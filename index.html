@@ -2,8 +2,41 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>¿Cuánto tengo que sudar?</title>
+  <title>LoVasASudar.com – Calculadora de castigo calórico de fiesta</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO básico -->
+  <meta name="description" content="LoVasASudar.com: mete lo que vas a comer y beber y descubre cuánto ejercicio tendrías que hacer para sudarlo. Ideal para cenas y noches de fiesta con colegas.">
+  <meta name="keywords" content="calorías, ejercicio, fiesta, copas, calculadora calorías, quemar calorías, running, gimnasio, dieta, pizza, alcohol">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://lovasasudar.com/">
+
+  <!-- Open Graph / redes -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="LoVasASudar.com – Calculadora de castigo calórico para noches de fiesta">
+  <meta property="og:description" content="El juego web que te dice cuánto tienes que sudar por tus pizzas, hamburguesas y gin-tonics.">
+  <meta property="og:url" content="https://lovasasudar.com/">
+  <!-- Cuando tengas una imagen de portada, cambia esta URL -->
+  <!-- <meta property="og:image" content="https://lovasasudar.com/imagen-portada.png"> -->
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="LoVasASudar.com – Calculadora de castigo calórico de fiesta">
+  <meta name="twitter:description" content="Mete comida y copas y descubre cuánto ejercicio tendrías que hacer para sudarlo.">
+
+  <!-- Google Search Console: cuando crees la propiedad, pega aquí la meta de verificación -->
+  <!-- <meta name="google-site-verification" content="TU_CODIGO_AQUI"> -->
+
+  <!-- Schema.org básico -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "LoVasASudar.com",
+    "url": "https://lovasasudar.com/",
+    "description": "Calculadora gamberra de calorías para noches de fiesta: introduces comida y copas y te dice cuánto ejercicio necesitarías para compensarlas."
+  }
+  </script>
 
   <style>
     :root {
@@ -78,10 +111,11 @@
 
     h1 {
       margin: 0;
-      font-size: 2rem;
-      font-weight: 800;
+      font-size: 2.1rem;
+      font-weight: 900;
+      letter-spacing: 0.03em;
       color: #ffffff;
-      text-shadow: 0 0 10px rgba(91, 124, 250, 0.8);
+      text-shadow: 0 0 10px rgba(91, 124, 250, 0.9);
     }
 
     header p {
@@ -528,12 +562,12 @@
     <header>
       <div class="pill">
         <span>🔥</span>
-        <span data-i18n="header.pill">Calculadora de castigo calórico nocturno</span>
+        <span data-i18n="header.pill">LoVasASudar.com · Calculadora de castigo calórico</span>
       </div>
-      <h1 data-i18n="header.title">¿Cuánto tengo que sudar por estas calorías?</h1>
+      <h1 data-i18n="header.title">LoVasASudar.com</h1>
       <p data-i18n="header.subtitle">
-        Perfecta para cenas con amigos y noches de copas: calcula cuánto ejercicio (o petanca)
-        te “cuesta” lo que vas a tomar.
+        Mete lo que vas a comer y beber y descubre cuánto ejercicio tendrías que hacer para sudarlo.
+        Perfecta para cenas con amigos y noches de copas.
       </p>
     </header>
 
@@ -554,7 +588,7 @@
                 </small>
               </div>
               <div class="section-badge" data-i18n="profile.badge">
-                Modo serio dentro de la fiesta
+                0% serio, 100% fiesta
               </div>
             </div>
 
@@ -569,7 +603,7 @@
             <div class="field">
               <label for="sexo" data-i18n="profile.genderLabel">Género (opcional)</label>
               <select id="sexo">
-                <option value="">{{/* texto lo pone JS */}}</option>
+                <option value=""></option>
                 <option value="hombre"></option>
                 <option value="mujer"></option>
                 <option value="otro"></option>
@@ -666,9 +700,11 @@
                 <option value="340" data-label="Patatas fritas medianas McDonald's">Patatas medianas McDonald's (~340 kcal)</option>
                 <option value="420" data-label="Patatas gajo Burger King">Patatas gajo Burger King (~420 kcal)</option>
 
-                <!-- Pizza / italiano -->
-                <option value="450" data-label="Porción pizza queso">Porción pizza queso (~450 kcal)</option>
-                <option value="500" data-label="Porción pizza pepperoni">Porción pizza pepperoni (~500 kcal)</option>
+                <!-- Pizza / italiano (1/8 pizza mediana) -->
+                <option value="450" data-label="Porción pizza queso (1/8 mediana)">Porción pizza queso (1/8 pizza mediana ~450 kcal)</option>
+                <option value="500" data-label="Porción pizza pepperoni (1/8 mediana)">Porción pizza pepperoni (1/8 pizza mediana ~500 kcal)</option>
+                <option value="3600" data-label="Pizza familiar queso entera">Pizza familiar queso entera (~3600 kcal aprox.)</option>
+                <option value="4000" data-label="Pizza familiar pepperoni entera">Pizza familiar pepperoni entera (~4000 kcal aprox.)</option>
                 <option value="600" data-label="Lasaña boloñesa">Lasaña boloñesa (~600 kcal)</option>
                 <option value="700" data-label="Ración pasta carbonara">Ración pasta carbonara (~700 kcal)</option>
 
@@ -697,15 +733,22 @@
                 <option value="200" data-label="Helado de palo cremoso">Helado de palo cremoso (~200 kcal)</option>
                 <option value="280" data-label="Helado tipo Magnum">Helado tipo Magnum (~280 kcal)</option>
 
-                <!-- Bebidas (también disponibles en modo copas, pero aquí como parte de la cena) -->
+                <!-- Bebidas y cocktails -->
                 <option value="150" data-label="Cerveza 330 ml">Cerveza 330 ml (~150 kcal)</option>
                 <option value="210" data-label="Gin-tonic estándar">Gin-tonic estándar (~210 kcal)</option>
                 <option value="200" data-label="Ron-cola">Ron-cola (~200 kcal)</option>
                 <option value="240" data-label="Mojito">Mojito (~240 kcal)</option>
+                <option value="230" data-label="Sex on the Beach">Sex on the Beach (~230 kcal)</option>
+                <option value="250" data-label="Caipiriña">Caipiriña (~250 kcal)</option>
+                <option value="300" data-label="Piña colada">Piña colada (~300 kcal)</option>
+                <option value="200" data-label="Whisky-cola">Whisky-cola (~200 kcal)</option>
+                <option value="200" data-label="Aperol Spritz">Aperol Spritz (~200 kcal)</option>
+                <option value="65" data-label="Chupito tequila">Chupito de tequila (~65 kcal)</option>
                 <option value="90" data-label="Copa de vino tinto">Copa de vino tinto (~90 kcal)</option>
                 <option value="110" data-label="Copa de vino blanco">Copa de vino blanco (~110 kcal)</option>
                 <option value="120" data-label="Refresco azucarado 330 ml">Refresco azucarado 330 ml (~120 kcal)</option>
                 <option value="100" data-label="Vermú">Vermú (~100 kcal)</option>
+                <option value="180" data-label="Cerveza artesana 330 ml">Cerveza artesana 330 ml (~180 kcal)</option>
 
                 <!-- Otros -->
                 <option value="650" data-label="Hamburguesa casera completa">Hamburguesa casera completa (~650 kcal)</option>
@@ -760,9 +803,16 @@
                   <select id="drinkSelect">
                     <option value="">—</option>
                     <option value="150">Cerveza 330 ml (~150 kcal)</option>
+                    <option value="180">Cerveza artesana 330 ml (~180 kcal)</option>
                     <option value="210">Gin-tonic (~210 kcal)</option>
                     <option value="200">Ron-cola (~200 kcal)</option>
                     <option value="240">Mojito (~240 kcal)</option>
+                    <option value="230">Sex on the Beach (~230 kcal)</option>
+                    <option value="250">Caipiriña (~250 kcal)</option>
+                    <option value="300">Piña colada (~300 kcal)</option>
+                    <option value="200">Whisky-cola (~200 kcal)</option>
+                    <option value="200">Aperol Spritz (~200 kcal)</option>
+                    <option value="65">Chupito tequila (~65 kcal)</option>
                     <option value="90">Copa vino tinto (~90 kcal)</option>
                     <option value="110">Copa vino blanco (~110 kcal)</option>
                     <option value="100">Vermú (~100 kcal)</option>
@@ -831,15 +881,15 @@
 
     const I18N = {
       es: {
-        'doc.title': '¿Cuánto tengo que sudar?',
-        'header.pill': 'Calculadora de castigo calórico nocturno',
-        'header.title': '¿Cuánto tengo que sudar por estas calorías?',
+        'doc.title': 'LoVasASudar.com – Calculadora de castigo calórico de fiesta',
+        'header.pill': 'LoVasASudar.com · Calculadora de castigo calórico',
+        'header.title': 'LoVasASudar.com',
         'header.subtitle':
-          'Perfecta para cenas con amigos y noches de copas: calcula cuánto ejercicio (o petanca) te “cuesta” lo que vas a tomar.',
+          'Mete lo que vas a comer y beber y descubre cuánto ejercicio tendrías que hacer para sudarlo. Perfecta para cenas con amigos y noches de copas.',
 
         'profile.title': 'Tu perfil',
         'profile.subtitle': 'Pon tus datos básicos para estimar el gasto.',
-        'profile.badge': 'Modo serio dentro de la fiesta',
+        'profile.badge': '0% serio, 100% fiesta',
         'profile.weightLabel': 'Peso (kg)',
         'profile.weightHint': 'El cálculo se hace por kg de peso (ecuación basada en MET).',
         'profile.genderLabel': 'Género (opcional)',
@@ -895,15 +945,15 @@
         'gender.optOther': 'Otro'
       },
       en: {
-        'doc.title': 'How much do I need to sweat?',
-        'header.pill': 'Night-time calorie punishment calculator',
-        'header.title': 'How much do I need to sweat for these calories?',
+        'doc.title': 'LoVasASudar.com – Party calorie punishment calculator',
+        'header.pill': 'LoVasASudar.com · Calorie punishment calculator',
+        'header.title': 'LoVasASudar.com',
         'header.subtitle':
-          'Perfect for dinners with friends and party nights: see how much exercise (or pétanque) your food and drinks “cost”.',
+          'Enter what you are going to eat and drink and see how much exercise you would need to sweat it out. Perfect for dinners with friends and party nights.',
 
         'profile.title': 'Your profile',
         'profile.subtitle': 'Fill your basic data to estimate energy cost.',
-        'profile.badge': 'Serious mode inside the party',
+        'profile.badge': '0% serious, 100% party',
         'profile.weightLabel': 'Weight (kg)',
         'profile.weightHint': 'The calculation uses your weight in kg (MET-based equation).',
         'profile.genderLabel': 'Gender (optional)',

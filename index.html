@@ -1173,7 +1173,12 @@
   <script>
     // --- Idioma actual ---
     let currentLang = 'es';
-
+      // --- GA4 helper (single HTML friendly) ---
+      function gaEvent(name, params = {}) {
+        try {
+          if (window.gtag) window.gtag('event', name, params);
+        } catch (e) { /* silent */ }
+      }
     const I18N = {
       es: {
         'doc.title': 'LoVasASudar.com – Calculadora de castigo calórico de fiesta',
@@ -1731,7 +1736,10 @@
         drinksBlock.style.display = toggleDrinks.checked ? 'block' : 'none';
       });
 
-      btnCalcular.addEventListener('click', calcular);
+      btnCalcular.addEventListener('click', () => {
+        gaEvent('calculate_click', { lang: currentLang });
+        calcular();
+      });
 
       [pesoInput, customKcalInput, unidadesInput].forEach(el => {
         el.addEventListener('keydown', e => {
@@ -1989,9 +1997,18 @@
         activePersonIndex = 0;
 
         renderResults(label);
-
-        // Guardar evento para ranking LOCAL
-        addEventToStats(totalKcal, label);
+        gaEvent('punishment_result', {
+          lang: currentLang,
+          kcal: Math.round(totalKcal),
+          people: (peopleResults?.length || 1),
+          has_drinks: (toggleDrinks?.checked ? 1 : 0),
+          battle: (toggleBattle?.checked ? 1 : 0)
+        });
+        
+        // stats local (si existe)
+        if (typeof addEventToStats === 'function') {
+          addEventToStats(totalKcal, label);
+        }
 
         // Auto: regenerar meme silenciosamente (sin molestar)
         drawMemeToCanvas();

@@ -1360,12 +1360,15 @@
 
     // Meme/share
     btnGenMeme.addEventListener('click', () => {
+      gaEvent('meme_generate_click', { lang: currentLang, kcal: Math.round(currentResults.kcal||0) });
       if (!currentResults.kcal || currentResults.kcal <= 0) return showHint(shareStatus, tMsg('memeNeedCalc'));
       drawMemeToCanvas(true);
+      gaEvent('meme_generate_done', { lang: currentLang, kcal: Math.round(currentResults.kcal||0) });
       showHint(shareStatus, currentLang === 'en' ? 'Meme generated ✅' : 'Meme generado ✅');
     });
 
     btnDownload.addEventListener('click', () => {
+      gaEvent('meme_download', { lang: currentLang, kcal: Math.round(currentResults.kcal||0) });
       if (!currentResults.kcal || currentResults.kcal <= 0) return showHint(shareStatus, tMsg('memeNeedCalc'));
       drawMemeToCanvas();
       const a = document.createElement('a');
@@ -1377,6 +1380,7 @@
     });
 
     btnCopyText.addEventListener('click', async () => {
+      gaEvent('share_copy_text', { lang: currentLang, kcal: Math.round(currentResults.kcal||0) });
       const txt = buildShareText();
       try {
         await navigator.clipboard.writeText(txt);
@@ -1393,6 +1397,7 @@
     });
 
     btnShare.addEventListener('click', async () => {
+      gaEvent('share_attempt', { lang: currentLang, kcal: Math.round(currentResults.kcal||0) });
       if (!currentResults.kcal || currentResults.kcal <= 0) return showHint(shareStatus, tMsg('memeNeedCalc'));
 
       drawMemeToCanvas();
@@ -1456,6 +1461,7 @@
 
     // Open Food Facts panel
     openFoodSearch.addEventListener('click', () => {
+      gaEvent('off_toggle', { lang: currentLang, open: (foodSearchPanel.style.display !== 'block') ? 1 : 0 });
       foodSearchPanel.style.display = (foodSearchPanel.style.display === 'none' || !foodSearchPanel.style.display) ? 'block' : 'none';
       if (foodSearchPanel.style.display === 'block') setTimeout(() => foodQuery.focus(), 50);
     });
@@ -1665,6 +1671,7 @@
     // CALCULADORA INVERSA
     // -------------------------
     function runInverse() {
+      gaEvent('inverse_calculate', { lang: currentLang, km: Number(invKm.value||0) });
       inverseOut.style.display = 'none';
       const w = parseFloat(pesoInput.value);
       if (isNaN(w) || w < 30 || w > 250) { showHint(shareStatus, tMsg('errorInverseNeedWeight')); return showError(tMsg('errorInverseNeedWeight')); }
@@ -1934,6 +1941,7 @@
     // OPEN FOOD FACTS (BETA)
     // -------------------------
     async function runFoodSearch() {
+      gaEvent('off_search', { lang: currentLang, q_len: (foodQuery.value||'').trim().length });
       foodSearchStatus.style.display = 'none';
       foodSearchResults.style.display = 'none';
       foodSearchResults.innerHTML = '';

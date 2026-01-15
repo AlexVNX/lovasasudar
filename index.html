@@ -7,2107 +7,1074 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
+    // Config correcta (en tu snippet se veía una línea rota tipo "configxPP?gkABO")
     gtag('config', 'G-RLQ6Y55SNC', { anonymize_ip: true });
   </script>
 
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="Calcula el castigo calórico de tu cena/noche de copas y genera un meme para compartir." />
-  <meta name="theme-color" content="#0b0f2a" />
-
-  <link rel="icon" type="image/png" href="favicon.png" sizes="32x32" />
-  <link rel="icon" type="image/png" href="favicon-48.png" sizes="48x48" />
-  <link rel="apple-touch-icon" href="lovasasudar-favicon-512.png" />
-
-  <title>LoVasASudar.com – Calculadora de castigo calórico</title>
+  <meta name="description" content="Calcula el castigo calórico de tu cena/noche de copas y descubre cuánto ejercicio tendrías que hacer para sudarlo." />
+  <title>LoVasASudar.com · Calculadora de castigo calórico</title>
 
   <style>
     :root{
-      --bg0:#05071a;
-      --bg1:#080b22;
-      --card:#0b1030cc;
-      --stroke:rgba(255,255,255,.14);
+      --bg1:#050617;
+      --bg2:#0b0f2a;
+      --card:#0b1130cc;
+      --stroke:rgba(255,255,255,.10);
       --text:rgba(255,255,255,.92);
       --muted:rgba(255,255,255,.70);
       --muted2:rgba(255,255,255,.55);
-      --accent:#5b7cfa;
-      --pink:#ff5bcb;
-      --gold:#ffd9a0;
-      --good:#54ffa7;
+      --primary:#5b7cfa;
+      --pink:#ff4fd8;
+      --cyan:#38e8ff;
+      --amber:#ffb648;
+      --good:#63ffb8;
+      --warn:#ffd66a;
       --bad:#ff6b6b;
-      --shadow: 0 18px 45px rgba(0,0,0,.45);
-      --r:22px;
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+      --radius: 22px;
     }
+
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       color:var(--text);
       background:
-        radial-gradient(1200px 600px at 20% 10%, rgba(91,124,250,.25), transparent 60%),
-        radial-gradient(900px 500px at 85% 25%, rgba(255,91,203,.18), transparent 60%),
-        radial-gradient(700px 500px at 50% 105%, rgba(91,124,250,.18), transparent 60%),
-        linear-gradient(180deg, var(--bg0), var(--bg1));
+        radial-gradient(1200px 800px at 12% 12%, rgba(91,124,250,.25), transparent 55%),
+        radial-gradient(900px 700px at 88% 18%, rgba(255,79,216,.20), transparent 55%),
+        radial-gradient(900px 900px at 70% 90%, rgba(56,232,255,.14), transparent 50%),
+        linear-gradient(180deg, var(--bg2), var(--bg1) 70%);
       overflow-x:hidden;
     }
 
+    /* Fondo decorativo: IMPORTANTÍSIMO -> pointer-events:none para no comerse clics */
+    .fx{
+      position:fixed;
+      inset:-2px;
+      pointer-events:none;
+      z-index:0;
+      opacity:.9;
+      background:
+        radial-gradient(600px 900px at 100% 15%, rgba(255,180,72,.18), transparent 60%),
+        radial-gradient(800px 700px at 0% 40%, rgba(56,232,255,.12), transparent 55%);
+      filter: blur(0px);
+    }
+
     .wrap{
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 18px 16px 36px;
+      position:relative;
+      z-index:2;
+      max-width:1150px;
+      margin: 26px auto 70px;
+      padding: 0 18px;
     }
 
     header{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:12px;
-      margin-bottom:14px;
+      gap:16px;
+      margin-bottom:16px;
     }
-    .brandline{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-    .pill{
+
+    .brand-pill{
       display:inline-flex;
       align-items:center;
-      padding:8px 12px;
+      gap:10px;
+      padding:10px 14px;
       border:1px solid var(--stroke);
       border-radius:999px;
-      background: rgba(5,8,24,.55);
-      box-shadow: var(--shadow);
-      font-weight:900;
-      font-size:.9rem;
-      color:rgba(255,255,255,.88);
+      background: rgba(10,14,40,.55);
+      box-shadow: 0 10px 40px rgba(0,0,0,.25);
+      backdrop-filter: blur(10px);
+      font-weight:700;
+      letter-spacing:.2px;
     }
-    .lang{display:flex; gap:8px; align-items:center;}
-    .lang-btn{
+
+    .lang{
+      display:flex;
+      gap:10px;
+    }
+    .lang button{
       border:1px solid var(--stroke);
-      background:rgba(5,8,24,.55);
-      color:rgba(255,255,255,.82);
-      padding:8px 10px;
-      border-radius:12px;
+      background: rgba(10,14,40,.55);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
       cursor:pointer;
-      font-weight:900;
-      transition:transform .08s ease, border-color .12s ease;
+      font-weight:700;
+      transition:.15s transform,.15s opacity;
     }
-    .lang-btn:hover{transform:translateY(-1px)}
-    .lang-btn.active{
-      border-color:rgba(91,124,250,.55);
-      box-shadow:0 0 0 3px rgba(91,124,250,.18);
-      color:rgba(255,255,255,.96);
+    .lang button:hover{transform: translateY(-1px)}
+    .lang button.active{
+      border-color: rgba(91,124,250,.65);
+      box-shadow: 0 0 0 3px rgba(91,124,250,.18);
+    }
+
+    /* NEON VERTICAL (tipo cartel japonés) */
+    .neon-sign{
+      position:fixed;
+      left: 16px;
+      top: 150px; /* ajústalo si quieres más arriba/abajo */
+      z-index:3;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:84px;
+      padding:14px 10px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.10);
+      background:
+        linear-gradient(180deg, rgba(10,14,40,.55), rgba(8,10,26,.35));
+      backdrop-filter: blur(10px);
+      box-shadow:
+        0 16px 70px rgba(0,0,0,.55),
+        0 0 22px rgba(56,232,255,.18),
+        0 0 38px rgba(255,79,216,.16);
+    }
+
+    /* “tubo” luminoso alrededor */
+    .neon-sign::before{
+      content:"";
+      position:absolute;
+      inset:-8px;
+      border-radius: 22px;
+      background: conic-gradient(from 180deg,
+        rgba(56,232,255,.0),
+        rgba(56,232,255,.35),
+        rgba(255,79,216,.30),
+        rgba(255,180,72,.22),
+        rgba(56,232,255,.0)
+      );
+      filter: blur(14px);
+      opacity:.85;
+      z-index:-1;
+      pointer-events:none;
+      animation: glowSpin 6.5s linear infinite;
+    }
+    @keyframes glowSpin{
+      0%{transform: rotate(0deg)}
+      100%{transform: rotate(360deg)}
+    }
+
+    /* texto vertical estilo “KANBAN” */
+    .neon-text{
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-weight: 900;
+      letter-spacing: 2px;
+      font-size: 18px;
+      line-height: 1;
+      text-transform: uppercase;
+      color: #fff;
+      /* glow brutal */
+      text-shadow:
+        0 0 6px rgba(56,232,255,.85),
+        0 0 16px rgba(56,232,255,.55),
+        0 0 28px rgba(255,79,216,.40),
+        0 0 48px rgba(255,79,216,.25);
+      animation: flicker 3.2s infinite;
+      user-select:none;
+    }
+    @keyframes flicker{
+      0%, 19%, 22%, 62%, 64%, 70%, 100% { opacity: 1; filter: brightness(1); }
+      20%, 63%, 69% { opacity: .85; filter: brightness(1.15); }
+      21% { opacity: .75; }
+    }
+
+    .neon-sub{
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-size: 12px;
+      font-weight:700;
+      color: rgba(255,255,255,.75);
+      margin-top:10px;
+      letter-spacing:1px;
+      text-shadow: 0 0 10px rgba(255,180,72,.25);
+      user-select:none;
+    }
+
+    /* En móvil, que no estorbe */
+    @media (max-width: 980px){
+      .neon-sign{
+        position: sticky;
+        top: 10px;
+        left: auto;
+        margin: 0 0 14px;
+        width: 100%;
+        flex-direction:row;
+        gap:12px;
+      }
+      .neon-text,.neon-sub{
+        writing-mode: horizontal-tb;
+      }
     }
 
     .card{
-      border:1px solid var(--stroke);
-      border-radius: var(--r);
-      background: linear-gradient(180deg, rgba(11,16,48,.70), rgba(7,10,31,.62));
-      box-shadow: var(--shadow);
-      padding: 18px;
       position:relative;
+      border:1px solid var(--stroke);
+      border-radius: var(--radius);
+      background: var(--card);
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+      padding: 28px;
       overflow:hidden;
     }
-    /* Menos “cuadro abstracto”: glow más discreto */
-    .card:before{
+
+    /* Decoración interior, OJO: pointer-events none */
+    .card::before{
       content:"";
       position:absolute;
-      inset:-2px;
-      border-radius: calc(var(--r) + 2px);
-      background: linear-gradient(90deg, rgba(91,124,250,.12), rgba(255,91,203,.10), rgba(91,124,250,.08));
-      opacity:.50;
-      filter: blur(16px);
+      inset:-1px;
+      background:
+        radial-gradient(900px 500px at 20% 0%, rgba(91,124,250,.20), transparent 55%),
+        radial-gradient(800px 500px at 90% 15%, rgba(255,79,216,.12), transparent 58%),
+        radial-gradient(600px 550px at 75% 95%, rgba(56,232,255,.10), transparent 55%);
       pointer-events:none;
+      z-index:0;
     }
-    .card > *{position:relative}
 
-    .hero{
-      text-align:left;
-      padding: 18px;
-    }
-    .title{
-      margin:0;
-      font-size: clamp(1.55rem, 2.6vw, 2.15rem);
-      font-weight: 950;
+    .card > *{ position:relative; z-index:1; }
+
+    h1{
+      margin:0 0 8px;
+      font-size: 44px;
       letter-spacing:.2px;
     }
-    .sub{
-      margin:8px 0 0;
+    .subtitle{
+      margin:0 0 22px;
       color:var(--muted);
+      max-width: 860px;
+      font-size: 18px;
       line-height:1.4;
-      max-width:none; /* clave: no recortes */
-      font-size: 1.02rem;
     }
 
-    /* === FORM ALINEADO: GRID ÚNICO === */
-    .form-grid{
-      margin-top:14px;
+    .grid{
       display:grid;
-      grid-template-columns: 1.65fr .70fr .95fr;
-      gap:12px;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap:18px;
       align-items:start;
     }
-    @media (max-width: 860px){
-      .form-grid{grid-template-columns:1fr;}
+    @media (max-width: 960px){
+      .grid{grid-template-columns:1fr}
     }
 
-    label{
+    .field label{
       display:block;
-      font-weight:900;
-      margin:10px 0 6px;
-      color:rgba(255,255,255,.92);
+      font-weight:800;
+      margin: 10px 0 10px;
+      font-size: 18px;
     }
-    input, select, button{font:inherit}
-    input, select{
-      width:100%;
-      min-height:52px; /* clave: alturas alineadas */
-      border-radius:16px;
-      border:1px solid var(--stroke);
-      background: rgba(5,8,24,.55);
-      color:rgba(255,255,255,.92);
-      padding: 13px 12px;
-      outline:none;
-      transition: box-shadow .12s ease, border-color .12s ease;
-    }
-    input:focus, select:focus{
-      border-color: rgba(91,124,250,.55);
-      box-shadow: 0 0 0 3px rgba(91,124,250,.16);
-    }
-
     .hint{
-      margin-top:6px;
-      color:var(--muted2);
-      font-size:.92rem;
+      margin-top:10px;
+      color: var(--muted2);
+      font-size: 14px;
       line-height:1.35;
-      max-width:none;
     }
 
-    .btn{
-      border:1px solid var(--stroke);
-      background: rgba(5,8,24,.55);
-      color: rgba(255,255,255,.92);
-      padding: 12px 14px;
-      border-radius: 16px;
-      cursor:pointer;
-      font-weight:950;
-      transition: transform .08s ease, box-shadow .12s ease, border-color .12s ease, opacity .12s ease;
-      user-select:none;
-      white-space:nowrap;
-    }
-    .btn:hover{transform:translateY(-1px)}
-    .btn:active{transform:translateY(0)}
-    .btn-primary{
-      border-color: rgba(91,124,250,.55);
-      background: linear-gradient(90deg, rgba(91,124,250,.92), rgba(255,91,203,.82));
-      color: rgba(255,255,255,.98);
-      box-shadow: 0 18px 40px rgba(91,124,250,.18), 0 14px 40px rgba(255,91,203,.10);
-    }
-    .btn-secondary{
-      border-color: rgba(159,168,255,.25);
-      background: rgba(9,13,35,.62);
-    }
-    .btn-wide{
+    select, input[type="number"], input[type="text"]{
       width:100%;
-      font-size: 1.1rem;
-      letter-spacing:.2px;
-      padding: 16px 16px;
-      border-radius: 999px;
-      margin-top:12px;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(4,7,22,.55);
+      color:var(--text);
+      padding:14px 14px;
+      font-size: 16px;
+      outline:none;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.03);
+    }
+    select:focus, input:focus{
+      border-color: rgba(91,124,250,.60);
+      box-shadow: 0 0 0 3px rgba(91,124,250,.20);
     }
 
-    /* Chips: UNA sola línea (scroll) */
-    .microbar{
-      margin-top: 12px;
-      display:flex;
-      gap:10px;
-      flex-wrap:nowrap;
-      overflow-x:auto;
-      overflow-y:hidden;
-      -webkit-overflow-scrolling: touch;
-      align-items:center;
-      padding-bottom: 2px;
+    .row2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:18px;
+      margin-top: 8px;
     }
-    .chip{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:9px 12px;
-      border-radius:999px;
-      border:1px solid var(--stroke);
-      background: rgba(5,8,24,.40);
-      font-weight:900;
-      color:rgba(255,255,255,.84);
-      cursor:pointer;
-      user-select:none;
-      white-space:nowrap;
-      flex:0 0 auto;
-    }
-    .chip input{ display:none; }
-    .chip .dot{
-      width:10px; height:10px; border-radius:999px;
-      border:2px solid rgba(255,255,255,.35);
-      background: transparent;
-      box-shadow:0 0 0 0 rgba(91,124,250,.0);
-      transition: all .12s ease;
-    }
-    .chip input:checked + .dot{
-      border-color: rgba(91,124,250,.75);
-      background: rgba(91,124,250,.9);
-      box-shadow:0 0 0 3px rgba(91,124,250,.15);
+    @media (max-width: 960px){
+      .row2{grid-template-columns:1fr}
     }
 
-    .error{
-      display:none;
-      margin-top:12px;
-      padding:12px 12px;
-      border-radius:14px;
-      border:1px solid rgba(255,107,107,.35);
-      background: rgba(35,10,12,.55);
-      color: rgba(255,180,180,.96);
-      font-weight:900;
+    .search-off{
+      margin-top:10px;
+      font-size:14px;
+      color:var(--muted2);
     }
-
-    .muted{color:var(--muted2)}
-    .linklike{
-      color: rgba(255,255,255,.92);
+    .search-off a{
+      color:#fff;
+      font-weight:800;
       text-decoration: underline;
       text-underline-offset: 3px;
       cursor:pointer;
-      font-weight:900;
     }
 
-    .advanced{ margin-top: 14px; display:none; }
-    .advanced.show{ display:block; }
-
-    details.acc{
-      border:1px solid var(--stroke);
-      background: rgba(5,8,24,.38);
-      border-radius: 18px;
-      padding: 0;
-      overflow:hidden;
-      margin-top: 10px;
+    /* Toggles tipo “píldora” (checkbox real + label clicable) */
+    .toggles{
+      display:flex;
+      flex-wrap:nowrap;
+      gap:12px;
+      overflow:auto;
+      padding: 14px 2px 10px;
+      margin-top: 12px;
     }
-    details.acc summary{
-      list-style:none;
+    .toggle{
+      flex:0 0 auto;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(6,8,22,.45);
       cursor:pointer;
       user-select:none;
-      padding: 12px 12px;
-      font-weight: 950;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      background: rgba(9,13,35,.45);
-      border-bottom:1px solid rgba(255,255,255,.08);
+      transition: .15s transform, .15s border-color, .15s box-shadow;
+      white-space:nowrap;
+      font-weight:800;
+      color: rgba(255,255,255,.9);
     }
-    details.acc summary::-webkit-details-marker{display:none}
-    .acc-body{ padding: 12px; }
-
-    .row{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
-    }
-    @media (max-width: 720px){ .row{grid-template-columns:1fr} }
-
-    /* Resultados */
-    .results-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:12px;
-      flex-wrap:wrap;
-      margin-bottom:10px;
-    }
-    .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding:7px 10px;
-      border-radius:999px;
-      border:1px solid var(--stroke);
-      background: rgba(5,8,24,.55);
-      font-weight:900;
-      color:rgba(255,255,255,.85);
-      font-size:.86rem;
-    }
-    .badge.kcal{
-      border-color: rgba(255,217,160,.32);
-      color: rgba(255,217,160,.95);
-      background: rgba(25,18,5,.35);
-      display:none;
+    .toggle:hover{ transform: translateY(-1px); }
+    .toggle input{ width:18px; height:18px; cursor:pointer; }
+    .toggle.active{
+      border-color: rgba(56,232,255,.55);
+      box-shadow: 0 0 0 3px rgba(56,232,255,.14);
     }
 
-    .phrase{
-      border:1px solid var(--stroke);
-      background: rgba(5,8,24,.45);
-      border-radius: 18px;
-      padding: 12px 12px;
-      color: rgba(255,255,255,.86);
-      line-height:1.35;
-      margin-bottom: 12px;
-    }
-
-    .tabs{
-      display:none;
-      gap:10px;
-      flex-wrap:wrap;
-      margin: 10px 0 10px;
-    }
-    .tabs button{
-      border:1px solid var(--stroke);
-      background: rgba(5,8,24,.45);
-      color: rgba(255,255,255,.88);
-      padding: 9px 12px;
+    .cta{
+      margin-top: 16px;
+      width:100%;
+      border:0;
       border-radius: 999px;
+      padding: 18px 18px;
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing:.3px;
+      color: #fff;
       cursor:pointer;
-      font-weight:950;
-      display:flex;
+      background: linear-gradient(90deg, rgba(91,124,250,1), rgba(255,79,216,1));
+      box-shadow: 0 18px 70px rgba(91,124,250,.22), 0 18px 70px rgba(255,79,216,.16);
+      transition: .15s transform, .15s filter;
+    }
+    .cta:hover{ transform: translateY(-1px); filter: brightness(1.05); }
+    .cta:active{ transform: translateY(0px); }
+
+    .results{
+      margin-top:18px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius: var(--radius);
+      background: rgba(10,14,40,.35);
+      padding: 18px;
+    }
+    .results h2{
+      margin:0 0 10px;
+      font-size: 22px;
+    }
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:12px;
+    }
+    @media (max-width: 960px){
+      .kpi{grid-template-columns:1fr}
+    }
+    .kpi .box{
+      padding:14px 14px;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(4,7,22,.45);
+    }
+    .box .big{
+      font-size: 26px;
+      font-weight: 950;
+      letter-spacing:.2px;
+      margin: 0 0 4px;
+    }
+    .box .small{
+      margin:0;
+      color: var(--muted2);
+      font-size: 13px;
+      line-height:1.3;
+    }
+    .fineprint{
+      margin-top: 12px;
+      color: var(--muted2);
+      font-size: 13px;
+      line-height:1.35;
+    }
+
+    /* MODAL OpenFoodFacts simple */
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
       align-items:center;
-      gap:8px;
+      justify-content:center;
+      padding: 18px;
+      z-index: 50;
     }
-    .tabs button.active{
-      border-color: rgba(91,124,250,.55);
-      box-shadow: 0 0 0 3px rgba(91,124,250,.14);
+    .modal{
+      width:min(820px, 100%);
+      border-radius: 22px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(10,14,40,.92);
+      box-shadow: 0 24px 90px rgba(0,0,0,.65);
+      padding: 16px;
     }
-
-    table{
-      width:100%;
-      border-collapse:separate;
-      border-spacing:0;
-      overflow:hidden;
-      border:1px solid var(--stroke);
-      border-radius: 18px;
-      background: rgba(5,8,24,.40);
+    .modal-header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      padding: 6px 6px 10px;
     }
-    th, td{
-      padding: 12px 12px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      vertical-align:top;
+    .modal-title{
+      font-weight:900;
+      font-size:16px;
     }
-    th{
-      text-align:left;
-      font-size:.92rem;
-      color: rgba(255,255,255,.82);
-      font-weight:950;
-      background: rgba(9,13,35,.45);
+    .x{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(4,7,22,.55);
+      color:var(--text);
+      border-radius: 14px;
+      padding: 8px 10px;
+      cursor:pointer;
+      font-weight:900;
     }
-    tr:last-child td{border-bottom:none}
-    .activity-name{font-weight:950}
-    .activity-soft{color:var(--muted2); font-size:.9rem; margin-top:2px}
-
-    .meme{ margin-top: 14px; display:grid; grid-template-columns: 1fr; gap:12px; }
-    canvas{
-      width:100%;
-      height:auto;
-      border-radius: 18px;
-      border:1px solid var(--stroke);
-      background: rgba(5,8,24,.35);
+    .modal-body{
+      padding: 6px;
     }
-    .share-row{
+    .modal-row{
       display:flex;
       gap:10px;
       flex-wrap:wrap;
       align-items:center;
+      margin-bottom: 10px;
     }
-    .share-status{
-      display:none;
-      padding:10px 12px;
-      border-radius: 14px;
-      border:1px solid rgba(84,255,167,.25);
-      background: rgba(8,30,22,.45);
-      color: rgba(190,255,225,.92);
+    .modal-row input{
+      flex: 1 1 280px;
+    }
+    .modal-row button{
+      border:0;
+      background: linear-gradient(90deg, rgba(56,232,255,1), rgba(91,124,250,1));
+      color:#021019;
       font-weight:950;
+      padding: 12px 14px;
+      border-radius: 16px;
+      cursor:pointer;
     }
-    .disclaimer{
-      margin-top: 14px;
-      padding: 12px 12px;
-      border-radius: 18px;
+    .modal-list{
+      max-height: 340px;
+      overflow:auto;
+      border-radius: 16px;
       border:1px solid rgba(255,255,255,.10);
-      background: rgba(5,8,24,.35);
-      color: rgba(255,255,255,.78);
-      line-height:1.35;
-      font-size:.95rem;
+      background: rgba(4,7,22,.45);
+      padding: 8px;
     }
-
-    .panel{
-      display:none;
-      margin-top: 12px;
-      border:1px solid var(--stroke);
-      border-radius: 18px;
-      background: rgba(5,8,24,.42);
-      padding: 12px;
-    }
-    .result-item{
+    .item{
       display:flex;
-      align-items:flex-start;
       justify-content:space-between;
       gap:12px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(9,13,35,.38);
-      border-radius: 14px;
       padding: 10px 10px;
-      margin-top:10px;
+      border-radius: 14px;
+      cursor:pointer;
+      border:1px solid transparent;
     }
-    .result-item .meta{
-      color: var(--muted2);
-      font-size: .9rem;
-      margin-top: 4px;
-      line-height:1.25;
+    .item:hover{
+      border-color: rgba(56,232,255,.35);
+      background: rgba(56,232,255,.06);
     }
+    .item strong{ font-size: 14px; }
+    .item span{ color: var(--muted2); font-size: 12px; white-space:nowrap; }
 
-    .hidden{ display:none !important; }
-
-    /* === Cartel neón “asiático” === */
-   /* === Cartel neón “asiático” (FLOTANTE) === */
-.neon-sign{
-  position: fixed;
-  top: 18px;
-  right: 18px;
-  width: 210px;
-  height: 110px;
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,.18);
-  background: linear-gradient(180deg, rgba(12,16,42,.55), rgba(5,8,24,.25));
-  backdrop-filter: blur(10px);
-  transform: rotate(3deg);
-  z-index: 999;           /* flotante por encima */
-  pointer-events:none;    /* que no moleste */
-  overflow:hidden;
-
-  /* Glow más “rótulo japonés” */
-  box-shadow:
-    0 14px 35px rgba(0,0,0,.45),
-    0 0 18px rgba(255,180,0,.30),
-    0 0 28px rgba(255,110,0,.22),
-    0 0 18px rgba(255,91,203,.18);
-}
-.neon-sign:before{
-  content:"";
-  position:absolute;
-  inset:-60px -60px;
-  background:
-    radial-gradient(230px 150px at 30% 30%, rgba(255,190,0,.45), transparent 60%),
-    radial-gradient(240px 160px at 80% 75%, rgba(255,110,0,.35), transparent 60%),
-    radial-gradient(220px 140px at 40% 80%, rgba(255,91,203,.22), transparent 60%);
-  filter: blur(12px);
-  opacity:.95;
-}
-.neon-sign .frame{
-  position:absolute;
-  inset:10px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,.16);
-  background: rgba(0,0,0,.10);
-}
-.neon-sign .jp{
-  position:absolute;
-  inset: 10px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  gap:6px;
-  text-align:center;
-  font-weight: 950;
-  letter-spacing: .6px;
-
-  text-shadow:
-    0 0 8px rgba(255,255,255,.35),
-    0 0 16px rgba(255,190,0,.50),
-    0 0 22px rgba(255,110,0,.35);
-}
-.neon-sign .jp .big{
-  font-size: 28px;
-  color: rgba(255,205,60,.98); /* amarillo */
-}
-.neon-sign .jp .small{
-  font-size: 12px;
-  color: rgba(255,235,200,.80);
-  font-weight: 900;
-}
-
-/* No invadir móviles */
-@media (max-width: 680px){
-  .neon-sign{ top: 10px; right: 10px; width: 160px; height: 88px; }
-  .neon-sign .jp .big{ font-size: 22px; }
-}
+    /* IMPORTANTE: asegurar que inputs estén por encima y clicables */
+    .card, .field, select, input, button, label { pointer-events: auto; }
   </style>
 </head>
 
 <body>
+  <div class="fx" aria-hidden="true"></div>
+
+  <!-- NEÓN “cartel japonés” fuera de la tarjeta -->
+  <div class="neon-sign" aria-hidden="true" title="Lo vas a sudar">
+    <div>
+      <div class="neon-text">LO VAS A SUDAR</div>
+      <div class="neon-sub">CALORÍAS</div>
+    </div>
+  </div>
+
   <div class="wrap">
     <header>
-      <div class="brandline">
-        <div class="pill" data-i18n="header.pill">LoVasASudar.com · Calculadora de castigo calórico</div>
-      </div>
+      <div class="brand-pill">LoVasASudar.com · Calculadora de castigo calórico</div>
       <div class="lang" aria-label="Idioma">
-        <button class="lang-btn active" type="button" data-lang="es">ES</button>
-        <button class="lang-btn" type="button" data-lang="en">EN</button>
+        <button id="btnES" class="active" type="button">ES</button>
+        <button id="btnEN" type="button">EN</button>
       </div>
     </header>
 
-
-     <!-- Neon sign -->
-      <div class="neon-sign" aria-hidden="true">
-        <div class="frame"></div>
-        <div class="jp">
-          <div class="jp-swap" id="jpSwap">
-            <span class="on">ハンバーガー</span>
-            <span>寿司</span>
-          </div>
-          <div class="small">NEON MENU</div>
-        </div>
-      </div>
-    
-    <!-- HERO + FORM (alineado) -->
-    <section class="card hero" id="mainHero">
-     
-
-      <h1 class="title" data-i18n="header.title">LoVasASudar.com</h1>
-      <p class="sub" data-i18n="header.subtitle">
+    <main class="card">
+      <h1 id="title">LoVasASudar.com</h1>
+      <p class="subtitle" id="subtitle">
         Mete lo que vas a comer y beber y descubre cuánto ejercicio tendrías que hacer para sudarlo. Perfecta para cenas con amigos y noches de copas.
       </p>
 
-      <div class="form-grid" aria-label="Formulario principal">
-
-        <div>
-          <label for="foodSelect" data-i18n="food.labelMain">Alimento o bebida</label>
-          <select id="foodSelect">
-            <option value="0" data-label="—">—</option>
-
-            <optgroup label="🍕 Comida">
-              <option value="850" data-label="Pizza mediana">Pizza mediana (~850 kcal)</option>
-              <option value="650" data-label="Hamburguesa">Hamburguesa (~650 kcal)</option>
-              <option value="1050" data-label="Kebab completo">Kebab completo (~1050 kcal)</option>
-              <option value="520" data-label="Ración bravas">Ración bravas (~520 kcal)</option>
-              <option value="460" data-label="Bocata calamares">Bocata calamares (~460 kcal)</option>
-
-              <option value="500" data-label="Happy Meal McDonald's">Happy Meal McDonald's (~500 kcal)</option>
-              <option value="550" data-label="Big Mac">Big Mac (~550 kcal)</option>
-              <option value="510" data-label="Menú mediano McDonald's">Menú mediano McDonald's (~510 kcal)</option>
-              <option value="250" data-label="6 Nuggets McDonald's">6 Nuggets McDonald's (~250 kcal)</option>
-              <option value="340" data-label="Patatas fritas medianas McDonald's">Patatas medianas McDonald's (~340 kcal)</option>
-              <option value="420" data-label="Patatas gajo Burger King">Patatas gajo Burger King (~420 kcal)</option>
-
-              <option value="450" data-label="Porción pizza queso (1/8 mediana)">Porción pizza queso (1/8 pizza mediana ~450 kcal)</option>
-              <option value="500" data-label="Porción pizza pepperoni (1/8 mediana)">Porción pizza pepperoni (1/8 pizza mediana ~500 kcal)</option>
-              <option value="3600" data-label="Pizza familiar queso entera">Pizza familiar queso entera (~3600 kcal aprox.)</option>
-              <option value="4000" data-label="Pizza familiar pepperoni entera">Pizza familiar pepperoni entera (~4000 kcal aprox.)</option>
-              <option value="600" data-label="Lasaña boloñesa">Lasaña boloñesa (~600 kcal)</option>
-              <option value="700" data-label="Ración pasta carbonara">Ración pasta carbonara (~700 kcal)</option>
-
-              <option value="250" data-label="Pincho de tortilla">Pincho de tortilla (~250 kcal)</option>
-              <option value="500" data-label="Ración patatas bravas">Ración patatas bravas (~500 kcal)</option>
-              <option value="350" data-label="3 croquetas de jamón">3 croquetas de jamón (~350 kcal)</option>
-              <option value="450" data-label="Bocadillo de jamón serrano">Bocadillo de jamón serrano (~450 kcal)</option>
-              <option value="550" data-label="Bocadillo de calamares">Bocadillo de calamares (~550 kcal)</option>
-
-              <option value="280" data-label="Donut clásico">Donut clásico (~280 kcal)</option>
-              <option value="220" data-label="Croissant de mantequilla">Croissant de mantequilla (~220 kcal)</option>
-              <option value="400" data-label="Palmera de chocolate">Palmera de chocolate (~400 kcal)</option>
-              <option value="450" data-label="Brownie de chocolate">Brownie de chocolate (~450 kcal)</option>
-              <option value="450" data-label="Muffin de chocolate">Muffin de chocolate (~450 kcal)</option>
-              <option value="550" data-label="Tarta de queso porción">Tarta de queso porción (~550 kcal)</option>
-              <option value="500" data-label="Tarta de chocolate porción">Tarta de chocolate porción (~500 kcal)</option>
-
-              <option value="150" data-label="Barrita chocolate tipo KitKat">Barrita chocolate tipo KitKat (~150 kcal)</option>
-              <option value="240" data-label="Barrita Snickers">Barrita Snickers (~240 kcal)</option>
-              <option value="250" data-label="Bolsa patatas fritas pequeña">Patatas fritas bolsa pequeña (~250 kcal)</option>
-              <option value="500" data-label="Bolsa patatas fritas grande">Patatas fritas bolsa grande (~500 kcal)</option>
-              <option value="200" data-label="Kinder Bueno (2 barritas)">Kinder Bueno (2 barritas) (~200 kcal)</option>
-              <option value="200" data-label="Helado de palo cremoso">Helado de palo cremoso (~200 kcal)</option>
-              <option value="280" data-label="Helado tipo Magnum">Helado tipo Magnum (~280 kcal)</option>
-
-              <option value="650" data-label="Hamburguesa casera completa">Hamburguesa casera completa (~650 kcal)</option>
-              <option value="350" data-label="Ración de sushi (8 piezas)">Ración de sushi (8 piezas) (~350 kcal)</option>
-              <option value="300" data-label="Ensalada César completa">Ensalada César completa (~300 kcal)</option>
-
-              <option value="custom" data-label="Personalizado">Otro / none</option>
-            </optgroup>
-
-            <optgroup label="🍺 Bebida">
-              <option value="150" data-label="Cerveza 330 ml">Cerveza 330 ml (~150 kcal)</option>
-              <option value="180" data-label="Cerveza artesana 330 ml">Cerveza artesana 330 ml (~180 kcal)</option>
-              <option value="90" data-label="Copa vino tinto">Copa vino tinto (~90 kcal)</option>
-              <option value="110" data-label="Copa vino blanco">Copa vino blanco (~110 kcal)</option>
-              <option value="210" data-label="Gin-tonic">Gin-tonic (~210 kcal)</option>
-              <option value="200" data-label="Ron-cola">Ron-cola (~200 kcal)</option>
-              <option value="240" data-label="Mojito">Mojito (~240 kcal)</option>
-
-              <option value="230" data-label="Sex on the Beach">Sex on the Beach (~230 kcal)</option>
-              <option value="250" data-label="Caipiriña">Caipiriña (~250 kcal)</option>
-              <option value="300" data-label="Piña colada">Piña colada (~300 kcal)</option>
-              <option value="200" data-label="Whisky-cola">Whisky-cola (~200 kcal)</option>
-              <option value="200" data-label="Aperol Spritz">Aperol Spritz (~200 kcal)</option>
-              <option value="65" data-label="Chupito tequila">Chupito de tequila (~65 kcal)</option>
-              <option value="120" data-label="Refresco azucarado 330 ml">Refresco azucarado 330 ml (~120 kcal)</option>
-              <option value="100" data-label="Vermú">Vermú (~100 kcal)</option>
-            </optgroup>
+      <section class="grid" aria-label="Formulario de cálculo">
+        <div class="field">
+          <label for="food" id="lblFood">Alimento o bebida</label>
+          <select id="food" aria-label="Alimento o bebida">
+            <!-- Se llena por JS -->
           </select>
 
-          <div class="hint">
-            <span data-i18n="food.searchHint">¿No está en la lista? Busca en Open Food Facts (beta).</span>
-            <span class="linklike" id="openFoodSearch" data-i18n="food.searchLink">Abrir buscador</span>
+          <div class="search-off" id="offHint">
+            ¿No está en la lista? Busca en Open Food Facts (beta). <a id="openOff" href="#" role="button">Abrir buscador</a>
+          </div>
+
+          <div class="row2">
+            <div class="field">
+              <label for="units" id="lblUnits">Nº de unidades</label>
+              <input id="units" type="number" min="1" step="1" value="1" />
+              <div class="hint" id="hintUnits">Ej: 3 cervezas → pon 3 unidades.</div>
+            </div>
+
+            <div class="field">
+              <label for="extra" id="lblExtra">Calorías extra</label>
+              <input id="extra" type="number" min="0" step="10" value="0" />
+              <div class="hint" id="hintExtra">Se suman a lo anterior (comida + copas).</div>
+            </div>
           </div>
         </div>
 
-        <div>
-          <label for="peso" data-i18n="profile.weightLabel">Peso (kg)</label>
-          <input id="peso" type="number" min="30" max="250" step="0.1" placeholder="80" />
-          <div class="hint" data-i18n="profile.weightHint">El cálculo se hace por kg de peso (ecuación basada en MET).</div>
+        <div class="field">
+          <label for="weight" id="lblWeight">Peso (kg)</label>
+          <input id="weight" type="number" min="35" max="200" step="1" value="80" />
+          <div class="hint" id="hintWeight">
+            El cálculo se hace por kg de peso (ecuación basada en MET).
+          </div>
         </div>
 
-        <div>
-          <label for="sexo" data-i18n="profile.genderLabel">Género (opcional)</label>
-          <select id="sexo">
-            <option value="no" data-i18n="gender.opt0">Prefiero no decirlo</option>
-            <option value="hombre" data-i18n="gender.optMale">Hombre</option>
-            <option value="mujer" data-i18n="gender.optFemale">Mujer</option>
-            <option value="otro" data-i18n="gender.optOther">Otro</option>
+        <div class="field">
+          <label for="gender" id="lblGender">Género (opcional)</label>
+          <select id="gender">
+            <option value="na">Prefiero no decirlo</option>
+            <option value="male">Hombre</option>
+            <option value="female">Mujer</option>
           </select>
-          <div class="hint" data-i18n="profile.genderHint">
+          <div class="hint" id="hintGender">
             A igualdad de peso, hombres y mujeres suelen quemar algo diferente. Aquí aplicamos un ajuste sencillo (~5%) para reflejarlo de forma aproximada.
           </div>
         </div>
+      </section>
 
-        <div>
-          <label for="unidades" data-i18n="food.unitsLabel">N.º de unidades</label>
-          <input id="unidades" type="number" min="1" step="1" value="1" />
-          <div class="hint" data-i18n="food.unitsHint">Ej: 3 cervezas → pon 3 unidades.</div>
-        </div>
-
-        <div>
-          <label for="customKcal" data-i18n="food.extraLabel">Calorías extra</label>
-          <input id="customKcal" type="number" min="0" step="1" placeholder="0" />
-          <div class="hint" data-i18n="food.extraHint">Se suman a lo anterior (comida + copas).</div>
-        </div>
-
-        <div></div>
-      </div>
-
-      <div class="microbar" aria-label="Opciones pequeñas">
-        <label class="chip" title="Modo noche de copas">
-          <input id="toggleDrinks" type="checkbox" />
-          <span class="dot"></span>
-          <span data-i18n="drinks.toggleTitle">Modo noche de copas</span>
+      <div class="toggles" aria-label="Modos">
+        <label class="toggle" id="tgDrinks">
+          <input type="checkbox" id="modeDrinks" />
+          <span id="txtDrinks">Modo noche de copas</span>
         </label>
 
-        <label class="chip" title="Batalla de colegas">
-          <input id="toggleBattle" type="checkbox" />
-          <span class="dot"></span>
-          <span data-i18n="battle.toggleTitle">Batalla de colegas</span>
+        <label class="toggle" id="tgBattle">
+          <input type="checkbox" id="modeBattle" />
+          <span id="txtBattle">Batalla de colegas</span>
         </label>
 
-        <label class="chip" title="Calculadora inversa">
-          <input id="toggleInverse" type="checkbox" />
-          <span class="dot"></span>
-          <span data-i18n="inverse.title">Calculadora inversa (modo precavido)</span>
+        <label class="toggle" id="tgInverse">
+          <input type="checkbox" id="modeInverse" />
+          <span id="txtInverse">Calculadora inversa (modo precavido)</span>
         </label>
 
-        <label class="chip" title="Ranking local">
-          <input id="toggleStats" type="checkbox" />
-          <span class="dot"></span>
-          <span data-i18n="stats.title">Ranking semanal (anónimo)</span>
+        <label class="toggle" id="tgRanking">
+          <input type="checkbox" id="modeRanking" />
+          <span id="txtRanking">Ranking semanal</span>
         </label>
       </div>
 
-      <button class="btn btn-primary btn-wide" id="btnCalcular" type="button" data-i18n="btn.calculate">
-        CALCULAR EJERCICIO NECESARIO 💪
-      </button>
+      <button class="cta" id="btnCalc" type="button">CALCULAR EJERCICIO NECESARIO 💪</button>
 
-      <div class="error" id="errorBox"></div>
-
-      <!-- Open Food Facts panel -->
-      <div class="panel" id="foodSearchPanel">
-        <div style="display:flex; gap:10px; justify-content:space-between; align-items:flex-start; flex-wrap:wrap;">
-          <div>
-            <div style="font-weight:950" data-i18n="foodSearch.title">Buscador (Open Food Facts)</div>
-            <div class="muted" style="margin-top:2px;" data-i18n="foodSearch.subtitle">
-              Escribe un producto. Te devolvemos resultados con kcal/100g y puedes añadirlo a la lista.
-            </div>
+      <section class="results" id="results" aria-label="Resultados del castigo calórico" style="display:none;">
+        <h2 id="resTitle">🎯 Resultados del castigo calórico</h2>
+        <div class="kpi">
+          <div class="box">
+            <p class="big" id="kcalOut">0 kcal</p>
+            <p class="small" id="kcalSub">Calorías totales estimadas</p>
           </div>
-          <button class="btn btn-secondary" type="button" id="btnFoodSearchClose" data-i18n="foodSearch.close">Cerrar</button>
-        </div>
-
-        <div class="row" style="margin-top:8px;">
-          <div>
-            <label for="foodQuery" data-i18n="foodSearch.queryLabel">Buscar</label>
-            <input id="foodQuery" placeholder="pizza pepperoni, cerveza 0,0..." />
-            <div class="hint" data-i18n="foodSearch.queryHint">Consejo: añade marca o tipo (“pizza pepperoni”, “cerveza 0,0”).</div>
+          <div class="box">
+            <p class="big" id="runOut">0 min</p>
+            <p class="small" id="runSub">Corriendo suave (≈ 8 MET)</p>
           </div>
-          <div>
-            <label for="foodServing" data-i18n="foodSearch.servingLabel">Ración (g/ml)</label>
-            <input id="foodServing" type="number" min="0" step="1" placeholder="250" />
-            <div class="hint" data-i18n="foodSearch.servingHint">Para convertir kcal/100g a tu ración.</div>
+          <div class="box">
+            <p class="big" id="walkOut">0 min</p>
+            <p class="small" id="walkSub">Andando rápido (≈ 4.3 MET)</p>
           </div>
         </div>
+        <div class="fineprint" id="fineprint">
+          Nota: estimaciones aproximadas. No es consejo médico. (Pero sí un recordatorio cósmico de que el universo cobra sus deudas en forma de sudor.)
+        </div>
+      </section>
+    </main>
+  </div>
 
-        <div style="display:flex; gap:10px; margin-top:10px; flex-wrap:wrap; align-items:center;">
-          <button class="btn btn-primary" type="button" id="btnFoodSearch" data-i18n="foodSearch.btn">Buscar</button>
-          <div class="muted">
-            <b data-i18n="foodSearch.disclaimerTitle">Beta:</b>
-            <span data-i18n="foodSearch.disclaimerBody">Los datos vienen de un repositorio abierto (usuarios suben productos). Puede haber errores.</span>
+  <!-- Modal OpenFoodFacts (beta) -->
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-label="Buscador Open Food Facts">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-title">Open Food Facts (beta) · Buscar producto</div>
+        <button class="x" id="closeModal" type="button">Cerrar ✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-row">
+          <input id="offQuery" type="text" placeholder="Ej: pizza, cerveza, patatas..." />
+          <button id="offSearch" type="button">Buscar</button>
+        </div>
+        <div class="modal-list" id="offList">
+          <div class="item" style="cursor:default; opacity:.8;">
+            <div><strong>Escribe una búsqueda y pulsa “Buscar”.</strong><div style="font-size:12px; color:rgba(255,255,255,.55); margin-top:4px;">Si no hay red/CORS, verás un fallback local.</div></div>
+            <span>—</span>
           </div>
         </div>
-
-        <div class="share-status" id="foodSearchStatus" style="display:none;margin-top:10px;"></div>
-        <div id="foodSearchResults" style="display:none;"></div>
       </div>
-
-      <!-- ADVANCED -->
-      <div class="advanced" id="advancedZone">
-
-        <details id="battleDetails" class="acc">
-          <summary><span data-i18n="battle.toggleTitle">Batalla de colegas</span> <span class="muted">▼</span></summary>
-          <div class="acc-body">
-            <div class="muted" style="margin-bottom:10px;" data-i18n="battle.hint">
-              Si nadie aquí tiene peso válido, solo te usamos a ti. Si los rellenas, todos comparten castigo calórico.
-            </div>
-
-            <div class="row">
-              <div>
-                <label data-i18n="battle.name1" for="friend1Name">Nombre 1</label>
-                <input id="friend1Name" placeholder="Alex" />
-              </div>
-              <div>
-                <label data-i18n="battle.weight1" for="friend1Weight">Peso 1 (kg)</label>
-                <input id="friend1Weight" type="number" min="30" max="250" step="0.1" placeholder="75" />
-              </div>
-            </div>
-
-            <div class="row">
-              <div>
-                <label data-i18n="battle.name2" for="friend2Name">Nombre 2</label>
-                <input id="friend2Name" placeholder="Colega 2" />
-              </div>
-              <div>
-                <label data-i18n="battle.weight2" for="friend2Weight">Peso 2 (kg)</label>
-                <input id="friend2Weight" type="number" min="30" max="250" step="0.1" placeholder="85" />
-              </div>
-            </div>
-
-            <div class="row">
-              <div>
-                <label data-i18n="battle.name3" for="friend3Name">Nombre 3</label>
-                <input id="friend3Name" placeholder="Colega 3" />
-              </div>
-              <div>
-                <label data-i18n="battle.weight3" for="friend3Weight">Peso 3 (kg)</label>
-                <input id="friend3Weight" type="number" min="30" max="250" step="0.1" placeholder="68" />
-              </div>
-            </div>
-          </div>
-        </details>
-
-        <details id="drinksDetails" class="acc">
-          <summary><span data-i18n="drinks.toggleTitle">Modo noche de copas</span> <span class="muted">▼</span></summary>
-          <div class="acc-body">
-            <div class="muted" style="margin-bottom:10px;" data-i18n="drinks.hint">
-              Perfecto para ver cuánto “vale” tu noche de copas además de la cena.
-            </div>
-
-            <div class="row">
-              <div>
-                <label for="drinkSelect" data-i18n="drinks.drinkLabel">Bebida</label>
-                <select id="drinkSelect">
-                  <option value="150" data-label="Cerveza 330 ml">Cerveza 330 ml (~150 kcal)</option>
-                  <option value="180" data-label="Cerveza artesana 330 ml">Cerveza artesana 330 ml (~180 kcal)</option>
-                  <option value="90" data-label="Copa vino tinto">Copa vino tinto (~90 kcal)</option>
-                  <option value="110" data-label="Copa vino blanco">Copa vino blanco (~110 kcal)</option>
-                  <option value="210" data-label="Gin-tonic">Gin-tonic estándar (~210 kcal)</option>
-                  <option value="200" data-label="Ron-cola">Ron-cola (~200 kcal)</option>
-                  <option value="240" data-label="Mojito">Mojito (~240 kcal)</option>
-                  <option value="230" data-label="Sex on the Beach">Sex on the Beach (~230 kcal)</option>
-                  <option value="250" data-label="Caipiriña">Caipiriña (~250 kcal)</option>
-                  <option value="300" data-label="Piña colada">Piña colada (~300 kcal)</option>
-                  <option value="200" data-label="Whisky-cola">Whisky-cola (~200 kcal)</option>
-                  <option value="200" data-label="Aperol Spritz">Aperol Spritz (~200 kcal)</option>
-                  <option value="65" data-label="Chupito tequila">Chupito de tequila (~65 kcal)</option>
-                  <option value="120" data-label="Refresco azucarado 330 ml">Refresco azucarado 330 ml (~120 kcal)</option>
-                  <option value="100" data-label="Vermú">Vermú (~100 kcal)</option>
-                </select>
-                <div class="hint" data-i18n="drinks.chipText">Estas calorías se suman al resto.</div>
-              </div>
-              <div>
-                <label for="numCopas" data-i18n="drinks.numLabel">N.º de copas</label>
-                <input id="numCopas" type="number" min="0" step="1" value="0" />
-              </div>
-            </div>
-          </div>
-        </details>
-
-        <details id="inverseDetails" class="acc">
-          <summary><span data-i18n="inverse.title">Calculadora inversa (modo precavido)</span> <span class="muted">▼</span></summary>
-          <div class="acc-body" id="inverseBlock">
-            <div class="row">
-              <div>
-                <label for="invKm" data-i18n="inverse.kmLabel">Mañana corro (km)</label>
-                <input id="invKm" type="number" min="0" step="0.1" placeholder="10" />
-                <div class="hint" data-i18n="inverse.kmHint">Regla rápida: correr ≈ 1 kcal por kg por km (aprox).</div>
-              </div>
-              <div>
-                <label for="invIntensity" data-i18n="inverse.intensityLabel">Intensidad</label>
-                <select id="invIntensity">
-                  <option value="0.9" data-i18n="inverse.intensityEasy">Suave</option>
-                  <option value="1.0" selected data-i18n="inverse.intensityMid">Media</option>
-                  <option value="1.15" data-i18n="inverse.intensityHard">Fuerte</option>
-                </select>
-                <div class="hint" data-i18n="inverse.intensityHint">Ajuste simple: +/− según intensidad.</div>
-              </div>
-            </div>
-
-            <div class="row">
-              <div>
-                <label for="invDrink" data-i18n="inverse.drinkLabel">¿En qué “te lo quieres gastar”?</label>
-                <select id="invDrink">
-                  <option value="0" data-label="—">—</option>
-                  <optgroup label="🍕 Comida">
-                    <option value="850" data-label="Pizza mediana">Pizza mediana (~850 kcal)</option>
-                    <option value="650" data-label="Hamburguesa">Hamburguesa (~650 kcal)</option>
-                    <option value="350" data-label="Ración de sushi (8 piezas)">Ración de sushi (8 piezas) (~350 kcal)</option>
-                    <option value="1050" data-label="Kebab completo">Kebab completo (~1050 kcal)</option>
-                    <option value="custom" data-label="Personalizado">Otro / none</option>
-                  </optgroup>
-                  <optgroup label="🍺 Bebida">
-                    <option value="150" data-label="Cerveza 330 ml">Cerveza 330 ml (~150 kcal)</option>
-                    <option value="210" data-label="Gin-tonic">Gin-tonic (~210 kcal)</option>
-                    <option value="240" data-label="Mojito">Mojito (~240 kcal)</option>
-                  </optgroup>
-                </select>
-              </div>
-              <div>
-                <label for="invExtraMargin" data-i18n="inverse.marginLabel">Margen “por si acaso”</label>
-                <select id="invExtraMargin">
-                  <option value="0.85" data-i18n="inverse.marginHigh">Alto (85%)</option>
-                  <option value="0.70" selected data-i18n="inverse.marginMid">Medio (70%)</option>
-                  <option value="0.55" data-i18n="inverse.marginLow">Bajo (55%)</option>
-                </select>
-                <div class="hint" data-i18n="inverse.marginHint">Porque luego hay cena. Y postre. Y “una última”.</div>
-              </div>
-            </div>
-
-            <button class="btn btn-primary btn-wide" type="button" id="btnInverse" data-i18n="inverse.btn">¿Cuánto puedo beber?</button>
-            <div class="panel" id="inverseOut" style="display:none;"></div>
-          </div>
-        </details>
-
-        <details id="statsDetails" class="acc">
-          <summary><span data-i18n="stats.title">Ranking semanal (anónimo)</span> <span class="muted">▼</span></summary>
-          <div class="acc-body">
-            <div class="muted" data-i18n="stats.noteBody">
-              Este ranking es <strong>local en tu dispositivo</strong> (sirve para “picar” a tus colegas).
-            </div>
-
-            <div class="row" style="margin-top:10px;">
-              <div class="card" style="padding:12px; background:rgba(5,8,24,.35)">
-                <div class="muted" data-i18n="stats.weekKcalLabel">Kcal acumuladas (7 días)</div>
-                <div style="font-size:1.6rem; font-weight:950; margin-top:4px;"><span id="weekKcal">0</span></div>
-              </div>
-              <div class="card" style="padding:12px; background:rgba(5,8,24,.35)">
-                <div class="muted" data-i18n="stats.weekKmLabel">Km “culpa de la fiesta” (7 días)</div>
-                <div style="font-size:1.6rem; font-weight:950; margin-top:4px;"><span id="weekKm">0</span></div>
-              </div>
-            </div>
-
-            <div class="card" style="padding:12px; background:rgba(5,8,24,.35); margin-top:10px;">
-              <div class="muted" data-i18n="stats.yearTopLabel">Top castigo (este año)</div>
-              <div style="font-weight:950; margin-top:6px;"><span id="yearTop">—</span></div>
-            </div>
-
-            <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
-              <button class="btn btn-secondary" id="btnResetStats" type="button" data-i18n="stats.reset">Resetear stats (local)</button>
-              <button class="btn btn-primary" id="btnShareStats" type="button" data-i18n="stats.share">Compartir mi “ranking”</button>
-            </div>
-
-            <div class="share-status" id="statsHeadline" style="display:none;margin-top:10px;"></div>
-          </div>
-        </details>
-
-      </div>
-    </section>
-
-    <!-- RESULTADOS -->
-    <section class="card" id="resultsSection" style="margin-top:16px;">
-      <div class="results-head">
-        <h2 style="margin:0; font-size:1.25rem; font-weight:950;">🎯 <span data-i18n="results.title">Resultados del castigo calórico</span></h2>
-        <span class="badge kcal" id="kcalBadge">0 kcal</span>
-      </div>
-
-      <div class="phrase" id="phraseBox" data-i18n="phrase.initial">
-        Introduce tu peso, elige comida o bebida, y pulsa en <strong>“Calcular ejercicio necesario”</strong>.
-      </div>
-
-      <div class="tabs" id="peopleTabs"></div>
-
-      <div id="tableWrapper" style="display:none;">
-        <table>
-          <thead>
-            <tr>
-              <th data-i18n="table.activity">Actividad</th>
-              <th data-i18n="table.time">Tiempo aprox.</th>
-              <th data-i18n="table.distance">Distancia aprox.</th>
-            </tr>
-          </thead>
-          <tbody id="resultsBody"></tbody>
-        </table>
-      </div>
-
-      <div class="meme">
-        <canvas id="memeCanvas" width="1200" height="630" aria-label="Meme generado"></canvas>
-
-        <div class="share-row">
-          <button class="btn btn-primary" type="button" id="btnShare" data-i18n="share.btnShare">Compartir</button>
-          <button class="btn btn-secondary" type="button" id="btnGenMeme" data-i18n="share.btnGen">Generar meme</button>
-          <button class="btn btn-secondary" type="button" id="btnDownload" data-i18n="share.btnDownload">Descargar imagen</button>
-          <button class="btn btn-secondary" type="button" id="btnCopyText" data-i18n="share.btnCopy">Copiar texto</button>
-          <button class="btn btn-secondary" type="button" id="btnEdit" aria-label="Editar entrada">Editar</button>
-          <div class="share-status" id="shareStatus"></div>
-        </div>
-      </div>
-
-      <div class="disclaimer" id="disclaimer"></div>
-    </section>
+    </div>
   </div>
 
   <script>
-    // --- Idioma actual ---
-    let currentLang = 'es';
-
-    // --- GA4 helper ---
-    function gaEvent(name, params = {}) {
-      try { if (window.gtag) window.gtag('event', name, params); } catch (e) {}
-    }
-
-    // === Neon JP swap (hamburguesa <-> sushi) ===
-    (function neonSwap(){
-      const el = document.getElementById('jpSwap');
-      if (!el) return;
-      const spans = el.querySelectorAll('span');
-      if (spans.length < 2) return;
-      let i = 0;
-      setInterval(()=>{
-        spans[i].classList.remove('on');
-        i = (i + 1) % spans.length;
-        spans[i].classList.add('on');
-      }, 2400);
-    })();
-
-    // -------- I18N --------
-    const I18N = {
-      es: {
-        'doc.title': 'LoVasASudar.com – Calculadora de castigo calórico de fiesta',
-        'header.pill': 'LoVasASudar.com · Calculadora de castigo calórico',
-        'header.title': 'LoVasASudar.com',
-        'header.subtitle': 'Mete lo que vas a comer y beber y descubre cuánto ejercicio tendrías que hacer para sudarlo. Perfecta para cenas con amigos y noches de copas.',
-
-        'profile.weightLabel': 'Peso (kg)',
-        'profile.weightHint': 'El cálculo se hace por kg de peso (ecuación basada en MET).',
-        'profile.genderLabel': 'Género (opcional)',
-        'profile.genderHint': 'A igualdad de peso, hombres y mujeres suelen quemar algo diferente. Aquí aplicamos un ajuste sencillo (~5%) para reflejarlo de forma aproximada.',
-
-        'food.labelMain': 'Alimento o bebida',
-        'food.unitsLabel': 'N.º de unidades',
-        'food.unitsHint': 'Ej: 3 cervezas → pon 3 unidades.',
-        'food.extraLabel': 'Calorías extra',
-        'food.extraHint': 'Se suman a lo anterior (comida + copas).',
-        'food.searchHint': '¿No está en la lista? Busca en Open Food Facts (beta).',
-        'food.searchLink': 'Abrir buscador',
-
-        'foodSearch.title': 'Buscador (Open Food Facts)',
-        'foodSearch.subtitle': 'Escribe un producto. Te devolvemos resultados con kcal/100g y puedes añadirlo a la lista.',
-        'foodSearch.queryLabel': 'Buscar',
-        'foodSearch.queryHint': 'Consejo: añade marca o tipo (“pizza pepperoni”, “cerveza 0,0”).',
-        'foodSearch.servingLabel': 'Ración (g/ml)',
-        'foodSearch.servingHint': 'Para convertir kcal/100g a tu ración.',
-        'foodSearch.btn': 'Buscar',
-        'foodSearch.close': 'Cerrar',
-        'foodSearch.disclaimerTitle': 'Beta:',
-        'foodSearch.disclaimerBody': 'Los datos vienen de un repositorio abierto (usuarios suben productos). Puede haber errores.',
-
-        'btn.calculate': 'CALCULAR EJERCICIO NECESARIO 💪',
-
-        'results.title': 'Resultados del castigo calórico',
-        'table.activity': 'Actividad',
-        'table.time': 'Tiempo aprox.',
-        'table.distance': 'Distancia aprox.',
-
-        'share.btnGen': 'Generar meme',
-        'share.btnShare': 'Compartir',
-        'share.btnDownload': 'Descargar imagen',
-        'share.btnCopy': 'Copiar texto',
-
-        'battle.toggleTitle': 'Batalla de colegas',
-        'battle.hint': 'Si nadie aquí tiene peso válido, solo te usamos a ti. Si los rellenas, todos comparten castigo calórico.',
-        'battle.name1': 'Nombre 1',
-        'battle.weight1': 'Peso 1 (kg)',
-        'battle.name2': 'Nombre 2',
-        'battle.weight2': 'Peso 2 (kg)',
-        'battle.name3': 'Nombre 3',
-        'battle.weight3': 'Peso 3 (kg)',
-
-        'drinks.toggleTitle': 'Modo noche de copas',
-        'drinks.drinkLabel': 'Bebida',
-        'drinks.numLabel': 'N.º de copas',
-        'drinks.chipText': 'Estas calorías se suman al resto.',
-        'drinks.hint': 'Perfecto para ver cuánto “vale” tu noche de copas además de la cena.',
-
-        'inverse.title': 'Calculadora inversa (modo precavido)',
-        'inverse.kmLabel': 'Mañana corro (km)',
-        'inverse.kmHint': 'Regla rápida: correr ≈ 1 kcal por kg por km (aprox).',
-        'inverse.intensityLabel': 'Intensidad',
-        'inverse.intensityEasy': 'Suave',
-        'inverse.intensityMid': 'Media',
-        'inverse.intensityHard': 'Fuerte',
-        'inverse.intensityHint': 'Ajuste simple: +/− según intensidad.',
-        'inverse.drinkLabel': '¿En qué “te lo quieres gastar”?',
-        'inverse.marginLabel': 'Margen “por si acaso”',
-        'inverse.marginHigh': 'Alto (85%)',
-        'inverse.marginMid': 'Medio (70%)',
-        'inverse.marginLow': 'Bajo (55%)',
-        'inverse.marginHint': 'Porque luego hay cena. Y postre. Y “una última”.',
-        'inverse.btn': '¿Cuánto puedo beber?',
-
-        'stats.title': 'Ranking semanal (anónimo)',
-        'stats.noteBody': 'Este ranking es <strong>local en tu dispositivo</strong> (sirve para “picar” a tus colegas).',
-        'stats.weekKcalLabel': 'Kcal acumuladas (7 días)',
-        'stats.weekKmLabel': 'Km “culpa de la fiesta” (7 días)',
-        'stats.yearTopLabel': 'Top castigo (este año)',
-        'stats.reset': 'Resetear stats (local)',
-        'stats.share': 'Compartir mi “ranking”',
-
-        'phrase.initial': 'Introduce tu peso, elige comida o bebida, y pulsa en <strong>“Calcular ejercicio necesario”</strong>.',
-        'disclaimer': '<strong>Nota seria dentro de la broma:</strong> los cálculos usan una fórmula estándar basada en MET (equivalentes metabólicos) multiplicada por tu peso y un pequeño ajuste por género cuando se indica. Son aproximaciones para concienciar y divertir, no prescripción médica.',
-        'gender.opt0': 'Prefiero no decirlo',
-        'gender.optMale': 'Hombre',
-        'gender.optFemale': 'Mujer',
-        'gender.optOther': 'Otro'
-      },
-      en: {
-        'doc.title': 'LoVasASudar.com – Party calorie punishment calculator',
-        'header.pill': 'LoVasASudar.com · Calorie punishment calculator',
-        'header.title': 'LoVasASudar.com',
-        'header.subtitle': 'Enter what you are going to eat and drink and see how much exercise you would need to sweat it out. Perfect for dinners with friends and party nights.',
-
-        'profile.weightLabel': 'Weight (kg)',
-        'profile.weightHint': 'The calculation uses your weight in kg (MET-based equation).',
-        'profile.genderLabel': 'Gender (optional)',
-        'profile.genderHint': 'For the same weight, men and women often burn slightly different amounts. We apply a simple (~5%) adjustment to reflect that roughly.',
-
-        'food.labelMain': 'Food or drink',
-        'food.unitsLabel': 'Number of units',
-        'food.unitsHint': 'Example: 3 beers → enter 3 units.',
-        'food.extraLabel': 'Extra calories',
-        'food.extraHint': 'These are added on top (food + drinks).',
-        'food.searchHint': 'Not on the list? Search Open Food Facts (beta).',
-        'food.searchLink': 'Open search',
-
-        'foodSearch.title': 'Search (Open Food Facts)',
-        'foodSearch.subtitle': 'Type a product. We show kcal/100g and you can add it to the list.',
-        'foodSearch.queryLabel': 'Search',
-        'foodSearch.queryHint': 'Tip: add brand/type (“pepperoni pizza”, “0.0 beer”).',
-        'foodSearch.servingLabel': 'Serving (g/ml)',
-        'foodSearch.servingHint': 'Convert kcal/100g to your serving.',
-        'foodSearch.btn': 'Search',
-        'foodSearch.close': 'Close',
-        'foodSearch.disclaimerTitle': 'Beta:',
-        'foodSearch.disclaimerBody': 'Data comes from an open repository (user-submitted products). Errors may exist.',
-
-        'btn.calculate': 'CALCULATE REQUIRED EXERCISE 💪',
-
-        'results.title': 'Calorie punishment results',
-        'table.activity': 'Activity',
-        'table.time': 'Approx. time',
-        'table.distance': 'Approx. distance',
-
-        'share.btnGen': 'Generate meme',
-        'share.btnShare': 'Share',
-        'share.btnDownload': 'Download image',
-        'share.btnCopy': 'Copy text',
-
-        'battle.toggleTitle': 'Friends battle',
-        'battle.hint': 'If no valid weight is set here, only you are used. If you fill them, everyone shares the calorie punishment.',
-        'battle.name1': 'Name 1',
-        'battle.weight1': 'Weight 1 (kg)',
-        'battle.name2': 'Name 2',
-        'battle.weight2': 'Weight 2 (kg)',
-        'battle.name3': 'Name 3',
-        'battle.weight3': 'Weight 3 (kg)',
-
-        'drinks.toggleTitle': 'Night drinks mode',
-        'drinks.drinkLabel': 'Drink',
-        'drinks.numLabel': 'Number of drinks',
-        'drinks.chipText': 'These calories are added to the total.',
-        'drinks.hint': 'Perfect to see how much your drinks “cost” on top of dinner.',
-
-        'inverse.title': 'Inverse calculator (cautious mode)',
-        'inverse.kmLabel': 'Tomorrow I run (km)',
-        'inverse.kmHint': 'Quick rule: running ≈ 1 kcal per kg per km (rough).',
-        'inverse.intensityLabel': 'Intensity',
-        'inverse.intensityEasy': 'Easy',
-        'inverse.intensityMid': 'Medium',
-        'inverse.intensityHard': 'Hard',
-        'inverse.intensityHint': 'Simple adjustment by intensity.',
-        'inverse.drinkLabel': 'Spend it on…',
-        'inverse.marginLabel': 'Safety margin',
-        'inverse.marginHigh': 'High (85%)',
-        'inverse.marginMid': 'Medium (70%)',
-        'inverse.marginLow': 'Low (55%)',
-        'inverse.marginHint': 'Because dinner happens. And dessert. And “one last one”.',
-        'inverse.btn': 'How much can I drink?',
-
-        'stats.title': 'Weekly ranking (anonymous)',
-        'stats.noteBody': 'This ranking is <strong>local on your device</strong> (good for viral “challenge” vibes).',
-        'stats.weekKcalLabel': 'Calories accumulated (7 days)',
-        'stats.weekKmLabel': '“Party guilt” km (7 days)',
-        'stats.yearTopLabel': 'Top punishment (this year)',
-        'stats.reset': 'Reset stats (local)',
-        'stats.share': 'Share my “ranking”',
-
-        'phrase.initial': 'Enter your weight, choose food or drinks and click <strong>“Calculate required exercise”</strong>.',
-        'disclaimer': '<strong>Serious note behind the joke:</strong> calculations use a standard MET-based formula multiplied by your weight, plus a small gender adjustment when given. These are rough estimates for awareness and fun, not medical advice.',
-        'gender.opt0': 'Prefer not to say',
-        'gender.optMale': 'Male',
-        'gender.optFemale': 'Female',
-        'gender.optOther': 'Other'
-      }
-    };
-
-    const MESSAGES = {
-      es: {
-        errorUnits: 'Introduce un número de unidades válido (mínimo 1).',
-        errorWeight: 'Introduce tu peso en kg (entre 30 y 250 kg).',
-        errorNoKcal: 'Necesitamos al menos alguna caloría (comida, copas o extra) para calcular.',
-        errorDrinksInvalid: 'Para el modo copas, elige una bebida y un número de copas válidos.',
-        errorInverseKm: 'Introduce kilómetros válidos (por ejemplo 10).',
-        errorInverseNeedWeight: 'Para la inversa, necesitamos tu peso arriba.',
-        copied: 'Copiado ✅',
-        shareFail: 'Tu navegador no deja compartir archivo directamente. Descarga la imagen y compártela desde WhatsApp/Instagram.',
-        memeNeedCalc: 'Primero calcula un castigo (arriba). Luego generamos el meme.',
-        offEmpty: 'No encontré kcal en ese producto (o no venían). Prueba otro resultado o usa calorías manuales.'
-      },
-      en: {
-        errorUnits: 'Enter a valid number of units (minimum 1).',
-        errorWeight: 'Enter your weight in kg (between 30 and 250 kg).',
-        errorNoKcal: 'We need at least some calories (food, drinks or extra) to calculate.',
-        errorDrinksInvalid: 'For drinks mode, choose a drink and a valid number of drinks.',
-        errorInverseKm: 'Enter valid km (e.g., 10).',
-        errorInverseNeedWeight: 'For inverse mode, we need your weight above.',
-        copied: 'Copied ✅',
-        shareFail: 'Your browser can’t share the image file directly. Download it and share via WhatsApp/Instagram.',
-        memeNeedCalc: 'Calculate a punishment first. Then we generate the meme.',
-        offEmpty: 'No kcal were found for that product. Try another result or enter calories manually.'
-      }
-    };
-
-    const PHRASES = {
-      es: [
-        (k, l) => `Tu elección (${l}) son aproximadamente ${k} kcal. No es pecado, pero el cuerpo te lo va a cobrar en sudor.`,
-        (k, l) => `Eso que vas a tomar (${l}) equivale a una negociación con tu cuerpo: ${k} kcal en la mesa, a cambio de deporte después.`,
-        (k, l) => `Si las calorías fuesen una moneda, ${l} te está saliendo caro: ${k} monedas de sudor.`,
-        (k, l) => `Buenas noticias: ${l} no es eterno. Malas noticias: las ${k} kcal tampoco desaparecen solas.`,
-        (k, l) => `Tu ${l} es básicamente un “préstamo” de ${k} kcal. Aquí tienes el plan de devolución.`
-      ],
-      en: [
-        (k, l) => `Your choice (${l}) is roughly ${k} kcal. Not a crime, but your body will charge interest in sweat.`,
-        (k, l) => `What you're having (${l}) is a negotiation with your body: ${k} kcal now, exercise later.`,
-        (k, l) => `If calories were a currency, ${l} is pricey: ${k} sweat coins.`,
-        (k, l) => `Good news: ${l} won’t last forever. Bad news: those ${k} kcal won’t vanish by themselves.`,
-        (k, l) => `Your ${l} is basically a “loan” of ${k} kcal. Here’s the repayment plan.`
-      ]
-    };
-
-    const ACTIVITIES = [
-      { id: 'correr', name: { es: 'Correr', en: 'Running' }, met: 8.5, hasDistance: true, speed: 8, note: { es: 'trote alegre ~8 km/h', en: 'easy run ~8 km/h' } },
-      { id: 'andar', name: { es: 'Andar rápido', en: 'Brisk walking' }, met: 3.8, hasDistance: true, speed: 5.5, note: { es: 'paseo ligero ~5,5 km/h', en: 'light walk ~5.5 km/h' } },
-      { id: 'bailar', name: { es: 'Bailar', en: 'Dancing' }, met: 6, hasDistance: false, note: { es: 'discoteca / “Maniac” vibes', en: 'club dancing / “Maniac” vibes' } },
-      { id: 'futbol', name: { es: 'Fútbol', en: 'Football / Soccer' }, met: 7, hasDistance: false, note: { es: 'partido informal con colegas', en: 'casual match with friends' } },
-      { id: 'musculacion', name: { es: 'Musculación (gym)', en: 'Weight training (gym)' }, met: 6, hasDistance: false, note: { es: 'entreno serio, no selfies', en: 'serious workout, not selfies' } },
-      { id: 'spinning', name: { es: 'Spinning', en: 'Spinning' }, met: 9, hasDistance: false, note: { es: 'clase de bici indoor a tope', en: 'intense indoor cycling class' } },
-      { id: 'bici_exterior', name: { es: 'Bicicleta exterior', en: 'Outdoor cycling' }, met: 7, hasDistance: true, speed: 18, note: { es: 'bici urbana / paseo rápido', en: 'urban / fast leisure cycling' } },
-      { id: 'nadar', name: { es: 'Nadar', en: 'Swimming' }, met: 6.5, hasDistance: false, note: { es: 'crol moderado', en: 'moderate freestyle' } },
-      { id: 'padel', name: { es: 'Pádel', en: 'Padel' }, met: 7, hasDistance: false, note: { es: 'partido dobles', en: 'doubles match' } },
-      { id: 'tenis', name: { es: 'Tenis', en: 'Tennis' }, met: 7.3, hasDistance: false, note: { es: 'partido recreativo', en: 'recreational match' } },
-      { id: 'petanca', name: { es: 'Petanca', en: 'Pétanque / boules' }, met: 2.5, hasDistance: false, note: { es: 'sí, también cuenta 😄', en: 'yes, this counts too 😄' } },
-      { id: 'dardos', name: { es: 'Dardos', en: 'Darts' }, met: 2, hasDistance: false, note: { es: 'ideal para la noche de copas', en: 'perfect during a night out' } }
+    // =========================
+    // Datos base (puedes ampliarlos)
+    // caloriesPerUnit: kcal por unidad típica
+    // unitLabel: texto auxiliar
+    // =========================
+    const BASE_ITEMS = [
+      { key:"beer",   es:"Cerveza (33cl)",          en:"Beer (330ml)",           caloriesPerUnit: 140, unitLabelES:"unidad", unitLabelEN:"unit" },
+      { key:"wine",   es:"Vino (copa)",            en:"Wine (glass)",           caloriesPerUnit: 120, unitLabelES:"copa",   unitLabelEN:"glass" },
+      { key:"gin",    es:"Ginebra + tónica",       en:"Gin & tonic",            caloriesPerUnit: 210, unitLabelES:"copa",   unitLabelEN:"drink" },
+      { key:"pizza",  es:"Pizza (porción)",        en:"Pizza (slice)",          caloriesPerUnit: 285, unitLabelES:"porción",unitLabelEN:"slice" },
+      { key:"burger", es:"Hamburguesa",            en:"Burger",                 caloriesPerUnit: 520, unitLabelES:"unidad", unitLabelEN:"unit" },
+      { key:"kebab",  es:"Kebab",                  en:"Kebab",                  caloriesPerUnit: 750, unitLabelES:"unidad", unitLabelEN:"unit" },
+      { key:"fries",  es:"Patatas fritas (ración)",en:"Fries (portion)",        caloriesPerUnit: 430, unitLabelES:"ración", unitLabelEN:"portion" },
+      { key:"ice",    es:"Helado (bola)",          en:"Ice cream (scoop)",      caloriesPerUnit: 160, unitLabelES:"bola",   unitLabelEN:"scoop" },
     ];
 
-    let currentResults = { people: [], kcal: 0, label: '' };
-    let activePersonIndex = 0;
+    // METs típicos (aprox)
+    const MET_RUN  = 8.0;   // correr suave
+    const MET_WALK = 4.3;   // caminar rápido
 
-    const LS_STATS_KEY = 'lvas_stats_v1';
-    const LS_PICKED_FOODS_KEY = 'lvas_picked_foods_v1';
+    // Ajuste por género (simple, opcional)
+    // female: -5% gasto -> más tiempo para quemar lo mismo
+    // male: 0% (base)
+    const GENDER_FACTOR = {
+      na: 1.00,
+      male: 1.00,
+      female: 0.95
+    };
 
-    function nowMs() { return Date.now(); }
-    function thisYear() { return new Date().getFullYear(); }
-    function safeParse(json, fallback) { try { return JSON.parse(json); } catch { return fallback; } }
+    // i18n mínimo
+    let LANG = "es";
 
-    function getStats() {
-      const raw = localStorage.getItem(LS_STATS_KEY);
-      const base = safeParse(raw, null);
-      if (base && typeof base === 'object') return base;
-      return { events: [] };
-    }
-    function saveStats(stats) { localStorage.setItem(LS_STATS_KEY, JSON.stringify(stats)); }
-    function addEventToStats(kcal, label) {
-      const stats = getStats();
-      stats.events = Array.isArray(stats.events) ? stats.events : [];
-      stats.events.push({ ts: nowMs(), kcal: Math.max(0, Math.round(kcal)), label: (label || '').slice(0, 120) });
-      if (stats.events.length > 600) stats.events = stats.events.slice(stats.events.length - 600);
-      saveStats(stats);
-      renderStatsUI();
-    }
-    function getEventsLastDays(days) {
-      const cutoff = nowMs() - days * 24 * 60 * 60 * 1000;
-      const stats = getStats();
-      return (stats.events || []).filter(e => e && typeof e.ts === 'number' && e.ts >= cutoff);
-    }
-    function getYearEvents(year) {
-      const stats = getStats();
-      return (stats.events || []).filter(e => new Date(e.ts).getFullYear() === year);
-    }
-    function sumKcal(events) { return events.reduce((a, e) => a + (Number(e.kcal) || 0), 0); }
-    function getTopEvent(events) {
-      let top = null;
-      for (const e of events) if (!top || (Number(e.kcal)||0) > (Number(top.kcal)||0)) top = e;
-      return top;
-    }
+    const i18n = {
+      es:{
+        title:"LoVasASudar.com",
+        subtitle:"Mete lo que vas a comer y beber y descubre cuánto ejercicio tendrías que hacer para sudarlo. Perfecta para cenas con amigos y noches de copas.",
+        lblFood:"Alimento o bebida",
+        off:"¿No está en la lista? Busca en Open Food Facts (beta).",
+        open:"Abrir buscador",
+        lblUnits:"Nº de unidades",
+        hintUnits:"Ej: 3 cervezas → pon 3 unidades.",
+        lblExtra:"Calorías extra",
+        hintExtra:"Se suman a lo anterior (comida + copas).",
+        lblWeight:"Peso (kg)",
+        hintWeight:"El cálculo se hace por kg de peso (ecuación basada en MET).",
+        lblGender:"Género (opcional)",
+        hintGender:"A igualdad de peso, hombres y mujeres suelen quemar algo diferente. Aquí aplicamos un ajuste sencillo (~5%) para reflejarlo de forma aproximada.",
+        tgDrinks:"Modo noche de copas",
+        tgBattle:"Batalla de colegas",
+        tgInverse:"Calculadora inversa (modo precavido)",
+        tgRanking:"Ranking semanal",
+        cta:"CALCULAR EJERCICIO NECESARIO 💪",
+        resTitle:"🎯 Resultados del castigo calórico",
+        kcalSub:"Calorías totales estimadas",
+        runSub:"Corriendo suave (≈ 8 MET)",
+        walkSub:"Andando rápido (≈ 4.3 MET)",
+        fine:"Nota: estimaciones aproximadas. No es consejo médico. (Pero sí un recordatorio cósmico de que el universo cobra sus deudas en forma de sudor.)",
+        genderNA:"Prefiero no decirlo",
+        genderM:"Hombre",
+        genderF:"Mujer",
+      },
+      en:{
+        title:"LoVasASudar.com",
+        subtitle:"Add what you’ll eat and drink and see how much exercise you’d need to sweat it off. Great for dinners with friends and nights out.",
+        lblFood:"Food or drink",
+        off:"Not in the list? Search Open Food Facts (beta).",
+        open:"Open search",
+        lblUnits:"Units",
+        hintUnits:"Ex: 3 beers → enter 3 units.",
+        lblExtra:"Extra calories",
+        hintExtra:"Added to the above (food + drinks).",
+        lblWeight:"Weight (kg)",
+        hintWeight:"Calculated per kg body weight (MET-based equation).",
+        lblGender:"Gender (optional)",
+        hintGender:"At the same weight, men and women may burn a bit differently. We apply a simple (~5%) adjustment as an approximation.",
+        tgDrinks:"Night-out mode",
+        tgBattle:"Friends battle",
+        tgInverse:"Inverse calculator (careful mode)",
+        tgRanking:"Weekly ranking",
+        cta:"CALCULATE REQUIRED EXERCISE 💪",
+        resTitle:"🎯 Calorie payback results",
+        kcalSub:"Estimated total calories",
+        runSub:"Easy run (≈ 8 MET)",
+        walkSub:"Brisk walk (≈ 4.3 MET)",
+        fine:"Note: rough estimates. Not medical advice. (But yes, physics keeps receipts.)",
+        genderNA:"Prefer not to say",
+        genderM:"Male",
+        genderF:"Female",
+      }
+    };
 
-    function getPickedFoods() {
-      const raw = localStorage.getItem(LS_PICKED_FOODS_KEY);
-      const base = safeParse(raw, []);
-      return Array.isArray(base) ? base : [];
-    }
-    function savePickedFoods(arr) {
-      localStorage.setItem(LS_PICKED_FOODS_KEY, JSON.stringify(arr.slice(0, 120)));
-    }
+    // =========================
+    // Helpers
+    // =========================
+    const $ = (id)=>document.getElementById(id);
 
-    function tMsg(code) { return (MESSAGES[currentLang] && MESSAGES[currentLang][code]) || code; }
-    function randomPhrase(kcal, label) {
-      const arr = PHRASES[currentLang] || PHRASES.es;
-      const idx = Math.floor(Math.random() * arr.length);
-      return arr[idx](kcal, label || (currentLang === 'en' ? 'your choice' : 'tu elección'));
-    }
-
-    function formatMinutes(mins) {
-      if (mins < 1) return currentLang === 'en' ? 'less than 1 min' : 'menos de 1 min';
-      const h = Math.floor(mins / 60);
-      const m = Math.round(mins % 60);
-      if (h === 0) return `${m} min`;
-      if (m === 0) return `${h} h`;
-      return `${h} h ${m} min`;
-    }
-    function formatDistance(km) {
-      if (!km || km <= 0.05) return '—';
-      if (km < 1) return `${(km * 1000).toFixed(0)} m`;
-      if (km < 10) return `${km.toFixed(1)} km`;
-      return `${km.toFixed(1)} km`;
-    }
-
-    function showError(msg){
-      errorBox.textContent = msg;
-      errorBox.style.display = 'block';
-      gaEvent('ui_error', { msg: (msg||'').slice(0,120) });
-    }
-    function clearError(){
-      errorBox.textContent = '';
-      errorBox.style.display = 'none';
-    }
-    function toast(el, msg){
-      el.textContent = msg;
-      el.style.display = 'inline-flex';
-      setTimeout(()=>{ el.style.display='none'; }, 2200);
+    function minutesToLabel(min){
+      if (!isFinite(min) || min < 0) return "0 min";
+      const rounded = Math.round(min);
+      return `${rounded} min`;
     }
 
-    function applyI18n(){
-      document.documentElement.lang = currentLang;
-      document.title = I18N[currentLang]['doc.title'] || document.title;
+    // kcal/min = (MET * 3.5 * weightKg) / 200
+    function kcalPerMinute(met, weightKg){
+      return (met * 3.5 * weightKg) / 200;
+    }
 
-      document.querySelectorAll('[data-i18n]').forEach(node=>{
-        const key = node.getAttribute('data-i18n');
-        const val = I18N[currentLang] && I18N[currentLang][key];
-        if (!val) return;
-        node.innerHTML = val;
-      });
+    function totalCalories(selectedItem, units, extra){
+      return (selectedItem.caloriesPerUnit * units) + extra;
+    }
 
-      disclaimerEl.innerHTML = I18N[currentLang].disclaimer || '';
-      langButtons.forEach(b=> b.classList.toggle('active', b.dataset.lang === currentLang));
+    function applyLanguage(){
+      const t = i18n[LANG];
 
-      renderPeopleTabs();
-      if (currentResults.people && currentResults.people.length){
-        renderResultsForPerson(activePersonIndex);
+      $("title").textContent = t.title;
+      $("subtitle").textContent = t.subtitle;
+
+      $("lblFood").textContent = t.lblFood;
+      $("offHint").firstChild.textContent = t.off + " ";
+      $("openOff").textContent = t.open;
+
+      $("lblUnits").textContent = t.lblUnits;
+      $("hintUnits").textContent = t.hintUnits;
+
+      $("lblExtra").textContent = t.lblExtra;
+      $("hintExtra").textContent = t.hintExtra;
+
+      $("lblWeight").textContent = t.lblWeight;
+      $("hintWeight").textContent = t.hintWeight;
+
+      $("lblGender").textContent = t.lblGender;
+      $("hintGender").textContent = t.hintGender;
+
+      $("txtDrinks").textContent = t.tgDrinks;
+      $("txtBattle").textContent = t.tgBattle;
+      $("txtInverse").textContent = t.tgInverse;
+      $("txtRanking").textContent = t.tgRanking;
+
+      $("btnCalc").textContent = t.cta;
+
+      $("resTitle").textContent = t.resTitle;
+      $("kcalSub").textContent = t.kcalSub;
+      $("runSub").textContent = t.runSub;
+      $("walkSub").textContent = t.walkSub;
+      $("fineprint").textContent = t.fine;
+
+      // género
+      const g = $("gender");
+      g.options[0].textContent = t.genderNA;
+      g.options[1].textContent = t.genderM;
+      g.options[2].textContent = t.genderF;
+
+      // opciones comida/bebida
+      fillFoodSelect();
+    }
+
+    function fillFoodSelect(){
+      const sel = $("food");
+      const current = sel.value;
+      sel.innerHTML = "";
+      for (const it of BASE_ITEMS){
+        const opt = document.createElement("option");
+        opt.value = it.key;
+        opt.textContent = (LANG==="es" ? it.es : it.en) + ` · ${it.caloriesPerUnit} kcal`;
+        sel.appendChild(opt);
+      }
+      // intenta mantener selección
+      if ([...sel.options].some(o=>o.value===current)) sel.value = current;
+    }
+
+    function setToggleActive(labelEl, checked){
+      labelEl.classList.toggle("active", checked);
+    }
+
+    function wireToggles(){
+      const pairs = [
+        [$("tgDrinks"), $("modeDrinks")],
+        [$("tgBattle"), $("modeBattle")],
+        [$("tgInverse"), $("modeInverse")],
+        [$("tgRanking"), $("modeRanking")],
+      ];
+      for (const [lab, input] of pairs){
+        // Inicial
+        setToggleActive(lab, input.checked);
+        // Cambio
+        input.addEventListener("change", ()=> setToggleActive(lab, input.checked));
+        // Click en label ya funciona por HTML, pero aseguramos que no haya nada raro:
+        lab.addEventListener("click", (e)=>{
+          // si clicas en el label (no en el checkbox), el navegador ya alterna,
+          // nosotros solo dejamos que ocurra.
+        });
+      }
+    }
+
+    // =========================
+    // Modal OFF (beta)
+    // =========================
+    function openModal(){
+      $("modalBackdrop").style.display = "flex";
+      $("offQuery").focus();
+    }
+    function closeModal(){
+      $("modalBackdrop").style.display = "none";
+    }
+
+    async function offSearch(){
+      const q = $("offQuery").value.trim();
+      const list = $("offList");
+      list.innerHTML = "";
+
+      if (!q){
+        list.innerHTML = `<div class="item" style="cursor:default; opacity:.8;">
+          <div><strong>Escribe algo para buscar.</strong><div style="font-size:12px; color:rgba(255,255,255,.55); margin-top:4px;">Ej: “pizza”, “cerveza”, “kebab”…</div></div>
+          <span>—</span>
+        </div>`;
+        return;
+      }
+
+      // Intento real (puede fallar por CORS/red según hosting)
+      const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=12`;
+
+      try{
+        const r = await fetch(url, { method:"GET" });
+        if (!r.ok) throw new Error("HTTP " + r.status);
+        const data = await r.json();
+        const products = (data.products || []).slice(0, 12);
+
+        if (!products.length){
+          throw new Error("no_products");
+        }
+
+        for (const p of products){
+          const name = p.product_name || p.generic_name || "Producto sin nombre";
+          // kcal/100g (si hay)
+          const kcal100 = p.nutriments && (p.nutriments["energy-kcal_100g"] ?? p.nutriments["energy-kcal_value"]);
+          const displayKcal = (kcal100!=null && isFinite(kcal100)) ? `${Math.round(kcal100)} kcal/100g` : "kcal n/d";
+
+          const div = document.createElement("div");
+          div.className = "item";
+          div.innerHTML = `<div><strong>${escapeHtml(name)}</strong></div><span>${displayKcal}</span>`;
+          div.addEventListener("click", ()=>{
+            // Añadimos como item temporal en el select (lo tratamos como "unidad" genérica)
+            const kcalUnit = (kcal100!=null && isFinite(kcal100)) ? Math.round(kcal100) : 200;
+            const key = "off_" + Math.random().toString(16).slice(2);
+            BASE_ITEMS.unshift({
+              key,
+              es: `${name} (OFF)`,
+              en: `${name} (OFF)`,
+              caloriesPerUnit: kcalUnit,
+              unitLabelES:"unidad",
+              unitLabelEN:"unit"
+            });
+            fillFoodSelect();
+            $("food").value = key;
+            closeModal();
+          });
+          list.appendChild(div);
+        }
+
+      }catch(err){
+        // Fallback local (para que "se abra algo" SIEMPRE)
+        const fallback = [
+          {name:`${q} (estimación)`, kcal:"≈ 250 kcal/unidad"},
+          {name:"Pizza (porción)", kcal:"≈ 285 kcal"},
+          {name:"Cerveza (33cl)", kcal:"≈ 140 kcal"},
+          {name:"Patatas fritas (ración)", kcal:"≈ 430 kcal"},
+        ];
+        for (const f of fallback){
+          const div = document.createElement("div");
+          div.className="item";
+          div.innerHTML = `<div><strong>${escapeHtml(f.name)}</strong></div><span>${escapeHtml(f.kcal)}</span>`;
+          div.addEventListener("click", ()=>{
+            // Mete uno genérico estimado
+            const key = "off_" + Math.random().toString(16).slice(2);
+            BASE_ITEMS.unshift({
+              key,
+              es: `${f.name} (estim.)`,
+              en: `${f.name} (est.)`,
+              caloriesPerUnit: 250,
+              unitLabelES:"unidad",
+              unitLabelEN:"unit"
+            });
+            fillFoodSelect();
+            $("food").value = key;
+            closeModal();
+          });
+          list.appendChild(div);
+        }
+      }
+    }
+
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, (m)=>({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[m]));
+    }
+
+    // =========================
+    // Cálculo principal
+    // =========================
+    function calculate(){
+      const key = $("food").value;
+      const item = BASE_ITEMS.find(x=>x.key===key) || BASE_ITEMS[0];
+
+      const units = Math.max(1, parseInt($("units").value || "1", 10));
+      const extra = Math.max(0, parseInt($("extra").value || "0", 10));
+      const weight = Math.min(200, Math.max(35, parseInt($("weight").value || "80", 10)));
+      const gender = $("gender").value;
+
+      // total kcal
+      let kcal = totalCalories(item, units, extra);
+
+      // Modos (aquí no hago magia rara; solo ejemplos sensatos)
+      const nightOut = $("modeDrinks").checked;
+      const battle   = $("modeBattle").checked;
+      const inverse  = $("modeInverse").checked;
+
+      // Si noche de copas: pequeña penalización (porque “picar” suele colarse)
+      if (nightOut) kcal = Math.round(kcal * 1.08);
+
+      // Si batalla de colegas: lo mostramos más “picante” (solo presentación)
+      const hype = battle ? "🔥" : "";
+
+      // Inversa: en vez de tiempo para quemar X kcal, te dice cuántas kcal quemas en 30 min
+      const factor = GENDER_FACTOR[gender] ?? 1.0;
+
+      const kpmRun  = kcalPerMinute(MET_RUN,  weight) * factor;
+      const kpmWalk = kcalPerMinute(MET_WALK, weight) * factor;
+
+      let runMin, walkMin, kcalLabel;
+
+      if (inverse){
+        const mins = 30;
+        const runKcal  = Math.round(kpmRun * mins);
+        const walkKcal = Math.round(kpmWalk * mins);
+
+        $("kcalOut").textContent = `${kcal} kcal ${hype}`;
+        $("kcalSub").textContent = (LANG==="es")
+          ? "Tu “castigo” estimado (para referencia)"
+          : "Your estimated intake (for reference)";
+
+        $("runOut").textContent  = `${runKcal} kcal`;
+        $("runSub").textContent  = (LANG==="es")
+          ? `Quemadas en ${mins} min corriendo suave`
+          : `Burned in ${mins} min easy run`;
+
+        $("walkOut").textContent = `${walkKcal} kcal`;
+        $("walkSub").textContent = (LANG==="es")
+          ? `Quemadas en ${mins} min andando rápido`
+          : `Burned in ${mins} min brisk walk`;
+
       } else {
-        drawMemePlaceholder();
-      }
-    }
+        runMin  = kcal / kpmRun;
+        walkMin = kcal / kpmWalk;
 
-    function genderFactor(sexo){
-      if (sexo === 'mujer') return 0.95;
-      if (sexo === 'hombre') return 1.00;
-      return 0.98;
-    }
-    function caloriesPerMinute(met, weightKg, sexo){
-      const base = (met * 3.5 * weightKg) / 200;
-      return base * genderFactor(sexo);
-    }
-    function calcMinutesForKcal(kcal, met, weightKg, sexo){
-      const kpm = caloriesPerMinute(met, weightKg, sexo);
-      if (kpm <= 0.0001) return Infinity;
-      return kcal / kpm;
-    }
+        $("kcalOut").textContent = `${kcal} kcal ${hype}`;
+        $("runOut").textContent  = minutesToLabel(runMin);
+        $("walkOut").textContent = minutesToLabel(walkMin);
 
-    function parseNumber(v){
-      const n = Number(v);
-      return Number.isFinite(n) ? n : NaN;
-    }
-    function getSelectedFoodLabel(selectEl){
-      const opt = selectEl.options[selectEl.selectedIndex];
-      if (!opt) return currentLang === 'en' ? 'your choice' : 'tu elección';
-      return opt.getAttribute('data-label') || opt.textContent.trim();
-    }
-
-    function computeTotalKcal(){
-      const units = parseNumber(unidadesInput.value);
-      if (!Number.isFinite(units) || units < 1) { showError(tMsg('errorUnits')); return null; }
-
-      const weight = parseNumber(pesoInput.value);
-      if (!Number.isFinite(weight) || weight < 30 || weight > 250) { showError(tMsg('errorWeight')); return null; }
-
-      const sexo = sexoSelect.value || 'no';
-
-      const selected = foodSelect.value;
-      let foodKcal = 0;
-      if (selected === 'custom') foodKcal = 0;
-      else {
-        foodKcal = parseNumber(selected);
-        if (!Number.isFinite(foodKcal)) foodKcal = 0;
+        $("kcalSub").textContent = i18n[LANG].kcalSub;
+        $("runSub").textContent  = i18n[LANG].runSub;
+        $("walkSub").textContent = i18n[LANG].walkSub;
       }
 
-      const extraKcal = Math.max(0, parseNumber(customKcalInp.value) || 0);
+      $("results").style.display = "block";
+      $("results").scrollIntoView({ behavior:"smooth", block:"start" });
 
-      let drinksKcal = 0;
-      if (toggleDrinks.checked) {
-        const dk = parseNumber(drinkSelect.value);
-        const dc = parseNumber(numCopasInput.value);
-        if (!Number.isFinite(dk) || !Number.isFinite(dc) || dc < 0) { showError(tMsg('errorDrinksInvalid')); return null; }
-        drinksKcal = dk * dc;
-      }
-
-      const total = (foodKcal * units) + extraKcal + drinksKcal;
-      if (!(total > 0)) { showError(tMsg('errorNoKcal')); return null; }
-
-      return { totalKcal: total, label: getSelectedFoodLabel(foodSelect), weightKg: weight, sexo };
-    }
-
-    function getBattlePeopleOrSolo(main){
-      if (!toggleBattle.checked) return [{ name: (currentLang==='en'?'You':'Tú'), weightKg: main.weightKg, sexo: main.sexo }];
-      const people = [{ name: (currentLang==='en'?'You':'Tú'), weightKg: main.weightKg, sexo: main.sexo }];
-
-      const addFriend = (nameEl, wEl) => {
-        const w = parseNumber(wEl.value);
-        if (Number.isFinite(w) && w >= 30 && w <= 250) {
-          const nm = (nameEl.value || '').trim() || (currentLang==='en'?'Friend':'Colega');
-          people.push({ name: nm.slice(0, 18), weightKg: w, sexo: 'no' });
+      // Analytics (si gtag existe)
+      try{
+        if (typeof gtag === "function"){
+          gtag("event","calculate",{
+            food_key: item.key,
+            units,
+            extra,
+            weight,
+            gender,
+            nightOut,
+            battle,
+            inverse,
+            ranking: $("modeRanking").checked
+          });
         }
-      };
-      addFriend(friend1Name, friend1Weight);
-      addFriend(friend2Name, friend2Weight);
-      addFriend(friend3Name, friend3Weight);
-      return people;
+      }catch(_){}
     }
 
-    function buildResultsRows(kcal, person){
-      const rows = [];
-      for (const a of ACTIVITIES){
-        const mins = calcMinutesForKcal(kcal, a.met, person.weightKg, person.sexo);
-        const dist = a.hasDistance ? (a.speed * (mins / 60)) : null;
-        rows.push({
-          id: a.id,
-          name: a.name[currentLang] || a.name.es,
-          note: a.note[currentLang] || a.note.es,
-          mins,
-          dist
-        });
-      }
-      rows.sort((x,y)=>x.mins - y.mins);
-      return rows;
-    }
-
-    function renderPeopleTabs(){
-      if (!currentResults.people || currentResults.people.length <= 1){
-        peopleTabs.style.display = 'none';
-        peopleTabs.innerHTML = '';
-        return;
-      }
-      peopleTabs.style.display = 'flex';
-      peopleTabs.innerHTML = '';
-      currentResults.people.forEach((p, idx)=>{
-        const b = document.createElement('button');
-        b.type = 'button';
-        b.className = (idx === activePersonIndex) ? 'active' : '';
-        b.textContent = p.name;
-        b.addEventListener('click', ()=>{
-          activePersonIndex = idx;
-          renderPeopleTabs();
-          renderResultsForPerson(idx);
-          gaEvent('switch_person', { idx });
-        });
-        peopleTabs.appendChild(b);
-      });
-    }
-
-    function renderResultsForPerson(idx){
-      if (!currentResults.people || !currentResults.people[idx]) return;
-      const person = currentResults.people[idx];
-      const kcal = currentResults.kcal;
-
-      phraseBox.innerHTML = randomPhrase(Math.round(kcal), currentResults.label);
-      kcalBadge.textContent = `${Math.round(kcal)} kcal`;
-      kcalBadge.style.display = 'inline-flex';
-
-      const rows = buildResultsRows(kcal, person);
-      resultsBody.innerHTML = '';
-      rows.forEach(r=>{
-        const tr = document.createElement('tr');
-
-        const tdA = document.createElement('td');
-        tdA.innerHTML = `<div class="activity-name">${r.name}</div><div class="activity-soft">${r.note}</div>`;
-
-        const tdT = document.createElement('td');
-        tdT.textContent = formatMinutes(r.mins);
-
-        const tdD = document.createElement('td');
-        tdD.textContent = r.dist ? formatDistance(r.dist) : '—';
-
-        tr.appendChild(tdA);
-        tr.appendChild(tdT);
-        tr.appendChild(tdD);
-        resultsBody.appendChild(tr);
-      });
-
-      tableWrapper.style.display = 'block';
-      drawMeme(kcal, person, currentResults.label);
-
-      if (toggleStats.checked) addEventToStats(kcal, currentResults.label);
-    }
-
-    // Meme
-    const memeCanvas = document.getElementById('memeCanvas');
-    const ctx = memeCanvas.getContext('2d');
-
-    function roundRect(ctx, x, y, w, h, r, fill, stroke){
-      if (w < 2*r) r = w/2;
-      if (h < 2*r) r = h/2;
-      ctx.beginPath();
-      ctx.moveTo(x+r, y);
-      ctx.arcTo(x+w, y, x+w, y+h, r);
-      ctx.arcTo(x+w, y+h, x, y+h, r);
-      ctx.arcTo(x, y+h, x, y, r);
-      ctx.arcTo(x, y, x+w, y, r);
-      ctx.closePath();
-      if (fill) ctx.fill();
-      if (stroke) ctx.stroke();
-    }
-    function wrapText(ctx, text, x, y, maxWidth, lineHeight){
-      const words = String(text).split(' ');
-      let line = '';
-      let yy = y;
-      for (let n = 0; n < words.length; n++){
-        const testLine = line + words[n] + ' ';
-        const testWidth = ctx.measureText(testLine).width;
-        if (testWidth > maxWidth && n > 0){
-          ctx.fillText(line, x, yy);
-          line = words[n] + ' ';
-          yy += lineHeight;
-        } else {
-          line = testLine;
-        }
-      }
-      ctx.fillText(line, x, yy);
-      return yy;
-    }
-
-    function drawMemePlaceholder(){
-      ctx.clearRect(0,0,memeCanvas.width,memeCanvas.height);
-      const g = ctx.createLinearGradient(0,0,memeCanvas.width,memeCanvas.height);
-      g.addColorStop(0, 'rgba(91,124,250,0.45)');
-      g.addColorStop(1, 'rgba(255,91,203,0.35)');
-      ctx.fillStyle = g;
-      ctx.fillRect(0,0,memeCanvas.width,memeCanvas.height);
-
-      ctx.fillStyle = 'rgba(5,8,24,0.55)';
-      roundRect(ctx, 70, 70, memeCanvas.width-140, memeCanvas.height-140, 34, true, false);
-
-      ctx.fillStyle = 'rgba(255,255,255,0.92)';
-      ctx.font = '900 56px system-ui, -apple-system, Segoe UI, Roboto';
-      ctx.fillText('LoVasASudar.com', 120, 170);
-
-      ctx.fillStyle = 'rgba(255,255,255,0.85)';
-      ctx.font = '700 42px system-ui, -apple-system, Segoe UI, Roboto';
-      wrapText(ctx,
-        currentLang==='en'
-          ? 'Pick food + drinks and see how much exercise you need.'
-          : 'Elige comida + bebida y mira cuánto ejercicio necesitas.',
-        120, 245, memeCanvas.width-240, 52);
-    }
-
-    function drawMeme(kcal, person, label){
-      const kcalR = Math.round(kcal);
-      const rows = buildResultsRows(kcal, person);
-      const best = rows[0];
-
-      ctx.clearRect(0,0,memeCanvas.width,memeCanvas.height);
-
-      const g = ctx.createLinearGradient(0,0,memeCanvas.width,memeCanvas.height);
-      g.addColorStop(0, 'rgba(91,124,250,0.55)');
-      g.addColorStop(1, 'rgba(255,91,203,0.45)');
-      ctx.fillStyle = g;
-      ctx.fillRect(0,0,memeCanvas.width,memeCanvas.height);
-
-      ctx.fillStyle = 'rgba(5,8,24,0.55)';
-      roundRect(ctx, 70, 70, memeCanvas.width-140, memeCanvas.height-140, 34, true, false);
-
-      ctx.fillStyle = 'rgba(255,255,255,0.92)';
-      ctx.font = '900 54px system-ui, -apple-system, Segoe UI, Roboto';
-      ctx.fillText('LoVasASudar.com', 120, 160);
-
-      const headline = currentLang==='en'
-        ? `You just “ate” ${kcalR} kcal`
-        : `Te acabas de meter ${kcalR} kcal`;
-
-      ctx.font = '950 74px system-ui, -apple-system, Segoe UI, Roboto';
-      ctx.fillStyle = 'rgba(255,255,255,0.98)';
-      wrapText(ctx, headline, 120, 250, memeCanvas.width-240, 78);
-
-      ctx.font = '800 44px system-ui, -apple-system, Segoe UI, Roboto';
-      ctx.fillStyle = 'rgba(255,255,255,0.86)';
-      const sub = currentLang==='en'
-        ? `That’s about ${formatMinutes(best.mins)} of ${best.name.toLowerCase()}.`
-        : `Eso son ~${formatMinutes(best.mins)} de ${best.name.toLowerCase()}.`;
-      wrapText(ctx, sub, 120, 410, memeCanvas.width-240, 52);
-
-      ctx.font = '800 34px system-ui, -apple-system, Segoe UI, Roboto';
-      ctx.fillStyle = 'rgba(255,255,255,0.76)';
-      const foot = `${label} · ${person.name} (${person.weightKg}kg)`;
-      wrapText(ctx, foot, 120, 520, memeCanvas.width-240, 44);
-    }
-
-    async function canvasToBlob(canvas){
-      return new Promise(resolve=> canvas.toBlob(b=>resolve(b), 'image/png'));
-    }
-
-    function buildShareText(){
-      const kcalR = Math.round(currentResults.kcal||0);
-      const person = (currentResults.people && currentResults.people[activePersonIndex]) || { name: (currentLang==='en'?'You':'Tú'), weightKg: parseNumber(pesoInput.value)||0, sexo: sexoSelect.value||'no' };
-      const rows = buildResultsRows(currentResults.kcal||0, person);
-      const best = rows[0];
-
-      return currentLang==='en'
-        ? `I just “ate” ${kcalR} kcal (${currentResults.label}). That’s ~${formatMinutes(best.mins)} of ${best.name.toLowerCase()}. LoVasASudar.com`
-        : `Me acabo de meter ${kcalR} kcal (${currentResults.label}). Eso son ~${formatMinutes(best.mins)} de ${best.name.toLowerCase()}. LoVasASudar.com`;
-    }
-
-    // DOM
-    const langButtons = document.querySelectorAll('.lang-btn');
-
-    const pesoInput = document.getElementById('peso');
-    const sexoSelect = document.getElementById('sexo');
-
-    const foodSelect = document.getElementById('foodSelect');
-    const unidadesInput = document.getElementById('unidades');
-    const customKcalInp = document.getElementById('customKcal');
-
-    const toggleBattle  = document.getElementById('toggleBattle');
-    const toggleDrinks  = document.getElementById('toggleDrinks');
-    const toggleInverse = document.getElementById('toggleInverse');
-    const toggleStats   = document.getElementById('toggleStats');
-
-    const advancedZone  = document.getElementById('advancedZone');
-    const battleDetails = document.getElementById('battleDetails');
-    const drinksDetails = document.getElementById('drinksDetails');
-    const inverseDetails= document.getElementById('inverseDetails');
-    const statsDetails  = document.getElementById('statsDetails');
-
-    const drinkSelect   = document.getElementById('drinkSelect');
-    const numCopasInput = document.getElementById('numCopas');
-
-    const btnCalcular   = document.getElementById('btnCalcular');
-    const errorBox      = document.getElementById('errorBox');
-
-    const phraseBox     = document.getElementById('phraseBox');
-    const kcalBadge     = document.getElementById('kcalBadge');
-    const tableWrapper  = document.getElementById('tableWrapper');
-    const resultsBody   = document.getElementById('resultsBody');
-    const peopleTabs    = document.getElementById('peopleTabs');
-
-    const btnGenMeme    = document.getElementById('btnGenMeme');
-    const btnShare      = document.getElementById('btnShare');
-    const btnDownload   = document.getElementById('btnDownload');
-    const btnCopyText   = document.getElementById('btnCopyText');
-    const btnEdit       = document.getElementById('btnEdit');
-    const shareStatus   = document.getElementById('shareStatus');
-
-    const disclaimerEl  = document.getElementById('disclaimer');
-
-    // OFF
-    const openFoodSearch     = document.getElementById('openFoodSearch');
-    const foodSearchPanel    = document.getElementById('foodSearchPanel');
-    const btnFoodSearchClose = document.getElementById('btnFoodSearchClose');
-    const btnFoodSearch      = document.getElementById('btnFoodSearch');
-    const foodQuery          = document.getElementById('foodQuery');
-    const foodServing        = document.getElementById('foodServing');
-    const foodSearchResults  = document.getElementById('foodSearchResults');
-    const foodSearchStatus   = document.getElementById('foodSearchStatus');
-
-    // Inverse
-    const invKm        = document.getElementById('invKm');
-    const invIntensity = document.getElementById('invIntensity');
-    const invDrink     = document.getElementById('invDrink');
-    const invExtraMargin = document.getElementById('invExtraMargin');
-    const btnInverse   = document.getElementById('btnInverse');
-    const inverseOut   = document.getElementById('inverseOut');
-
-    // Battle inputs
-    const friend1Name   = document.getElementById('friend1Name');
-    const friend1Weight = document.getElementById('friend1Weight');
-    const friend2Name   = document.getElementById('friend2Name');
-    const friend2Weight = document.getElementById('friend2Weight');
-    const friend3Name   = document.getElementById('friend3Name');
-    const friend3Weight = document.getElementById('friend3Weight');
-
-    // Stats
-    const weekKcalEl    = document.getElementById('weekKcal');
-    const weekKmEl      = document.getElementById('weekKm');
-    const yearTopEl     = document.getElementById('yearTop');
-    const btnResetStats = document.getElementById('btnResetStats');
-    const btnShareStats = document.getElementById('btnShareStats');
-    const statsHeadline = document.getElementById('statsHeadline');
-
-    function setAdvancedVisibility(){
-      const any = toggleBattle.checked || toggleDrinks.checked || toggleInverse.checked || toggleStats.checked;
-      advancedZone.classList.toggle('show', any);
-
-      battleDetails.open  = toggleBattle.checked;
-      drinksDetails.open  = toggleDrinks.checked;
-      inverseDetails.open = toggleInverse.checked;
-      statsDetails.open   = toggleStats.checked;
-
-      battleDetails.style.display  = toggleBattle.checked  ? 'block' : 'none';
-      drinksDetails.style.display  = toggleDrinks.checked  ? 'block' : 'none';
-      inverseDetails.style.display = toggleInverse.checked ? 'block' : 'none';
-      statsDetails.style.display   = toggleStats.checked   ? 'block' : 'none';
-    }
-
-    [toggleBattle, toggleDrinks, toggleInverse, toggleStats].forEach(t=>{
-      t.addEventListener('change', ()=>{
-        setAdvancedVisibility();
-        gaEvent('toggle_feature', { feature: t.id, on: t.checked ? 1 : 0 });
-      });
-    });
-
-    langButtons.forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        currentLang = btn.dataset.lang || 'es';
-        applyI18n();
-        gaEvent('lang_change', { lang: currentLang });
-      });
-    });
-
-    btnEdit.addEventListener('click', ()=>{
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      gaEvent('edit_clicked', {});
-    });
-
-    openFoodSearch.addEventListener('click', ()=>{
-      foodSearchPanel.style.display = 'block';
-      gaEvent('open_foodfacts_panel', {});
-    });
-    btnFoodSearchClose.addEventListener('click', ()=>{
-      foodSearchPanel.style.display = 'none';
-      gaEvent('close_foodfacts_panel', {});
-    });
-
-    function renderOffResults(items){
-      foodSearchResults.innerHTML = '';
-      items.forEach(item=>{
-        const div = document.createElement('div');
-        div.className = 'result-item';
-
-        const left = document.createElement('div');
-        const title = document.createElement('div');
-        title.style.fontWeight = '950';
-        title.textContent = item.name || '—';
-
-        const meta = document.createElement('div');
-        meta.className = 'meta';
-        meta.innerHTML = `${item.brand ? `<b>${item.brand}</b> · ` : ''}${item.kcal100 ? `${item.kcal100} kcal/100g` : 'kcal n/d'}`;
-
-        left.appendChild(title);
-        left.appendChild(meta);
-
-        const right = document.createElement('div');
-        right.style.display = 'flex';
-        right.style.flexDirection = 'column';
-        right.style.gap = '8px';
-        right.style.alignItems = 'flex-end';
-
-        const addBtn = document.createElement('button');
-        addBtn.type = 'button';
-        addBtn.className = 'btn btn-primary';
-        addBtn.textContent = currentLang === 'en' ? 'Add' : 'Añadir';
-
-        addBtn.addEventListener('click', ()=>{
-          const s = parseNumber(foodServing.value);
-          let kcal = item.kcal100 || 0;
-          let label = item.name || 'Producto';
-
-          if (Number.isFinite(s) && s > 0 && item.kcal100){
-            kcal = (item.kcal100 * s) / 100;
-            label = `${label} (${Math.round(s)}g)`;
-          } else if (!item.kcal100){
-            toast(foodSearchStatus, tMsg('offEmpty'));
-            return;
-          }
-
-          const opt = document.createElement('option');
-          opt.value = String(Math.round(kcal));
-          opt.textContent = `${label} (~${Math.round(kcal)} kcal)`;
-          opt.setAttribute('data-label', label);
-
-          foodSelect.insertBefore(opt, foodSelect.options[1] || null);
-          foodSelect.value = opt.value;
-
-          const picked = getPickedFoods();
-          picked.unshift({ value: opt.value, label, text: opt.textContent });
-          savePickedFoods(picked);
-
-          foodSearchPanel.style.display = 'none';
-          gaEvent('off_add_item', { kcal: Math.round(kcal), hasServing: (Number.isFinite(s) && s>0) ? 1 : 0 });
-        });
-
-        right.appendChild(addBtn);
-        div.appendChild(left);
-        div.appendChild(right);
-        foodSearchResults.appendChild(div);
-      });
-
-      foodSearchResults.style.display = 'block';
-    }
-
-    async function searchOpenFoodFacts(q){
-      const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=8`;
-      const res = await fetch(url);
-      const data = await res.json();
-      const prods = (data && data.products) ? data.products : [];
-      const items = prods.map(p=>{
-        const name = (p.product_name || p.generic_name || '').trim();
-        const brand = (p.brands || '').split(',')[0].trim();
-        const kcal100 = p.nutriments && (p.nutriments['energy-kcal_100g'] || p.nutriments['energy-kcal_serving']);
-        const kcalNum = Number(kcal100);
-        return {
-          name: name || (brand ? `${brand} (producto)` : 'Producto'),
-          brand: brand || '',
-          kcal100: Number.isFinite(kcalNum)
-        ? Math.round(kcalNum)
-        : null;
-      }).filter(x => x && x.name);
-
-      return items;
-    }
-
-    btnFoodSearch.addEventListener('click', async ()=>{
-      const q = (foodQuery.value || '').trim();
-      if (!q) return;
-      foodSearchStatus.style.display = 'none';
-      foodSearchResults.style.display = 'none';
-
-      btnFoodSearch.disabled = true;
-      btnFoodSearch.style.opacity = '0.7';
-      gaEvent('off_search', { q: q.slice(0, 80) });
-
-      try{
-        const items = await searchOpenFoodFacts(q);
-        if (!items.length){
-          toast(foodSearchStatus, currentLang === 'en' ? 'No results.' : 'Sin resultados.');
-        } else {
-          renderOffResults(items);
-        }
-      } catch(e){
-        toast(foodSearchStatus, currentLang === 'en' ? 'Search failed.' : 'Falló la búsqueda.');
-      } finally {
-        btnFoodSearch.disabled = false;
-        btnFoodSearch.style.opacity = '1';
-      }
-    });
-
-    // Enter para buscar en OFF
-    foodQuery.addEventListener('keydown', (e)=>{
-      if (e.key === 'Enter'){
-        e.preventDefault();
-        btnFoodSearch.click();
-      }
-    });
-
-    // --- Calcular principal ---
-    btnCalcular.addEventListener('click', ()=>{
-      clearError();
-
-      const main = computeTotalKcal();
-      if (!main) return;
-
-      const people = getBattlePeopleOrSolo(main);
-      currentResults.people = people;
-      currentResults.kcal = main.totalKcal;
-      currentResults.label = main.label;
-
-      activePersonIndex = 0;
-
-      renderPeopleTabs();
-      renderResultsForPerson(0);
-
-      // UX: baja a resultados
-      document.getElementById('resultsSection').scrollIntoView({ behavior:'smooth', block:'start' });
-
-      gaEvent('calculate_click', {
-        kcal: Math.round(main.totalKcal),
-        battle: toggleBattle.checked ? 1 : 0,
-        drinks: toggleDrinks.checked ? 1 : 0,
-        inverse: toggleInverse.checked ? 1 : 0,
-        stats: toggleStats.checked ? 1 : 0
-      });
-
-      // Guardar "favoritos" locales (lo elegido)
-      try{
-        const picked = getPickedFoods();
-        const label = main.label;
-        // evita duplicados por label
-        const next = [{ value: String(Math.round(main.totalKcal)), label, text: `${label} (~${Math.round(main.totalKcal)} kcal)` }]
-          .concat(picked.filter(p => p && p.label !== label));
-        savePickedFoods(next);
-      }catch(e){}
-    });
-
-    // --- Botón Generar meme ---
-    btnGenMeme.addEventListener('click', ()=>{
-      if (!(currentResults && currentResults.kcal > 0)){
-        showError(tMsg('memeNeedCalc'));
-        return;
-      }
-      const person = (currentResults.people && currentResults.people[activePersonIndex]) || { name:(currentLang==='en'?'You':'Tú'), weightKg: parseNumber(pesoInput.value)||75, sexo: sexoSelect.value||'no' };
-      drawMeme(currentResults.kcal, person, currentResults.label || (currentLang==='en'?'your choice':'tu elección'));
-      gaEvent('meme_generate_click', {});
-    });
-
-    // --- Compartir ---
-    btnShare.addEventListener('click', async ()=>{
-      if (!(currentResults && currentResults.kcal > 0)){
-        showError(tMsg('memeNeedCalc'));
-        return;
-      }
-      const text = buildShareText();
-      try{
-        const blob = await canvasToBlob(memeCanvas);
-        const file = new File([blob], 'lovasasudar.png', { type: 'image/png' });
-
-        // Share API con archivo (móvil suele ir mejor)
-        if (navigator.canShare && navigator.canShare({ files:[file] }) && navigator.share){
-          await navigator.share({ files:[file], text, title: 'LoVasASudar.com' });
-          toast(shareStatus, currentLang==='en' ? 'Shared ✅' : 'Compartido ✅');
-          gaEvent('meme_share_done', { mode:'files' });
-          return;
-        }
-
-        // Fallback: compartir solo texto
-        if (navigator.share){
-          await navigator.share({ text, title: 'LoVasASudar.com' });
-          toast(shareStatus, currentLang==='en' ? 'Shared ✅' : 'Compartido ✅');
-          gaEvent('meme_share_done', { mode:'text' });
-          return;
-        }
-
-        // Último fallback
-        toast(shareStatus, tMsg('shareFail'));
-        gaEvent('meme_share_fail', { reason:'no_share_api' });
-      } catch(e){
-        toast(shareStatus, tMsg('shareFail'));
-        gaEvent('meme_share_fail', { reason:'exception' });
-      }
-    });
-
-    // --- Descargar imagen ---
-    btnDownload.addEventListener('click', async ()=>{
-      try{
-        const a = document.createElement('a');
-        a.download = 'lovasasudar.png';
-        a.href = memeCanvas.toDataURL('image/png');
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        gaEvent('meme_download', {});
-      } catch(e){}
-    });
-
-    // --- Copiar texto ---
-    btnCopyText.addEventListener('click', async ()=>{
-      try{
-        const text = buildShareText();
-        await navigator.clipboard.writeText(text);
-        toast(shareStatus, tMsg('copied'));
-        gaEvent('copy_text', {});
-      } catch(e){
-        // fallback: prompt
-        const text = buildShareText();
-        window.prompt(currentLang==='en' ? 'Copy:' : 'Copia:', text);
-        gaEvent('copy_text_fallback', {});
-      }
-    });
-
-    // --- Inversa ---
-    btnInverse.addEventListener('click', ()=>{
-      clearError();
-      const w = parseNumber(pesoInput.value);
-      if (!Number.isFinite(w) || w < 30 || w > 250) { showError(tMsg('errorInverseNeedWeight')); return; }
-
-      const km = parseNumber(invKm.value);
-      if (!Number.isFinite(km) || km <= 0) { showError(tMsg('errorInverseKm')); return; }
-
-      const intensity = parseNumber(invIntensity.value) || 1.0;
-      const margin = parseNumber(invExtraMargin.value) || 0.70;
-
-      const chosen = invDrink.value;
-      let kcalPerUnit = 0;
-      if (chosen === 'custom' || chosen === '0') kcalPerUnit = 0;
-      else kcalPerUnit = parseNumber(chosen) || 0;
-
-      // regla rápida: running ~1 kcal/kg/km
-      const burnt = w * km * intensity;
-      const allowed = burnt * margin;
-
-      let units = (kcalPerUnit > 0) ? (allowed / kcalPerUnit) : null;
-
-      inverseOut.style.display = 'block';
-      inverseOut.innerHTML = `
-        <div style="font-weight:950; font-size:1.1rem;">${currentLang==='en' ? 'Inverse result' : 'Resultado inverso'}</div>
-        <div class="muted" style="margin-top:6px;">
-          ${currentLang==='en'
-            ? `If you run <b>${km}</b> km at <b>${intensity.toFixed(2)}</b> intensity, you burn ~<b>${Math.round(burnt)}</b> kcal. With margin <b>${Math.round(margin*100)}%</b>, your “budget” is ~<b>${Math.round(allowed)}</b> kcal.`
-            : `Si corres <b>${km}</b> km con intensidad <b>${intensity.toFixed(2)}</b>, quemas ~<b>${Math.round(burnt)}</b> kcal. Con margen <b>${Math.round(margin*100)}%</b>, tu “presupuesto” es ~<b>${Math.round(allowed)}</b> kcal.`
-          }
-        </div>
-        <div style="margin-top:10px; font-weight:950;">
-          ${kcalPerUnit > 0
-            ? (currentLang==='en'
-              ? `That’s about <b>${units.toFixed(1)}</b> units of your choice.`
-              : `Eso son aproximadamente <b>${units.toFixed(1)}</b> unidades de tu elección.`)
-            : (currentLang==='en'
-              ? `Pick a food/drink with known kcal per unit to get a unit estimate.`
-              : `Elige una comida/bebida con kcal por unidad para estimar unidades.`)
-          }
-        </div>
-      `;
-
-      gaEvent('inverse_calculate', { km, burnt: Math.round(burnt), allowed: Math.round(allowed) });
-    });
-
-    // --- Stats UI ---
-    function renderStatsUI(){
-      if (!weekKcalEl || !weekKmEl || !yearTopEl) return;
-
-      const last7 = getEventsLastDays(7);
-      const sum7 = sumKcal(last7);
-
-      // km aproximados usando regla running 1 kcal/kg/km con peso actual si lo hay
-      const w = parseNumber(pesoInput.value);
-      const weightForKm = (Number.isFinite(w) && w>0) ? w : 75;
-      const km7 = sum7 / weightForKm;
-
-      weekKcalEl.textContent = String(Math.round(sum7));
-      weekKmEl.textContent = (km7 > 0 ? km7.toFixed(1) : '0');
-
-      const yr = thisYear();
-      const yEvents = getYearEvents(yr);
-      const top = getTopEvent(yEvents);
-      yearTopEl.textContent = top
-        ? `${top.label} · ${Math.round(top.kcal)} kcal`
-        : (currentLang==='en' ? '—' : '—');
-    }
-
-    btnResetStats.addEventListener('click', ()=>{
-      localStorage.removeItem(LS_STATS_KEY);
-      renderStatsUI();
-      toast(statsHeadline, currentLang==='en' ? 'Reset ✅' : 'Reset ✅');
-      gaEvent('stats_reset', {});
-    });
-
-    btnShareStats.addEventListener('click', async ()=>{
-      const last7 = getEventsLastDays(7);
-      const sum7 = sumKcal(last7);
-      const yr = thisYear();
-      const top = getTopEvent(getYearEvents(yr));
-
-      const text = currentLang==='en'
-        ? `My weekly “punishment”: ${Math.round(sum7)} kcal (last 7 days). Top this year: ${top ? `${top.label} (${Math.round(top.kcal)} kcal)` : '—'}. LoVasASudar.com`
-        : `Mi “castigo” semanal: ${Math.round(sum7)} kcal (últimos 7 días). Top este año: ${top ? `${top.label} (${Math.round(top.kcal)} kcal)` : '—'}. LoVasASudar.com`;
-
-      try{
-        await navigator.clipboard.writeText(text);
-        toast(statsHeadline, tMsg('copied'));
-        gaEvent('stats_share_copy', {});
-      } catch(e){
-        window.prompt(currentLang==='en' ? 'Copy:' : 'Copia:', text);
-        gaEvent('stats_share_copy_fallback', {});
-      }
-    });
-
-    // --- UX: cuando abres/cierra details a mano, sincroniza checkboxes ---
-    function syncToggleFromDetails(detailsEl, toggleEl){
-      if (!detailsEl || !toggleEl) return;
-      detailsEl.addEventListener('toggle', ()=>{
-        toggleEl.checked = detailsEl.open;
-        setAdvancedVisibility();
-      });
-    }
-    syncToggleFromDetails(battleDetails, toggleBattle);
-    syncToggleFromDetails(drinksDetails, toggleDrinks);
-    syncToggleFromDetails(inverseDetails, toggleInverse);
-    syncToggleFromDetails(statsDetails, toggleStats);
-
-    // --- Init ---
-    function restorePickedFoods(){
-      const picked = getPickedFoods();
-      if (!picked.length) return;
-      // Inserta algunos recientes en el select (sin duplicar)
-      const existingLabels = new Set(Array.from(foodSelect.options).map(o => o.getAttribute('data-label') || o.textContent));
-      let inserted = 0;
-      for (const p of picked){
-        if (!p || !p.text) continue;
-        if (existingLabels.has(p.label)) continue;
-        const opt = document.createElement('option');
-        opt.value = String(p.value || 0);
-        opt.textContent = p.text;
-        opt.setAttribute('data-label', p.label || p.text);
-        foodSelect.insertBefore(opt, foodSelect.options[1] || null);
-        inserted++;
-        if (inserted >= 6) break;
-      }
-    }
-
+    // =========================
+    // Init
+    // =========================
     function init(){
-      // disclaimer
-      disclaimerEl.innerHTML = I18N[currentLang].disclaimer || '';
-      // placeholder meme
-      drawMemePlaceholder();
-      // stats
-      renderStatsUI();
-      // advanced zone
-      setAdvancedVisibility();
-      // restore picks
-      restorePickedFoods();
-      // i18n
-      applyI18n();
+      // Idioma
+      $("btnES").addEventListener("click", ()=>{
+        LANG="es";
+        $("btnES").classList.add("active");
+        $("btnEN").classList.remove("active");
+        applyLanguage();
+      });
+      $("btnEN").addEventListener("click", ()=>{
+        LANG="en";
+        $("btnEN").classList.add("active");
+        $("btnES").classList.remove("active");
+        applyLanguage();
+      });
 
-      gaEvent('session_start', { v: 'single_html_v2' });
+      // Fill selects
+      fillFoodSelect();
+
+      // Toggles
+      wireToggles();
+
+      // Button calculate
+      $("btnCalc").addEventListener("click", calculate);
+
+      // Modal hooks
+      $("openOff").addEventListener("click", (e)=>{ e.preventDefault(); openModal(); });
+      $("closeModal").addEventListener("click", closeModal);
+      $("modalBackdrop").addEventListener("click", (e)=>{
+        if (e.target === $("modalBackdrop")) closeModal();
+      });
+      $("offSearch").addEventListener("click", offSearch);
+      $("offQuery").addEventListener("keydown", (e)=>{
+        if (e.key === "Enter") offSearch();
+        if (e.key === "Escape") closeModal();
+      });
+
+      // Seguridad: normaliza units al perder foco
+      $("units").addEventListener("blur", ()=>{
+        const n = Math.max(1, parseInt($("units").value || "1",10));
+        $("units").value = String(n);
+      });
+
+      // Aplica idioma inicial
+      applyLanguage();
     }
 
     init();
   </script>
-
 </body>
 </html>

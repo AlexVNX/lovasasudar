@@ -7,7 +7,6 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    // Config correcta (en tu snippet se veía una línea rota tipo "configxPP?gkABO")
     gtag('config', 'G-RLQ6Y55SNC', { anonymize_ip: true });
   </script>
 
@@ -29,9 +28,6 @@
       --pink:#ff4fd8;
       --cyan:#38e8ff;
       --amber:#ffb648;
-      --good:#63ffb8;
-      --warn:#ffd66a;
-      --bad:#ff6b6b;
       --shadow: 0 18px 60px rgba(0,0,0,.45);
       --radius: 22px;
     }
@@ -50,7 +46,7 @@
       overflow-x:hidden;
     }
 
-    /* Fondo decorativo: IMPORTANTÍSIMO -> pointer-events:none para no comerse clics */
+    /* Fondo decorativo: no puede interceptar clics */
     .fx{
       position:fixed;
       inset:-2px;
@@ -60,7 +56,6 @@
       background:
         radial-gradient(600px 900px at 100% 15%, rgba(255,180,72,.18), transparent 60%),
         radial-gradient(800px 700px at 0% 40%, rgba(56,232,255,.12), transparent 55%);
-      filter: blur(0px);
     }
 
     .wrap{
@@ -93,31 +88,11 @@
       letter-spacing:.2px;
     }
 
-    .lang{
-      display:flex;
-      gap:10px;
-    }
-    .lang button{
-      border:1px solid var(--stroke);
-      background: rgba(10,14,40,.55);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:14px;
-      cursor:pointer;
-      font-weight:700;
-      transition:.15s transform,.15s opacity;
-    }
-    .lang button:hover{transform: translateY(-1px)}
-    .lang button.active{
-      border-color: rgba(91,124,250,.65);
-      box-shadow: 0 0 0 3px rgba(91,124,250,.18);
-    }
-
-    /* NEON VERTICAL (tipo cartel japonés) */
+    /* NEON IZQUIERDO (ya lo tenías) */
     .neon-sign{
       position:fixed;
       left: 16px;
-      top: 150px; /* ajústalo si quieres más arriba/abajo */
+      top: 150px;
       z-index:3;
       display:flex;
       align-items:center;
@@ -126,16 +101,13 @@
       padding:14px 10px;
       border-radius: 18px;
       border: 1px solid rgba(255,255,255,.10);
-      background:
-        linear-gradient(180deg, rgba(10,14,40,.55), rgba(8,10,26,.35));
+      background: linear-gradient(180deg, rgba(10,14,40,.55), rgba(8,10,26,.35));
       backdrop-filter: blur(10px);
       box-shadow:
         0 16px 70px rgba(0,0,0,.55),
         0 0 22px rgba(56,232,255,.18),
         0 0 38px rgba(255,79,216,.16);
     }
-
-    /* “tubo” luminoso alrededor */
     .neon-sign::before{
       content:"";
       position:absolute;
@@ -154,22 +126,16 @@
       pointer-events:none;
       animation: glowSpin 6.5s linear infinite;
     }
-    @keyframes glowSpin{
-      0%{transform: rotate(0deg)}
-      100%{transform: rotate(360deg)}
-    }
+    @keyframes glowSpin{ 0%{transform: rotate(0deg)} 100%{transform: rotate(360deg)} }
 
-    /* texto vertical estilo “KANBAN” */
     .neon-text{
       writing-mode: vertical-rl;
       text-orientation: mixed;
       font-weight: 900;
       letter-spacing: 2px;
       font-size: 18px;
-      line-height: 1;
       text-transform: uppercase;
       color: #fff;
-      /* glow brutal */
       text-shadow:
         0 0 6px rgba(56,232,255,.85),
         0 0 16px rgba(56,232,255,.55),
@@ -178,12 +144,6 @@
       animation: flicker 3.2s infinite;
       user-select:none;
     }
-    @keyframes flicker{
-      0%, 19%, 22%, 62%, 64%, 70%, 100% { opacity: 1; filter: brightness(1); }
-      20%, 63%, 69% { opacity: .85; filter: brightness(1.15); }
-      21% { opacity: .75; }
-    }
-
     .neon-sub{
       writing-mode: vertical-rl;
       text-orientation: mixed;
@@ -195,21 +155,82 @@
       text-shadow: 0 0 10px rgba(255,180,72,.25);
       user-select:none;
     }
+    @keyframes flicker{
+      0%, 19%, 22%, 62%, 64%, 70%, 100% { opacity: 1; filter: brightness(1); }
+      20%, 63%, 69% { opacity: .85; filter: brightness(1.15); }
+      21% { opacity: .75; }
+    }
 
-    /* En móvil, que no estorbe */
+    /* NEON DERECHO NUEVO: japonés amarillo "hamburguesa y sushi" */
+    .neon-sign-right{
+      position:fixed;
+      right: 16px;
+      top: 120px;
+      z-index:3;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:84px;
+      padding:14px 10px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(10,14,40,.55), rgba(8,10,26,.35));
+      backdrop-filter: blur(10px);
+      box-shadow:
+        0 16px 70px rgba(0,0,0,.55),
+        0 0 26px rgba(255,182,72,.22),
+        0 0 44px rgba(255,182,72,.18);
+    }
+    .neon-sign-right::before{
+      content:"";
+      position:absolute;
+      inset:-8px;
+      border-radius: 22px;
+      background: conic-gradient(from 180deg,
+        rgba(255,182,72,.0),
+        rgba(255,182,72,.45),
+        rgba(255,255,140,.30),
+        rgba(255,182,72,.0)
+      );
+      filter: blur(14px);
+      opacity:.9;
+      z-index:-1;
+      pointer-events:none;
+      animation: glowSpin 7.2s linear infinite reverse;
+    }
+    .jp-text{
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-weight: 950;
+      letter-spacing: 1px;
+      font-size: 20px;
+      color: #ffe36a; /* amarillo llamativo */
+      text-shadow:
+        0 0 6px rgba(255,227,106,.95),
+        0 0 18px rgba(255,182,72,.65),
+        0 0 34px rgba(255,182,72,.35);
+      user-select:none;
+      animation: flickerY 2.9s infinite;
+    }
+    @keyframes flickerY{
+      0%, 18%, 21%, 60%, 100% { opacity: 1; filter: brightness(1); }
+      19%, 61% { opacity: .85; filter: brightness(1.1); }
+      20% { opacity: .7; }
+    }
+
+    /* En móvil: convierte los neones en barras horizontales para no invadir */
     @media (max-width: 980px){
-      .neon-sign{
+      .neon-sign, .neon-sign-right{
         position: sticky;
         top: 10px;
         left: auto;
-        margin: 0 0 14px;
+        right: auto;
+        margin: 0 0 12px;
         width: 100%;
         flex-direction:row;
         gap:12px;
       }
-      .neon-text,.neon-sub{
-        writing-mode: horizontal-tb;
-      }
+      .neon-text,.neon-sub,.jp-text{ writing-mode: horizontal-tb; }
     }
 
     .card{
@@ -222,8 +243,6 @@
       padding: 28px;
       overflow:hidden;
     }
-
-    /* Decoración interior, OJO: pointer-events none */
     .card::before{
       content:"";
       position:absolute;
@@ -235,21 +254,10 @@
       pointer-events:none;
       z-index:0;
     }
-
     .card > *{ position:relative; z-index:1; }
 
-    h1{
-      margin:0 0 8px;
-      font-size: 44px;
-      letter-spacing:.2px;
-    }
-    .subtitle{
-      margin:0 0 22px;
-      color:var(--muted);
-      max-width: 860px;
-      font-size: 18px;
-      line-height:1.4;
-    }
+    h1{ margin:0 0 8px; font-size: 44px; letter-spacing:.2px; }
+    .subtitle{ margin:0 0 22px; color:var(--muted); max-width: 860px; font-size: 18px; line-height:1.4; }
 
     .grid{
       display:grid;
@@ -257,9 +265,7 @@
       gap:18px;
       align-items:start;
     }
-    @media (max-width: 960px){
-      .grid{grid-template-columns:1fr}
-    }
+    @media (max-width: 960px){ .grid{grid-template-columns:1fr} }
 
     .field label{
       display:block;
@@ -267,14 +273,9 @@
       margin: 10px 0 10px;
       font-size: 18px;
     }
-    .hint{
-      margin-top:10px;
-      color: var(--muted2);
-      font-size: 14px;
-      line-height:1.35;
-    }
+    .hint{ margin-top:10px; color: var(--muted2); font-size: 14px; line-height:1.35; }
 
-    select, input[type="number"], input[type="text"]{
+    select, input[type="number"]{
       width:100%;
       border-radius: 18px;
       border:1px solid rgba(255,255,255,.14);
@@ -296,9 +297,7 @@
       gap:18px;
       margin-top: 8px;
     }
-    @media (max-width: 960px){
-      .row2{grid-template-columns:1fr}
-    }
+    @media (max-width: 960px){ .row2{grid-template-columns:1fr} }
 
     .search-off{
       margin-top:10px;
@@ -313,8 +312,8 @@
       cursor:pointer;
     }
 
-    /* Toggles tipo “píldora” (checkbox real + label clicable) */
-    .toggles{
+    /* Modos: EXCLUYENTES (radio) con aspecto de pill */
+    .modes{
       display:flex;
       flex-wrap:nowrap;
       gap:12px;
@@ -322,7 +321,7 @@
       padding: 14px 2px 10px;
       margin-top: 12px;
     }
-    .toggle{
+    .mode{
       flex:0 0 auto;
       display:flex;
       align-items:center;
@@ -338,9 +337,9 @@
       font-weight:800;
       color: rgba(255,255,255,.9);
     }
-    .toggle:hover{ transform: translateY(-1px); }
-    .toggle input{ width:18px; height:18px; cursor:pointer; }
-    .toggle.active{
+    .mode:hover{ transform: translateY(-1px); }
+    .mode input{ width:18px; height:18px; cursor:pointer; }
+    .mode.active{
       border-color: rgba(56,232,255,.55);
       box-shadow: 0 0 0 3px rgba(56,232,255,.14);
     }
@@ -369,19 +368,15 @@
       border-radius: var(--radius);
       background: rgba(10,14,40,.35);
       padding: 18px;
+      display:none;
     }
-    .results h2{
-      margin:0 0 10px;
-      font-size: 22px;
-    }
+    .results h2{ margin:0 0 10px; font-size: 22px; }
     .kpi{
       display:grid;
       grid-template-columns: repeat(3, 1fr);
       gap:12px;
     }
-    @media (max-width: 960px){
-      .kpi{grid-template-columns:1fr}
-    }
+    @media (max-width: 960px){ .kpi{grid-template-columns:1fr} }
     .kpi .box{
       padding:14px 14px;
       border-radius: 18px;
@@ -407,7 +402,7 @@
       line-height:1.35;
     }
 
-    /* MODAL OpenFoodFacts simple */
+    /* Modal (si lo usas) */
     .modal-backdrop{
       position:fixed;
       inset:0;
@@ -433,10 +428,7 @@
       gap:12px;
       padding: 6px 6px 10px;
     }
-    .modal-title{
-      font-weight:900;
-      font-size:16px;
-    }
+    .modal-title{ font-weight:900; font-size:16px; }
     .x{
       border:1px solid rgba(255,255,255,.12);
       background: rgba(4,7,22,.55);
@@ -446,61 +438,16 @@
       cursor:pointer;
       font-weight:900;
     }
-    .modal-body{
-      padding: 6px;
-    }
-    .modal-row{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      margin-bottom: 10px;
-    }
-    .modal-row input{
-      flex: 1 1 280px;
-    }
-    .modal-row button{
-      border:0;
-      background: linear-gradient(90deg, rgba(56,232,255,1), rgba(91,124,250,1));
-      color:#021019;
-      font-weight:950;
-      padding: 12px 14px;
-      border-radius: 16px;
-      cursor:pointer;
-    }
-    .modal-list{
-      max-height: 340px;
-      overflow:auto;
-      border-radius: 16px;
-      border:1px solid rgba(255,255,255,.10);
-      background: rgba(4,7,22,.45);
-      padding: 8px;
-    }
-    .item{
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      padding: 10px 10px;
-      border-radius: 14px;
-      cursor:pointer;
-      border:1px solid transparent;
-    }
-    .item:hover{
-      border-color: rgba(56,232,255,.35);
-      background: rgba(56,232,255,.06);
-    }
-    .item strong{ font-size: 14px; }
-    .item span{ color: var(--muted2); font-size: 12px; white-space:nowrap; }
 
-    /* IMPORTANTE: asegurar que inputs estén por encima y clicables */
-    .card, .field, select, input, button, label { pointer-events: auto; }
+    /* Seguridad anti “no funciona nada”: */
+    .card, .field, select, input, button, label { pointer-events:auto; }
   </style>
 </head>
 
 <body>
   <div class="fx" aria-hidden="true"></div>
 
-  <!-- NEÓN “cartel japonés” fuera de la tarjeta -->
+  <!-- NEÓN IZQUIERDO -->
   <div class="neon-sign" aria-hidden="true" title="Lo vas a sudar">
     <div>
       <div class="neon-text">LO VAS A SUDAR</div>
@@ -508,12 +455,17 @@
     </div>
   </div>
 
+  <!-- NEÓN DERECHO (JAPONÉS) -->
+  <div class="neon-sign-right" aria-hidden="true" title="ハンバーガーと寿司">
+    <div class="jp-text">ハンバーガーと寿司</div>
+  </div>
+
   <div class="wrap">
     <header>
       <div class="brand-pill">LoVasASudar.com · Calculadora de castigo calórico</div>
-      <div class="lang" aria-label="Idioma">
-        <button id="btnES" class="active" type="button">ES</button>
-        <button id="btnEN" type="button">EN</button>
+      <div style="display:flex; gap:10px;">
+        <button id="btnES" type="button" style="border:1px solid rgba(255,255,255,.12);background:rgba(10,14,40,.55);color:rgba(255,255,255,.92);padding:10px 12px;border-radius:14px;cursor:pointer;font-weight:900;box-shadow:0 0 0 3px rgba(91,124,250,.16);">ES</button>
+        <button id="btnEN" type="button" style="border:1px solid rgba(255,255,255,.12);background:rgba(10,14,40,.55);color:rgba(255,255,255,.92);padding:10px 12px;border-radius:14px;cursor:pointer;font-weight:900;">EN</button>
       </div>
     </header>
 
@@ -526,12 +478,108 @@
       <section class="grid" aria-label="Formulario de cálculo">
         <div class="field">
           <label for="food" id="lblFood">Alimento o bebida</label>
+
+          <!-- 👇 AQUÍ VAN TUS OPTGROUP/OPTIONS EXACTOS (restaurados) -->
           <select id="food" aria-label="Alimento o bebida">
-            <!-- Se llena por JS -->
+            <optgroup label="🍕 Comida">
+              <option value="850" data-label="Pizza mediana">Pizza mediana (~850 kcal)</option>
+              <option value="650" data-label="Hamburguesa">Hamburguesa (~650 kcal)</option>
+              <option value="1050" data-label="Kebab completo">Kebab completo (~1050 kcal)</option>
+              <option value="520" data-label="Ración bravas">Ración bravas (~520 kcal)</option>
+              <option value="460" data-label="Bocata calamares">Bocata calamares (~460 kcal)</option>
+              <!-- McDonald's / fast food -->
+              <!-- Items originales + nuevos populares 2025-2026 -->
+              <option value="500" data-label="Happy Meal McDonald's">Happy Meal McDonald's (~500 kcal)</option>
+              <option value="550" data-label="Big Mac">Big Mac (~550 kcal)</option>
+              <option value="510" data-label="Menú mediano McDonald's">Menú mediano McDonald's (~510 kcal)</option>
+              <option value="250" data-label="6 Nuggets McDonald's">6 Nuggets McDonald's (~250 kcal)</option>
+              <option value="340" data-label="Patatas fritas medianas McDonald's">Patatas medianas McDonald's (~340 kcal)</option>
+              <option value="420" data-label="Patatas gajo Burger King">Patatas gajo Burger King (~420 kcal)</option>
+
+              <!-- Pizza / italiano (1/8 pizza mediana) -->
+              <option value="450" data-label="Porción pizza queso (1/8 mediana)">Porción pizza queso (1/8 pizza mediana ~450 kcal)</option>
+              <option value="500" data-label="Porción pizza pepperoni (1/8 mediana)">Porción pizza pepperoni (1/8 pizza mediana ~500 kcal)</option>
+              <option value="3600" data-label="Pizza familiar queso entera">Pizza familiar queso entera (~3600 kcal aprox.)</option>
+              <option value="4000" data-label="Pizza familiar pepperoni entera">Pizza familiar pepperoni entera (~4000 kcal aprox.)</option>
+              <option value="600" data-label="Lasaña boloñesa">Lasaña boloñesa (~600 kcal)</option>
+              <option value="700" data-label="Ración pasta carbonara">Ración pasta carbonara (~700 kcal)</option>
+
+              <!-- Tapas / comida española -->
+              <option value="450" data-label="Porción pizza queso (1/8 mediana)">Porción pizza queso (~450 kcal)</option>
+              <option value="500" data-label="Porción pizza pepperoni (1/8 mediana)">Porción pizza pepperoni (~500 kcal)</option>
+              <option value="3600" data-label="Pizza familiar queso entera">Pizza familiar queso entera (~3600 kcal)</option>
+              <option value="250" data-label="Pincho de tortilla">Pincho de tortilla (~250 kcal)</option>
+              <option value="500" data-label="Ración patatas bravas">Ración patatas bravas (~500 kcal)</option>
+              <option value="350" data-label="3 croquetas de jamón">3 croquetas de jamón (~350 kcal)</option>
+              <option value="450" data-label="Bocadillo de jamón serrano">Bocadillo de jamón serrano (~450 kcal)</option>
+              <option value="550" data-label="Bocadillo de calamares">Bocadillo de calamares (~550 kcal)</option>
+
+              <!-- Dulces / bollería -->
+              <option value="280" data-label="Donut clásico">Donut clásico (~280 kcal)</option>
+              <option value="220" data-label="Croissant de mantequilla">Croissant de mantequilla (~220 kcal)</option>
+              <option value="400" data-label="Palmera de chocolate">Palmera de chocolate (~400 kcal)</option>
+              <option value="450" data-label="Brownie de chocolate">Brownie de chocolate (~450 kcal)</option>
+              <option value="450" data-label="Muffin de chocolate">Muffin de chocolate (~450 kcal)</option>
+              <option value="550" data-label="Tarta de queso porción">Tarta de queso porción (~550 kcal)</option>
+              <option value="500" data-label="Tarta de chocolate porción">Tarta de chocolate porción (~500 kcal)</option>
+
+              <!-- Snacks / chocolatinas -->
+              <option value="150" data-label="Barrita chocolate tipo KitKat">Barrita chocolate tipo KitKat (~150 kcal)</option>
+              <option value="240" data-label="Barrita Snickers">Barrita Snickers (~240 kcal)</option>
+              <option value="250" data-label="Bolsa patatas fritas pequeña">Patatas fritas bolsa pequeña (~250 kcal)</option>
+              <option value="500" data-label="Bolsa patatas fritas grande">Patatas fritas bolsa grande (~500 kcal)</option>
+              <option value="200" data-label="Kinder Bueno (2 barritas)">Kinder Bueno (2 barritas) (~200 kcal)</option>
+              <option value="200" data-label="Helado de palo cremoso">Helado de palo cremoso (~200 kcal)</option>
+              <option value="280" data-label="Helado tipo Magnum">Helado tipo Magnum (~280 kcal)</option>
+
+              <!-- Otros -->
+              <option value="650" data-label="Hamburguesa casera completa">Hamburguesa casera completa (~650 kcal)</option>
+              <option value="350" data-label="Ración de sushi (8 piezas)">Ración de sushi (8 piezas) (~350 kcal)</option>
+              <option value="300" data-label="Ensalada César completa">Ensalada César completa (~300 kcal)</option>
+
+              <!-- Sin selección -->
+              <option value="custom" data-label="Personalizado">Otro / none</option>
+              <option value="850" data-label="Kebab completo con todo">Kebab completo (~850 kcal)</option>
+              <option value="950" data-label="Shawarma grande extra salsas">Shawarma grande (~950 kcal)</option>
+              <option value="700" data-label="Nachos con queso y guacamole">Nachos loaded (~700 kcal)</option>
+              <option value="600" data-label="10 alitas barbacoa">10 alitas barbacoa (~600 kcal)</option>
+              <option value="450" data-label="Ramen tonkotsu grande">Ramen grande (~450-800 kcal)</option>
+              <option value="1200" data-label="Sushi para 2 (20-24 piezas)">Sushi para 2 (~1200 kcal)</option>
+              <option value="180" data-label="Sangría jarra 1L">Sangría jarra pequeña (~180-250 kcal/vaso)</option>
+              <option value="320" data-label="Cubo cerveza 6 botellines">Cubo cerveza (~320 kcal/vaso)</option>
+              <option value="900" data-label="Hamburguesa doble bacon cheese">Doble bacon cheese (~900 kcal)</option>
+            </optgroup>
+
+            <optgroup label="🍺 Bebida">
+              <option value="150" data-label="Cerveza 330 ml">Cerveza 330 ml (~150 kcal)</option>
+              <option value="180" data-label="Cerveza artesana 330 ml">Cerveza artesana 330 ml (~180 kcal)</option>
+              <option value="90" data-label="Copa vino tinto">Copa vino tinto (~90 kcal)</option>
+              <option value="110" data-label="Copa vino blanco">Copa vino blanco (~110 kcal)</option>
+              <option value="210" data-label="Gin-tonic">Gin-tonic (~210 kcal)</option>
+              <option value="200" data-label="Ron-cola">Ron-cola (~200 kcal)</option>
+              <option value="240" data-label="Mojito">Mojito (~240 kcal)</option>
+              <!-- Bebidas y cocktails -->
+              <option value="150" data-label="Cerveza 330 ml">Cerveza 330 ml (~150 kcal)</option>
+              <option value="210" data-label="Gin-tonic estándar">Gin-tonic estándar (~210 kcal)</option>
+              <option value="200" data-label="Ron-cola">Ron-cola (~200 kcal)</option>
+              <option value="240" data-label="Mojito">Mojito (~240 kcal)</option>
+              <option value="230" data-label="Sex on the Beach">Sex on the Beach (~230 kcal)</option>
+              <option value="250" data-label="Caipiriña">Caipiriña (~250 kcal)</option>
+              <option value="300" data-label="Piña colada">Piña colada (~300 kcal)</option>
+              <option value="200" data-label="Whisky-cola">Whisky-cola (~200 kcal)</option>
+              <option value="200" data-label="Aperol Spritz">Aperol Spritz (~200 kcal)</option>
+              <option value="65" data-label="Chupito tequila">Chupito de tequila (~65 kcal)</option>
+              <option value="90" data-label="Copa de vino tinto">Copa de vino tinto (~90 kcal)</option>
+              <option value="110" data-label="Copa de vino blanco">Copa de vino blanco (~110 kcal)</option>
+              <option value="120" data-label="Refresco azucarado 330 ml">Refresco azucarado 330 ml (~120 kcal)</option>
+              <option value="100" data-label="Vermú">Vermú (~100 kcal)</option>
+              <option value="180" data-label="Cerveza artesana 330 ml">Cerveza artesana 330 ml (~180 kcal)</option>
+            </optgroup>
           </select>
 
           <div class="search-off" id="offHint">
-            ¿No está en la lista? Busca en Open Food Facts (beta). <a id="openOff" href="#" role="button">Abrir buscador</a>
+            ¿No está en la lista? Busca en Open Food Facts (beta).
+            <a id="openOff" href="#" role="button">Abrir buscador</a>
           </div>
 
           <div class="row2">
@@ -570,31 +618,36 @@
         </div>
       </section>
 
-      <div class="toggles" aria-label="Modos">
-        <label class="toggle" id="tgDrinks">
-          <input type="checkbox" id="modeDrinks" />
-          <span id="txtDrinks">Modo noche de copas</span>
+      <!-- MODOS EXCLUYENTES: usamos radios (una sola selección) -->
+      <div class="modes" aria-label="Modos">
+        <label class="mode" id="mNone" title="Sin modo">
+          <input type="radio" name="mode" value="none" checked />
+          <span>Sin modo</span>
         </label>
 
-        <label class="toggle" id="tgBattle">
-          <input type="checkbox" id="modeBattle" />
-          <span id="txtBattle">Batalla de colegas</span>
+        <label class="mode" id="mDrinks">
+          <input type="radio" name="mode" value="drinks" />
+          <span>Modo noche de copas</span>
         </label>
 
-        <label class="toggle" id="tgInverse">
-          <input type="checkbox" id="modeInverse" />
-          <span id="txtInverse">Calculadora inversa (modo precavido)</span>
+        <label class="mode" id="mBattle">
+          <input type="radio" name="mode" value="battle" />
+          <span>Batalla de colegas</span>
         </label>
 
-        <label class="toggle" id="tgRanking">
-          <input type="checkbox" id="modeRanking" />
-          <span id="txtRanking">Ranking semanal</span>
+        <label class="mode" id="mInverse">
+          <input type="radio" name="mode" value="inverse" />
+          <span>Calculadora inversa (modo precavido)</span>
+        </label>
+        <label class="mode" id="mRanking">
+          <input type="radio" name="mode" value="ranking" />
+          <span>Ranking semanal</span>
         </label>
       </div>
 
       <button class="cta" id="btnCalc" type="button">CALCULAR EJERCICIO NECESARIO 💪</button>
 
-      <section class="results" id="results" aria-label="Resultados del castigo calórico" style="display:none;">
+      <section class="results" id="results" aria-label="Resultados del castigo calórico">
         <h2 id="resTitle">🎯 Resultados del castigo calórico</h2>
         <div class="kpi">
           <div class="box">
@@ -610,471 +663,182 @@
             <p class="small" id="walkSub">Andando rápido (≈ 4.3 MET)</p>
           </div>
         </div>
+
         <div class="fineprint" id="fineprint">
-          Nota: estimaciones aproximadas. No es consejo médico. (Pero sí un recordatorio cósmico de que el universo cobra sus deudas en forma de sudor.)
+          Nota: estimaciones aproximadas. No es consejo médico.
         </div>
       </section>
     </main>
   </div>
 
-  <!-- Modal OpenFoodFacts (beta) -->
+  <!-- Modal (placeholder OFF) -->
   <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-label="Buscador Open Food Facts">
     <div class="modal">
       <div class="modal-header">
         <div class="modal-title">Open Food Facts (beta) · Buscar producto</div>
         <button class="x" id="closeModal" type="button">Cerrar ✕</button>
       </div>
-      <div class="modal-body">
-        <div class="modal-row">
-          <input id="offQuery" type="text" placeholder="Ej: pizza, cerveza, patatas..." />
-          <button id="offSearch" type="button">Buscar</button>
-        </div>
-        <div class="modal-list" id="offList">
-          <div class="item" style="cursor:default; opacity:.8;">
-            <div><strong>Escribe una búsqueda y pulsa “Buscar”.</strong><div style="font-size:12px; color:rgba(255,255,255,.55); margin-top:4px;">Si no hay red/CORS, verás un fallback local.</div></div>
-            <span>—</span>
-          </div>
-        </div>
+      <div style="padding:6px; color:rgba(255,255,255,.7); font-size:14px;">
+        (Placeholder) Puedes conectar aquí tu buscador cuando quieras.
       </div>
     </div>
   </div>
 
   <script>
-    // =========================
-    // Datos base (puedes ampliarlos)
-    // caloriesPerUnit: kcal por unidad típica
-    // unitLabel: texto auxiliar
-    // =========================
-    const BASE_ITEMS = [
-      { key:"beer",   es:"Cerveza (33cl)",          en:"Beer (330ml)",           caloriesPerUnit: 140, unitLabelES:"unidad", unitLabelEN:"unit" },
-      { key:"wine",   es:"Vino (copa)",            en:"Wine (glass)",           caloriesPerUnit: 120, unitLabelES:"copa",   unitLabelEN:"glass" },
-      { key:"gin",    es:"Ginebra + tónica",       en:"Gin & tonic",            caloriesPerUnit: 210, unitLabelES:"copa",   unitLabelEN:"drink" },
-      { key:"pizza",  es:"Pizza (porción)",        en:"Pizza (slice)",          caloriesPerUnit: 285, unitLabelES:"porción",unitLabelEN:"slice" },
-      { key:"burger", es:"Hamburguesa",            en:"Burger",                 caloriesPerUnit: 520, unitLabelES:"unidad", unitLabelEN:"unit" },
-      { key:"kebab",  es:"Kebab",                  en:"Kebab",                  caloriesPerUnit: 750, unitLabelES:"unidad", unitLabelEN:"unit" },
-      { key:"fries",  es:"Patatas fritas (ración)",en:"Fries (portion)",        caloriesPerUnit: 430, unitLabelES:"ración", unitLabelEN:"portion" },
-      { key:"ice",    es:"Helado (bola)",          en:"Ice cream (scoop)",      caloriesPerUnit: 160, unitLabelES:"bola",   unitLabelEN:"scoop" },
-    ];
+    const $ = (id)=>document.getElementById(id);
 
     // METs típicos (aprox)
     const MET_RUN  = 8.0;   // correr suave
     const MET_WALK = 4.3;   // caminar rápido
 
-    // Ajuste por género (simple, opcional)
-    // female: -5% gasto -> más tiempo para quemar lo mismo
-    // male: 0% (base)
+    // Ajuste por género (simple)
     const GENDER_FACTOR = {
       na: 1.00,
       male: 1.00,
       female: 0.95
     };
 
-    // i18n mínimo
-    let LANG = "es";
-
-    const i18n = {
-      es:{
-        title:"LoVasASudar.com",
-        subtitle:"Mete lo que vas a comer y beber y descubre cuánto ejercicio tendrías que hacer para sudarlo. Perfecta para cenas con amigos y noches de copas.",
-        lblFood:"Alimento o bebida",
-        off:"¿No está en la lista? Busca en Open Food Facts (beta).",
-        open:"Abrir buscador",
-        lblUnits:"Nº de unidades",
-        hintUnits:"Ej: 3 cervezas → pon 3 unidades.",
-        lblExtra:"Calorías extra",
-        hintExtra:"Se suman a lo anterior (comida + copas).",
-        lblWeight:"Peso (kg)",
-        hintWeight:"El cálculo se hace por kg de peso (ecuación basada en MET).",
-        lblGender:"Género (opcional)",
-        hintGender:"A igualdad de peso, hombres y mujeres suelen quemar algo diferente. Aquí aplicamos un ajuste sencillo (~5%) para reflejarlo de forma aproximada.",
-        tgDrinks:"Modo noche de copas",
-        tgBattle:"Batalla de colegas",
-        tgInverse:"Calculadora inversa (modo precavido)",
-        tgRanking:"Ranking semanal",
-        cta:"CALCULAR EJERCICIO NECESARIO 💪",
-        resTitle:"🎯 Resultados del castigo calórico",
-        kcalSub:"Calorías totales estimadas",
-        runSub:"Corriendo suave (≈ 8 MET)",
-        walkSub:"Andando rápido (≈ 4.3 MET)",
-        fine:"Nota: estimaciones aproximadas. No es consejo médico. (Pero sí un recordatorio cósmico de que el universo cobra sus deudas en forma de sudor.)",
-        genderNA:"Prefiero no decirlo",
-        genderM:"Hombre",
-        genderF:"Mujer",
-      },
-      en:{
-        title:"LoVasASudar.com",
-        subtitle:"Add what you’ll eat and drink and see how much exercise you’d need to sweat it off. Great for dinners with friends and nights out.",
-        lblFood:"Food or drink",
-        off:"Not in the list? Search Open Food Facts (beta).",
-        open:"Open search",
-        lblUnits:"Units",
-        hintUnits:"Ex: 3 beers → enter 3 units.",
-        lblExtra:"Extra calories",
-        hintExtra:"Added to the above (food + drinks).",
-        lblWeight:"Weight (kg)",
-        hintWeight:"Calculated per kg body weight (MET-based equation).",
-        lblGender:"Gender (optional)",
-        hintGender:"At the same weight, men and women may burn a bit differently. We apply a simple (~5%) adjustment as an approximation.",
-        tgDrinks:"Night-out mode",
-        tgBattle:"Friends battle",
-        tgInverse:"Inverse calculator (careful mode)",
-        tgRanking:"Weekly ranking",
-        cta:"CALCULATE REQUIRED EXERCISE 💪",
-        resTitle:"🎯 Calorie payback results",
-        kcalSub:"Estimated total calories",
-        runSub:"Easy run (≈ 8 MET)",
-        walkSub:"Brisk walk (≈ 4.3 MET)",
-        fine:"Note: rough estimates. Not medical advice. (But yes, physics keeps receipts.)",
-        genderNA:"Prefer not to say",
-        genderM:"Male",
-        genderF:"Female",
-      }
-    };
-
-    // =========================
-    // Helpers
-    // =========================
-    const $ = (id)=>document.getElementById(id);
-
-    function minutesToLabel(min){
-      if (!isFinite(min) || min < 0) return "0 min";
-      const rounded = Math.round(min);
-      return `${rounded} min`;
-    }
-
-    // kcal/min = (MET * 3.5 * weightKg) / 200
     function kcalPerMinute(met, weightKg){
+      // kcal/min = (MET * 3.5 * kg) / 200
       return (met * 3.5 * weightKg) / 200;
     }
 
-    function totalCalories(selectedItem, units, extra){
-      return (selectedItem.caloriesPerUnit * units) + extra;
+    function minutesToLabel(min){
+      if (!isFinite(min) || min < 0) return "0 min";
+      return `${Math.round(min)} min`;
     }
 
-    function applyLanguage(){
-      const t = i18n[LANG];
-
-      $("title").textContent = t.title;
-      $("subtitle").textContent = t.subtitle;
-
-      $("lblFood").textContent = t.lblFood;
-      $("offHint").firstChild.textContent = t.off + " ";
-      $("openOff").textContent = t.open;
-
-      $("lblUnits").textContent = t.lblUnits;
-      $("hintUnits").textContent = t.hintUnits;
-
-      $("lblExtra").textContent = t.lblExtra;
-      $("hintExtra").textContent = t.hintExtra;
-
-      $("lblWeight").textContent = t.lblWeight;
-      $("hintWeight").textContent = t.hintWeight;
-
-      $("lblGender").textContent = t.lblGender;
-      $("hintGender").textContent = t.hintGender;
-
-      $("txtDrinks").textContent = t.tgDrinks;
-      $("txtBattle").textContent = t.tgBattle;
-      $("txtInverse").textContent = t.tgInverse;
-      $("txtRanking").textContent = t.tgRanking;
-
-      $("btnCalc").textContent = t.cta;
-
-      $("resTitle").textContent = t.resTitle;
-      $("kcalSub").textContent = t.kcalSub;
-      $("runSub").textContent = t.runSub;
-      $("walkSub").textContent = t.walkSub;
-      $("fineprint").textContent = t.fine;
-
-      // género
-      const g = $("gender");
-      g.options[0].textContent = t.genderNA;
-      g.options[1].textContent = t.genderM;
-      g.options[2].textContent = t.genderF;
-
-      // opciones comida/bebida
-      fillFoodSelect();
+    function getSelectedMode(){
+      const r = document.querySelector('input[name="mode"]:checked');
+      return r ? r.value : "none";
     }
 
-    function fillFoodSelect(){
+    function syncModePills(){
+      document.querySelectorAll(".mode").forEach(l => l.classList.remove("active"));
+      const selected = document.querySelector('input[name="mode"]:checked');
+      if (selected) selected.closest(".mode").classList.add("active");
+    }
+
+    function getSelectedCalories(){
       const sel = $("food");
-      const current = sel.value;
-      sel.innerHTML = "";
-      for (const it of BASE_ITEMS){
-        const opt = document.createElement("option");
-        opt.value = it.key;
-        opt.textContent = (LANG==="es" ? it.es : it.en) + ` · ${it.caloriesPerUnit} kcal`;
-        sel.appendChild(opt);
-      }
-      // intenta mantener selección
-      if ([...sel.options].some(o=>o.value===current)) sel.value = current;
+      const val = sel.value;
+
+      // "custom" significa: no suma base desde combo; usas "Calorías extra"
+      if (val === "custom") return 0;
+
+      const n = parseFloat(val);
+      return isFinite(n) ? n : 0;
     }
 
-    function setToggleActive(labelEl, checked){
-      labelEl.classList.toggle("active", checked);
-    }
-
-    function wireToggles(){
-      const pairs = [
-        [$("tgDrinks"), $("modeDrinks")],
-        [$("tgBattle"), $("modeBattle")],
-        [$("tgInverse"), $("modeInverse")],
-        [$("tgRanking"), $("modeRanking")],
-      ];
-      for (const [lab, input] of pairs){
-        // Inicial
-        setToggleActive(lab, input.checked);
-        // Cambio
-        input.addEventListener("change", ()=> setToggleActive(lab, input.checked));
-        // Click en label ya funciona por HTML, pero aseguramos que no haya nada raro:
-        lab.addEventListener("click", (e)=>{
-          // si clicas en el label (no en el checkbox), el navegador ya alterna,
-          // nosotros solo dejamos que ocurra.
-        });
-      }
-    }
-
-    // =========================
-    // Modal OFF (beta)
-    // =========================
-    function openModal(){
-      $("modalBackdrop").style.display = "flex";
-      $("offQuery").focus();
-    }
-    function closeModal(){
-      $("modalBackdrop").style.display = "none";
-    }
-
-    async function offSearch(){
-      const q = $("offQuery").value.trim();
-      const list = $("offList");
-      list.innerHTML = "";
-
-      if (!q){
-        list.innerHTML = `<div class="item" style="cursor:default; opacity:.8;">
-          <div><strong>Escribe algo para buscar.</strong><div style="font-size:12px; color:rgba(255,255,255,.55); margin-top:4px;">Ej: “pizza”, “cerveza”, “kebab”…</div></div>
-          <span>—</span>
-        </div>`;
-        return;
-      }
-
-      // Intento real (puede fallar por CORS/red según hosting)
-      const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(q)}&search_simple=1&action=process&json=1&page_size=12`;
-
-      try{
-        const r = await fetch(url, { method:"GET" });
-        if (!r.ok) throw new Error("HTTP " + r.status);
-        const data = await r.json();
-        const products = (data.products || []).slice(0, 12);
-
-        if (!products.length){
-          throw new Error("no_products");
-        }
-
-        for (const p of products){
-          const name = p.product_name || p.generic_name || "Producto sin nombre";
-          // kcal/100g (si hay)
-          const kcal100 = p.nutriments && (p.nutriments["energy-kcal_100g"] ?? p.nutriments["energy-kcal_value"]);
-          const displayKcal = (kcal100!=null && isFinite(kcal100)) ? `${Math.round(kcal100)} kcal/100g` : "kcal n/d";
-
-          const div = document.createElement("div");
-          div.className = "item";
-          div.innerHTML = `<div><strong>${escapeHtml(name)}</strong></div><span>${displayKcal}</span>`;
-          div.addEventListener("click", ()=>{
-            // Añadimos como item temporal en el select (lo tratamos como "unidad" genérica)
-            const kcalUnit = (kcal100!=null && isFinite(kcal100)) ? Math.round(kcal100) : 200;
-            const key = "off_" + Math.random().toString(16).slice(2);
-            BASE_ITEMS.unshift({
-              key,
-              es: `${name} (OFF)`,
-              en: `${name} (OFF)`,
-              caloriesPerUnit: kcalUnit,
-              unitLabelES:"unidad",
-              unitLabelEN:"unit"
-            });
-            fillFoodSelect();
-            $("food").value = key;
-            closeModal();
-          });
-          list.appendChild(div);
-        }
-
-      }catch(err){
-        // Fallback local (para que "se abra algo" SIEMPRE)
-        const fallback = [
-          {name:`${q} (estimación)`, kcal:"≈ 250 kcal/unidad"},
-          {name:"Pizza (porción)", kcal:"≈ 285 kcal"},
-          {name:"Cerveza (33cl)", kcal:"≈ 140 kcal"},
-          {name:"Patatas fritas (ración)", kcal:"≈ 430 kcal"},
-        ];
-        for (const f of fallback){
-          const div = document.createElement("div");
-          div.className="item";
-          div.innerHTML = `<div><strong>${escapeHtml(f.name)}</strong></div><span>${escapeHtml(f.kcal)}</span>`;
-          div.addEventListener("click", ()=>{
-            // Mete uno genérico estimado
-            const key = "off_" + Math.random().toString(16).slice(2);
-            BASE_ITEMS.unshift({
-              key,
-              es: `${f.name} (estim.)`,
-              en: `${f.name} (est.)`,
-              caloriesPerUnit: 250,
-              unitLabelES:"unidad",
-              unitLabelEN:"unit"
-            });
-            fillFoodSelect();
-            $("food").value = key;
-            closeModal();
-          });
-          list.appendChild(div);
-        }
-      }
-    }
-
-    function escapeHtml(s){
-      return String(s).replace(/[&<>"']/g, (m)=>({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-      }[m]));
-    }
-
-    // =========================
-    // Cálculo principal
-    // =========================
     function calculate(){
-      const key = $("food").value;
-      const item = BASE_ITEMS.find(x=>x.key===key) || BASE_ITEMS[0];
-
+      const baseKcal = getSelectedCalories();
       const units = Math.max(1, parseInt($("units").value || "1", 10));
       const extra = Math.max(0, parseInt($("extra").value || "0", 10));
       const weight = Math.min(200, Math.max(35, parseInt($("weight").value || "80", 10)));
       const gender = $("gender").value;
-
-      // total kcal
-      let kcal = totalCalories(item, units, extra);
-
-      // Modos (aquí no hago magia rara; solo ejemplos sensatos)
-      const nightOut = $("modeDrinks").checked;
-      const battle   = $("modeBattle").checked;
-      const inverse  = $("modeInverse").checked;
-
-      // Si noche de copas: pequeña penalización (porque “picar” suele colarse)
-      if (nightOut) kcal = Math.round(kcal * 1.08);
-
-      // Si batalla de colegas: lo mostramos más “picante” (solo presentación)
-      const hype = battle ? "🔥" : "";
-
-      // Inversa: en vez de tiempo para quemar X kcal, te dice cuántas kcal quemas en 30 min
       const factor = GENDER_FACTOR[gender] ?? 1.0;
+
+      let kcal = (baseKcal * units) + extra;
+
+      const mode = getSelectedMode();
+
+      // Para que se NOTE que funciona:
+      // - drinks: +8% (picar escondido)
+      // - battle: "hype" visual
+      // - inverse: muestra kcal quemadas en 30 min
+      // - ranking: hype visual (placeholder)
+      let hype = "";
+      if (mode === "drinks") kcal = Math.round(kcal * 1.08);
+      if (mode === "battle") hype = " 🔥";
+      if (mode === "ranking") hype = " 🏆";
 
       const kpmRun  = kcalPerMinute(MET_RUN,  weight) * factor;
       const kpmWalk = kcalPerMinute(MET_WALK, weight) * factor;
 
-      let runMin, walkMin, kcalLabel;
-
-      if (inverse){
+      if (mode === "inverse"){
         const mins = 30;
         const runKcal  = Math.round(kpmRun * mins);
         const walkKcal = Math.round(kpmWalk * mins);
 
-        $("kcalOut").textContent = `${kcal} kcal ${hype}`;
-        $("kcalSub").textContent = (LANG==="es")
-          ? "Tu “castigo” estimado (para referencia)"
-          : "Your estimated intake (for reference)";
+        $("kcalOut").textContent = `${kcal} kcal${hype}`;
+        $("kcalSub").textContent = "Tu “castigo” estimado (referencia)";
 
         $("runOut").textContent  = `${runKcal} kcal`;
-        $("runSub").textContent  = (LANG==="es")
-          ? `Quemadas en ${mins} min corriendo suave`
-          : `Burned in ${mins} min easy run`;
+        $("runSub").textContent  = `Quemadas en ${mins} min corriendo suave`;
 
         $("walkOut").textContent = `${walkKcal} kcal`;
-        $("walkSub").textContent = (LANG==="es")
-          ? `Quemadas en ${mins} min andando rápido`
-          : `Burned in ${mins} min brisk walk`;
-
+        $("walkSub").textContent = `Quemadas en ${mins} min andando rápido`;
       } else {
-        runMin  = kcal / kpmRun;
-        walkMin = kcal / kpmWalk;
+        const runMin  = kcal / kpmRun;
+        const walkMin = kcal / kpmWalk;
 
-        $("kcalOut").textContent = `${kcal} kcal ${hype}`;
+        $("kcalOut").textContent = `${kcal} kcal${hype}`;
+        $("kcalSub").textContent = "Calorías totales estimadas";
+
         $("runOut").textContent  = minutesToLabel(runMin);
-        $("walkOut").textContent = minutesToLabel(walkMin);
+        $("runSub").textContent  = "Corriendo suave (≈ 8 MET)";
 
-        $("kcalSub").textContent = i18n[LANG].kcalSub;
-        $("runSub").textContent  = i18n[LANG].runSub;
-        $("walkSub").textContent = i18n[LANG].walkSub;
+        $("walkOut").textContent = minutesToLabel(walkMin);
+        $("walkSub").textContent = "Andando rápido (≈ 4.3 MET)";
       }
 
       $("results").style.display = "block";
       $("results").scrollIntoView({ behavior:"smooth", block:"start" });
 
-      // Analytics (si gtag existe)
+      // Analytics
       try{
         if (typeof gtag === "function"){
+          const selectedOpt = $("food").selectedOptions[0];
+          const label = selectedOpt ? (selectedOpt.getAttribute("data-label") || selectedOpt.textContent || "") : "";
           gtag("event","calculate",{
-            food_key: item.key,
+            mode,
+            kcal_base: baseKcal,
             units,
             extra,
             weight,
             gender,
-            nightOut,
-            battle,
-            inverse,
-            ranking: $("modeRanking").checked
+            item_label: label
           });
         }
       }catch(_){}
     }
 
-    // =========================
-    // Init
-    // =========================
     function init(){
-      // Idioma
-      $("btnES").addEventListener("click", ()=>{
-        LANG="es";
-        $("btnES").classList.add("active");
-        $("btnEN").classList.remove("active");
-        applyLanguage();
+      // Modos: exclusividad ya la garantiza radio, pero activamos el highlight de la pill
+      document.querySelectorAll('input[name="mode"]').forEach(r=>{
+        r.addEventListener("change", syncModePills);
       });
-      $("btnEN").addEventListener("click", ()=>{
-        LANG="en";
-        $("btnEN").classList.add("active");
-        $("btnES").classList.remove("active");
-        applyLanguage();
-      });
+      syncModePills();
 
-      // Fill selects
-      fillFoodSelect();
-
-      // Toggles
-      wireToggles();
-
-      // Button calculate
+      // Botón calcular
       $("btnCalc").addEventListener("click", calculate);
 
-      // Modal hooks
-      $("openOff").addEventListener("click", (e)=>{ e.preventDefault(); openModal(); });
-      $("closeModal").addEventListener("click", closeModal);
-      $("modalBackdrop").addEventListener("click", (e)=>{
-        if (e.target === $("modalBackdrop")) closeModal();
+      // Modal OFF (placeholder)
+      $("openOff").addEventListener("click", (e)=>{
+        e.preventDefault();
+        $("modalBackdrop").style.display="flex";
       });
-      $("offSearch").addEventListener("click", offSearch);
-      $("offQuery").addEventListener("keydown", (e)=>{
-        if (e.key === "Enter") offSearch();
-        if (e.key === "Escape") closeModal();
+      $("closeModal").addEventListener("click", ()=>{
+        $("modalBackdrop").style.display="none";
+      });
+      $("modalBackdrop").addEventListener("click", (e)=>{
+        if (e.target === $("modalBackdrop")) $("modalBackdrop").style.display="none";
       });
 
-      // Seguridad: normaliza units al perder foco
+      // Normaliza units
       $("units").addEventListener("blur", ()=>{
         const n = Math.max(1, parseInt($("units").value || "1",10));
         $("units").value = String(n);
       });
 
-      // Aplica idioma inicial
-      applyLanguage();
+      // Mini detalle: si eliges "custom", te pongo el foco en calorías extra
+      $("food").addEventListener("change", ()=>{
+        if ($("food").value === "custom") $("extra").focus();
+      });
     }
 
     init();
   </script>
 </body>
 </html>
+

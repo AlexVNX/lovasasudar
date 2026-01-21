@@ -190,6 +190,7 @@
         0 16px 70px rgba(0,0,0,.55),
         0 0 22px rgba(56,232,255,.18),
         0 0 38px rgba(255,79,216,.16);
+      pointer-events:none; /* IMPORTANTE: flotante y no molesta */
     }
     .neon-sign::before{
       content:"";
@@ -263,6 +264,7 @@
         0 16px 70px rgba(0,0,0,.55),
         0 0 26px rgba(255,182,72,.22),
         0 0 44px rgba(255,182,72,.18);
+      pointer-events:none; /* IMPORTANTE: flotante y no molesta */
     }
     .neon-sign-right::before{
       content:"";
@@ -859,16 +861,22 @@
           <div class="sports" id="inverseList"></div>
         </div>
 
+        <!-- CTA de compartir MÁS visible -->
         <div class="btnRow" aria-label="Acciones meme">
-          <!-- Seguimos dejando el botón por si alguien quiere regenerar tras tocar inputs,
-               pero YA NO ES NECESARIO: al calcular se genera automáticamente -->
+          <button class="btnLite" id="btnShareTop" type="button" style="display:none;">📲 Compartir MEME</button>
+          <a class="btnLite" id="btnDownloadTop" download="lovasasudar-meme.png" href="#" style="display:none;">⬇️ Descargar MEME</a>
+          <!-- mantenemos el antiguo por compatibilidad -->
           <button class="btnLite" id="btnMeme" type="button">📸 Generar MEME</button>
-          <a class="btnLite" id="btnDownload" download="lovasasudar-meme.png" href="#" style="display:none;">⬇️ Descargar MEME</a>
-          <button class="btnLite" id="btnShare" type="button" style="display:none;">📲 Compartir</button>
         </div>
 
         <div class="memeWrap" id="memeWrap">
           <canvas id="memeCanvas" width="1200" height="630"></canvas>
+        </div>
+
+        <!-- Botones repetidos abajo (menos fricción móvil) -->
+        <div class="btnRow" aria-label="Acciones meme (abajo)">
+          <button class="btnLite" id="btnShare" type="button" style="display:none;">📲 Compartir</button>
+          <a class="btnLite" id="btnDownload" download="lovasasudar-meme.png" href="#" style="display:none;">⬇️ Descargar MEME</a>
         </div>
 
         <div class="fineprint" id="fineprint">
@@ -920,6 +928,8 @@
         meme:"📸 Generar MEME",
         download:"⬇️ Descargar MEME",
         share:"📲 Compartir",
+        shareTop:"📲 Compartir MEME",
+        downloadTop:"⬇️ Descargar MEME",
         fine:"Estimaciones aproximadas basadas en MET (la física no negocia, pero sí te deja elegir dardos).",
         drinksTitle:"🍻 Añade tus bebidas (se suman al total)",
         drinksHint:"Tip: si mezclas “cubo cerveza” + “gin-tonic”, el universo no juzga… pero las matemáticas sí.",
@@ -979,6 +989,8 @@
         meme:"📸 Generate MEME",
         download:"⬇️ Download MEME",
         share:"📲 Share",
+        shareTop:"📲 Share MEME",
+        downloadTop:"⬇️ Download MEME",
         fine:"Rough estimates based on MET (physics keeps receipts, but it lets you pick darts).",
         drinksTitle:"🍻 Add your drinks (they’re added to the total)",
         drinksHint:"Tip: mixing ‘beer bucket’ + ‘gin & tonic’ is allowed. Math will still snitch.",
@@ -1089,7 +1101,7 @@
       { id:"soda",        group:"drink", kcal:120, es:"Refresco azucarado 330 ml", en:"Sugary soda (330 ml)" },
       { id:"vermouth",    group:"drink", kcal:100, es:"Vermú", en:"Vermouth" },
 
-      // “graciosas” que estaban mezcladas antes:
+      // “graciosas”
       { id:"sangria_glass", group:"drink", kcal:200, es:"Sangría (vaso)", en:"Sangria (glass)" },
       { id:"beer_bucket",   group:"drink", kcal:320, es:"Cubo cerveza (vaso)", en:"Beer bucket (per glass)" }
     ];
@@ -1145,7 +1157,7 @@
     // =========================
     function buildFoodSelect(preserveId){
       const sel = $("food");
-      const prev = preserveId || sel.value; // we'll store IDs in value
+      const prev = preserveId || sel.value;
       sel.innerHTML = "";
 
       const groups = [
@@ -1160,7 +1172,7 @@
         const items = CATALOG.filter(x=>x.group===g.key);
         items.forEach(it=>{
           const opt = document.createElement("option");
-          opt.value = it.id;                         // IMPORTANT: value = id (not kcal)
+          opt.value = it.id;
           opt.dataset.kcal = String(it.kcal);
           opt.dataset.labelEs = it.es;
           opt.dataset.labelEn = it.en;
@@ -1171,7 +1183,6 @@
         sel.appendChild(og);
       });
 
-      // Custom option at end (kept as id="custom")
       const ogCustom = document.createElement("optgroup");
       ogCustom.label = "—";
       const optC = document.createElement("option");
@@ -1183,7 +1194,6 @@
       ogCustom.appendChild(optC);
       sel.appendChild(ogCustom);
 
-      // Restore selection if possible
       sel.value = prev && [...sel.querySelectorAll("option")].some(o=>o.value===prev) ? prev : "pizza_medium";
     }
 
@@ -1271,7 +1281,6 @@
       const units = Math.max(1, parseInt($("units").value || "1", 10));
       const extra = Math.max(0, parseInt($("extra").value || "0", 10));
 
-      // Base selection kcal from dataset
       let kcal = 0;
       if ($("food").value !== "custom"){
         kcal = getSelectedKcal() * units;
@@ -1413,7 +1422,7 @@
     }
 
     // =========================
-    // Meme generation (Canvas)
+    // Meme generation (Canvas) + VARIANTES por severidad
     // =========================
     function blob(ctx, x, y, r, color){
       const g = ctx.createRadialGradient(x,y,0,x,y,r);
@@ -1444,13 +1453,41 @@
       return t + "…";
     }
 
+    function pickMemeVariant(kcal){
+      // 4 niveles (tuneables). Objetivo: que “pique” más según castigo.
+      if (kcal < 400) return "light";
+      if (kcal < 900) return "mid";
+      if (kcal < 1600) return "hard";
+      return "apocalypse";
+    }
+
+    function memeCopy(variant){
+      // Titulares + “taunts” cortos para que se compartan
+      const ES = {
+        light:      { title:"PECADO VENIAL", sub:"Esto se arregla andando y sin llorar.", stamp:"✅ SALVABLE" },
+        mid:        { title:"PECADO SERIO",  sub:"El cardio te está escribiendo un WhatsApp.", stamp:"⚠️ DOLORCITO" },
+        hard:       { title:"CRIMEN GASTRONÓMICO", sub:"Tu reloj ya ha llamado a su abogado.", stamp:"🔥 ALERTA" },
+        apocalypse: { title:"APOCALIPSIS CALÓRICO", sub:"Has invocado al gimnasio. Enfadado.", stamp:"☠️ RIP" }
+      };
+      const EN = {
+        light:      { title:"MINOR SIN", sub:"A brisk walk will do. No tears.", stamp:"✅ FIXABLE" },
+        mid:        { title:"SERIOUS SIN", sub:"Cardio just texted you.", stamp:"⚠️ OOF" },
+        hard:       { title:"GASTRO CRIME", sub:"Your watch hired a lawyer.", stamp:"🔥 ALERT" },
+        apocalypse: { title:"CALORIE APOCALYPSE", sub:"Gym has been summoned. Angry.", stamp:"☠️ RIP" }
+      };
+      return (LANG==="es" ? ES[variant] : EN[variant]);
+    }
+
     function generateMeme({kcal, modeName, label, weight, sportPick}){
       const wrap = $("memeWrap");
       const canvas = $("memeCanvas");
       const ctx = canvas.getContext("2d");
-
       const w = canvas.width, h = canvas.height;
 
+      const variant = pickMemeVariant(kcal);
+      const copy = memeCopy(variant);
+
+      // Fondo
       const g = ctx.createLinearGradient(0,0,w,h);
       g.addColorStop(0, "rgba(91,124,250,1)");
       g.addColorStop(1, "rgba(255,79,216,1)");
@@ -1463,80 +1500,114 @@
       blob(ctx, 820, 540, 300, "rgba(56,232,255,1)");
       ctx.globalAlpha = 1;
 
+      // Tarjeta
       roundRect(ctx, 60, 60, w-120, h-120, 34);
-      ctx.fillStyle = "rgba(10,14,40,.70)";
+      ctx.fillStyle = "rgba(10,14,40,.74)";
       ctx.fill();
       ctx.lineWidth = 2;
       ctx.strokeStyle = "rgba(255,255,255,.12)";
       ctx.stroke();
 
+      // Header brand
       ctx.fillStyle = "rgba(255,255,255,.95)";
       ctx.font = "900 56px system-ui, -apple-system, Segoe UI, Roboto, Arial";
-      ctx.fillText("LOVASASUDAR.COM", 100, 150);
+      ctx.fillText("LOVASASUDAR.COM", 100, 140);
 
-      ctx.font = "700 30px system-ui, -apple-system, Segoe UI, Roboto, Arial";
-      ctx.fillStyle = "rgba(255,255,255,.85)";
-      ctx.fillText((LANG==="es") ? T.es.memeSub : T.en.memeSub, 100, 200);
+      // Big stamp (arriba derecha)
+      ctx.font = "950 38px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+      ctx.fillStyle = "rgba(255,227,106,.95)";
+      const stamp = copy.stamp;
+      const sw = ctx.measureText(stamp).width;
+      ctx.fillText(stamp, w - 100 - sw, 140);
 
-      ctx.font = "950 120px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+      // Variant title
+      ctx.font = "950 48px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+      ctx.fillStyle = "rgba(255,255,255,.93)";
+      ctx.fillText(copy.title, 100, 205);
+
+      ctx.font = "750 28px system-ui, -apple-system, Segoe UI, Roboto, Arial";
+      ctx.fillStyle = "rgba(255,255,255,.78)";
+      ctx.fillText(copy.sub, 100, 245);
+
+      // Kcal huge
+      ctx.font = "950 130px system-ui, -apple-system, Segoe UI, Roboto, Arial";
       ctx.fillStyle = "#fff";
-      ctx.fillText(`${kcal}`, 100, 340);
+      ctx.fillText(`${kcal}`, 100, 370);
 
       ctx.font = "900 44px system-ui, -apple-system, Segoe UI, Roboto, Arial";
       ctx.fillStyle = "rgba(255,255,255,.9)";
-      ctx.fillText("kcal", 430, 340);
+      ctx.fillText("kcal", 450, 370);
 
+      // Details
       ctx.font = "800 30px system-ui, -apple-system, Segoe UI, Roboto, Arial";
       ctx.fillStyle = "rgba(255,255,255,.85)";
       const d1 = (LANG==="es")
         ? `Modo: ${modeName} · Peso: ${weight}kg`
         : `Mode: ${modeName} · Weight: ${weight}kg`;
-      ctx.fillText(d1, 100, 410);
+      ctx.fillText(d1, 100, 435);
 
-      ctx.font = "800 30px system-ui, -apple-system, Segoe UI, Roboto, Arial";
       const d2 = (LANG==="es")
         ? `Comida/bebida: ${label || T.es.memeFoodFallback}`
         : `Item: ${label || T.en.memeFoodFallback}`;
-      ctx.fillText(trimTo(ctx, d2, w-200), 100, 455);
+      ctx.fillText(trimTo(ctx, d2, w-200), 100, 480);
 
       ctx.font = "900 38px system-ui, -apple-system, Segoe UI, Roboto, Arial";
       ctx.fillStyle = "rgba(255,227,106,.95)";
-      const d3 = (LANG==="es")
-        ? `Solución: ${sportPick}`
-        : `Solution: ${sportPick}`;
-      ctx.fillText(trimTo(ctx, d3, w-200), 100, 520);
+      const d3 = (LANG==="es") ? `Solución: ${sportPick}` : `Solution: ${sportPick}`;
+      ctx.fillText(trimTo(ctx, d3, w-200), 100, 540);
 
       ctx.font = "800 24px system-ui, -apple-system, Segoe UI, Roboto, Arial";
-      ctx.fillStyle = "rgba(255,255,255,.75)";
+      ctx.fillStyle = "rgba(255,255,255,.70)";
       const foot = (LANG==="es")
         ? "Comparte y que el grupo cargue con la culpa."
         : "Share it and let the group carry the guilt.";
-      ctx.fillText(foot, 100, 585);
+      ctx.fillText(foot, 100, 590);
 
       wrap.style.display = "block";
 
       const url = canvas.toDataURL("image/png");
+
+      // Links/botones arriba + abajo (menos fricción)
       const dl = $("btnDownload");
       dl.href = url;
       dl.style.display = "inline-flex";
 
+      const dlTop = $("btnDownloadTop");
+      dlTop.href = url;
+      dlTop.style.display = "inline-flex";
+
       const shareBtn = $("btnShare");
-      shareBtn.style.display = navigator.share ? "inline-flex" : "none";
+      const shareTop = $("btnShareTop");
+
+      const canShare = !!navigator.share;
+      shareBtn.style.display = canShare ? "inline-flex" : "none";
+      shareTop.style.display = canShare ? "inline-flex" : "none";
+
+      // Scroll al MEME (requisito #1)
+      // Espera al siguiente frame para asegurar display:block ya aplicado.
+      requestAnimationFrame(()=>{
+        wrap.scrollIntoView({ behavior:"smooth", block:"start" });
+      });
 
       return url;
     }
 
-    // Choose a fun sport suggestion for meme
+    // Choose a fun sport suggestion for meme (la que “pica” más)
     function pickSportForMeme(kcal, weight, gender){
       const rows = SPORTS.map(s=>{
         const m = minutesNeeded(kcal, s.met, weight, gender);
         return {s, m};
       }).filter(x => isFinite(x.m)).sort((a,b)=>a.m-b.m);
 
+      // “medio” para que no siempre sea correr, y que quede creíble
       const mid = rows[Math.floor(rows.length/2)] || rows[0];
       const name = (LANG==="es" ? mid.s.es : mid.s.en);
       const mins = Math.round(mid.m);
-      return (LANG==="es") ? `${mins} min de ${name}` : `${mins} min of ${name}`;
+
+      // Redondeo a 5 min para que sea más “memeable”
+      const mins5 = Math.max(5, Math.round(mins/5)*5);
+
+      return (LANG==="es") ? `${mins5} min de ${name}` : `${mins5} min of ${name}`;
     }
 
     async function shareMeme(url){
@@ -1562,8 +1633,12 @@
       $("battleResultsWrap").style.display = "none";
       $("inverseResultsWrap").style.display = "none";
       $("memeWrap").style.display = "none";
-      $("btnDownload").style.display = "none";
-      $("btnShare").style.display = "none";
+
+      // Ocultamos CTAs meme hasta regenerar
+      ["btnDownload","btnShare","btnDownloadTop","btnShareTop"].forEach(id=>{
+        const el = $(id);
+        if (el) el.style.display = "none";
+      });
 
       const mode = getSelectedMode();
       const modeName = T[LANG].modeNames[mode] || mode;
@@ -1616,6 +1691,7 @@
       $("mainSub").textContent = summary;
 
       $("results").style.display = "block";
+      // Scroll a resultados, pero luego el meme se autoscrollea a sí mismo
       $("results").scrollIntoView({ behavior:"smooth", block:"start" });
 
       // Analytics
@@ -1629,7 +1705,7 @@
         lang: LANG
       });
 
-      // AUTO MEME on calculate (requirement #2)
+      // AUTO MEME
       const sportPick = (mode === "inverse")
         ? (LANG==="es" ? "A comer con tranquilidad (moderada)" : "Eat with (moderate) peace")
         : pickSportForMeme(kcalForMeme, weight, gender);
@@ -1642,23 +1718,18 @@
         sportPick
       });
 
-      // Wire share button every time we generate
-      $("btnShare").onclick = ()=>shareMeme(url);
+      // Wire share botones (arriba y abajo) cada vez
+      const fnShare = ()=>shareMeme(url);
+      if ($("btnShare")) $("btnShare").onclick = fnShare;
+      if ($("btnShareTop")) $("btnShareTop").onclick = fnShare;
 
-      track("meme_generated", {
-        mode,
-        kcal: kcalForMeme,
-        lang: LANG
-      });
+      track("meme_generated", { mode, kcal: kcalForMeme, lang: LANG });
     }
 
     // Manual meme regenerate (kept)
     function onMeme(){
-      if ($("results").style.display !== "block") calculate();
-      else {
-        // Just re-run calculate to keep everything in sync and regenerate meme
-        calculate();
-      }
+      // Re-run calculate to keep everything in sync and regenerate meme
+      calculate();
     }
 
     // =========================
@@ -1701,8 +1772,13 @@
       $("sportsTitle").textContent = t.sportsTitle;
 
       $("btnMeme").textContent = t.meme;
-      $("btnDownload").textContent = t.download;
-      $("btnShare").textContent = t.share;
+
+      // botones top + bottom
+      if ($("btnDownload")) $("btnDownload").textContent = t.download;
+      if ($("btnShare")) $("btnShare").textContent = t.share;
+      if ($("btnDownloadTop")) $("btnDownloadTop").textContent = t.downloadTop;
+      if ($("btnShareTop")) $("btnShareTop").textContent = t.shareTop;
+
       $("fineprint").textContent = t.fine;
 
       $("drinksTitle").textContent = t.drinksTitle;
@@ -1742,7 +1818,6 @@
         $("p4name").placeholder = "Nombre";
       }
 
-      // rebuild selects with same selection preserved
       const prevFood = $("food").value || "pizza_medium";
       buildFoodSelect(prevFood);
       fillDrinkSelects();
@@ -1775,7 +1850,6 @@
     // Init
     // =========================
     function init(){
-      // Initial lang from URL or browser
       const qLang = getLangFromUrl();
       if (qLang) LANG = qLang;
       else {
@@ -1801,11 +1875,9 @@
         track("lang_change", { lang: "en" });
       });
 
-      // set active class correctly on load
       if (LANG==="en"){ $("btnEN").classList.add("active"); $("btnES").classList.remove("active"); }
       else { $("btnES").classList.add("active"); $("btnEN").classList.remove("active"); }
 
-      // Build selects
       buildFoodSelect("pizza_medium");
       fillDrinkSelects();
       fillInverseSports();
@@ -1832,24 +1904,34 @@
         $("units").value = String(n);
       });
 
-      // If custom -> focus extra + hint
+      // If custom -> focus extra
       $("food").addEventListener("change", ()=>{
         track("food_change", { item_id: $("food").value, lang: LANG });
         if ($("food").value === "custom") $("extra").focus();
       });
 
-      // Track key interactions (useful funnels)
+      // Track key interactions
       ["weight","gender","extra","drink1","drink2","drink3","drink1n","drink2n","drink3n","invSport","invHours"].forEach(id=>{
         const el = $(id);
         if (!el) return;
         el.addEventListener("change", ()=>track("input_change", { field:id, mode:getSelectedMode(), lang: LANG }));
       });
 
-      // First paint language strings
       applyLanguage();
 
       // Page view (explicit)
       track("page_view_custom", { lang: LANG });
+
+      // UX mini: Enter para calcular (en desktop)
+      document.addEventListener("keydown", (e)=>{
+        if (e.key === "Enter"){
+          const tag = (e.target && e.target.tagName || "").toLowerCase();
+          if (tag === "textarea") return;
+          // Evita submit fantasma si algún browser interpreta
+          e.preventDefault();
+          calculate();
+        }
+      });
     }
 
     init();

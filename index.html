@@ -1,6 +1,9 @@
 <!doctype html>
 <html lang="es">
 <head>
+  <!-- =========================
+       SEO + Social + PWA-ish
+  ========================== -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#050617" />
@@ -9,26 +12,81 @@
   <title id="metaTitle">LoVasASudar.com · Calculadora de castigo calórico</title>
   <meta id="metaDesc" name="description" content="Calcula el castigo calórico de tu cena/noche de copas y descubre cuánto ejercicio tendrías que hacer para sudarlo." />
 
+  <!-- Canonical + alternates (misma página con ?lang=) -->
   <link id="linkCanonical" rel="canonical" href="https://lovasasudar.com/" />
   <link rel="alternate" hreflang="es" href="https://lovasasudar.com/?lang=es" />
   <link rel="alternate" hreflang="en" href="https://lovasasudar.com/?lang=en" />
   <link rel="alternate" hreflang="x-default" href="https://lovasasudar.com/" />
 
-  <!-- GA4 -->
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="LoVasASudar.com" />
+  <meta property="og:title" content="LoVasASudar.com · Calculadora de castigo calórico" />
+  <meta property="og:description" content="Traduce calorías a esfuerzo real: cuánto ejercicio para sudarlo. Y te genera un meme compartible." />
+  <meta property="og:url" content="https://lovasasudar.com/" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="LoVasASudar.com" />
+  <meta name="twitter:description" content="Calcula el castigo calórico y genera un meme compartible." />
+
+  <!-- Favicon (SVG inline) -->
+  <link rel="icon" type="image/svg+xml"
+        href='data:image/svg+xml;utf8,
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="%235b7cfa"/>
+      <stop offset="1" stop-color="%23ff4fd8"/>
+    </linearGradient>
+    <filter id="s" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect x="6" y="6" width="52" height="52" rx="16" fill="%23050617" stroke="url(%23g)" stroke-width="3"/>
+  <path d="M20 38c0-8 6-14 14-14s14 6 14 14" fill="none" stroke="url(%23g)" stroke-width="5" stroke-linecap="round" filter="url(%23s)"/>
+  <circle cx="24" cy="40" r="3" fill="%2338e8ff"/>
+  <circle cx="40" cy="20" r="3" fill="%23ffb648"/>
+  <text x="32" y="48" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-size="12" font-weight="900" fill="%23ffffff">SUDAR</text>
+</svg>' />
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"WebApplication",
+    "name":"LoVasASudar.com",
+    "url":"https://lovasasudar.com/",
+    "applicationCategory":"HealthApplication",
+    "operatingSystem":"All",
+    "description":"Calculadora divertida para estimar el ejercicio necesario para compensar calorías (MET) y generar un meme compartible.",
+    "inLanguage":["es","en"]
+  }
+  </script>
+
+  <!-- =========================
+       GA4 (gtag)
+  ========================== -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-RLQ6Y55SNC"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    gtag('config', 'G-RLQ6Y55SNC', { anonymize_ip:true, allow_ad_personalization_signals:false });
+    gtag('config', 'G-RLQ6Y55SNC', {
+      anonymize_ip: true,
+      allow_ad_personalization_signals: false
+    });
   </script>
 
+  <!-- CSS separado (misma estética) -->
   <link rel="stylesheet" href="./assets/css/styles.css" />
 </head>
 
 <body>
   <div class="fx" aria-hidden="true"></div>
 
+  <!-- NEÓN IZQUIERDO -->
   <div class="neon-sign" aria-hidden="true" title="Lo vas a sudar">
     <div>
       <div class="neon-text">LO VAS A SUDAR</div>
@@ -36,6 +94,7 @@
     </div>
   </div>
 
+  <!-- NEÓN DERECHO (JAPONÉS) -->
   <div class="neon-sign-right" aria-hidden="true" title="ハンバーガーと寿司">
     <div class="jp-text">ハンバーガーと寿司</div>
   </div>
@@ -44,9 +103,9 @@
     <header>
       <div class="brand-pill" id="brand">LoVasASudar.com · Calculadora de castigo calórico</div>
 
-      <div class="langBtns">
-        <button id="btnES" type="button" class="active">ES</button>
-        <button id="btnEN" type="button">EN</button>
+      <div class="langBtns" style="display:flex; gap:10px;">
+        <button id="btnES" type="button" class="active" aria-label="Cambiar a español">ES</button>
+        <button id="btnEN" type="button" aria-label="Switch to English">EN</button>
       </div>
     </header>
 
@@ -59,22 +118,7 @@
       <section class="grid" aria-label="Formulario de cálculo">
         <div class="field">
           <label for="food" id="lblFood">Alimento o bebida</label>
-
-          <!-- Fallback options (por si el JS no carga) -->
-          <select id="food">
-            <optgroup label="🍕 Comida">
-              <option value="happy_meal" data-kcal="500" data-label-es="Happy Meal McDonald's" data-label-en="McDonald's Happy Meal">Happy Meal McDonald's (~500 kcal)</option>
-              <option value="pizza_medium" data-kcal="850" data-label-es="Pizza mediana" data-label-en="Medium pizza">Pizza mediana (~850 kcal)</option>
-              <option value="burger" data-kcal="650" data-label-es="Hamburguesa" data-label-en="Burger">Hamburguesa (~650 kcal)</option>
-            </optgroup>
-            <optgroup label="🍺 Bebida">
-              <option value="beer_330" data-kcal="150" data-label-es="Cerveza 330 ml" data-label-en="Beer (330 ml)">Cerveza 330 ml (~150 kcal)</option>
-              <option value="gin_tonic" data-kcal="210" data-label-es="Gin-tonic" data-label-en="Gin & tonic">Gin-tonic (~210 kcal)</option>
-            </optgroup>
-            <optgroup label="—">
-              <option value="custom" data-kcal="0" data-label-es="Otro / personalizado" data-label-en="Other / custom">Otro / personalizado</option>
-            </optgroup>
-          </select>
+          <select id="food" aria-label="Alimento o bebida"></select>
 
           <div class="row2">
             <div class="field">
@@ -89,17 +133,14 @@
               <div class="hint" id="hintExtra">Se suman a lo anterior (comida + copas).</div>
             </div>
           </div>
-
-          <div class="ctaTopWrap">
-            <button class="cta ctaTop" id="btnCalcTop" type="button">CALCULAR EJERCICIO NECESARIO 💪</button>
-            <div class="hint" id="hintAutoCalc">Tip: esto se recalcula solo cuando cambias algo.</div>
-          </div>
         </div>
 
         <div class="field">
           <label for="weight" id="lblWeight">Peso (kg)</label>
           <input id="weight" type="number" min="35" max="200" step="1" value="80" inputmode="numeric" />
-          <div class="hint" id="hintWeight">El cálculo se hace por kg de peso (ecuación basada en MET).</div>
+          <div class="hint" id="hintWeight">
+            El cálculo se hace por kg de peso (ecuación basada en MET).
+          </div>
         </div>
 
         <div class="field">
@@ -109,10 +150,13 @@
             <option value="male">Hombre</option>
             <option value="female">Mujer</option>
           </select>
-          <div class="hint" id="hintGender">Ajuste aproximado (~5%). No es magia, es estadística con resaca.</div>
+          <div class="hint" id="hintGender">
+            Ajuste aproximado (~5%). No es magia, es estadística con resaca.
+          </div>
         </div>
       </section>
 
+      <!-- MODOS EXCLUYENTES -->
       <div class="modes" aria-label="Modos">
         <label class="mode" id="mNormal">
           <input type="radio" name="mode" value="normal" checked />
@@ -135,16 +179,14 @@
         </label>
       </div>
 
+      <!-- PANEL: NOCHE DE COPAS -->
       <div class="panel" id="panelDrinks">
         <h3 id="drinksTitle">🍻 Añade tus bebidas (se suman al total)</h3>
 
         <div class="row2">
           <div class="field">
             <label for="drink1" id="lblDrink1">Bebida</label>
-            <select id="drink1">
-              <option value="beer_330" data-kcal="150" data-label-es="Cerveza 330 ml" data-label-en="Beer (330 ml)">Cerveza 330 ml (~150 kcal)</option>
-              <option value="gin_tonic" data-kcal="210" data-label-es="Gin-tonic" data-label-en="Gin & tonic">Gin-tonic (~210 kcal)</option>
-            </select>
+            <select id="drink1"></select>
           </div>
           <div class="field">
             <label for="drink1n" id="lblDrink1n">Cantidad</label>
@@ -155,10 +197,7 @@
         <div class="row2">
           <div class="field">
             <label for="drink2" id="lblDrink2">Bebida (opcional)</label>
-            <select id="drink2">
-              <option value="beer_330" data-kcal="150">Cerveza 330 ml (~150 kcal)</option>
-              <option value="gin_tonic" data-kcal="210">Gin-tonic (~210 kcal)</option>
-            </select>
+            <select id="drink2"></select>
           </div>
           <div class="field">
             <label for="drink2n" id="lblDrink2n">Cantidad</label>
@@ -169,10 +208,7 @@
         <div class="row2">
           <div class="field">
             <label for="drink3" id="lblDrink3">Bebida (opcional)</label>
-            <select id="drink3">
-              <option value="beer_330" data-kcal="150">Cerveza 330 ml (~150 kcal)</option>
-              <option value="gin_tonic" data-kcal="210">Gin-tonic (~210 kcal)</option>
-            </select>
+            <select id="drink3"></select>
           </div>
           <div class="field">
             <label for="drink3n" id="lblDrink3n">Cantidad</label>
@@ -180,9 +216,12 @@
           </div>
         </div>
 
-        <div class="hint" id="drinksHint">Tip: si mezclas “cubo cerveza” + “gin-tonic”, el universo no juzga… pero las matemáticas sí.</div>
+        <div class="hint" id="drinksHint">
+          Tip: si mezclas “cubo cerveza” + “gin-tonic”, el universo no juzga… pero las matemáticas sí.
+        </div>
       </div>
 
+      <!-- PANEL: BATALLA -->
       <div class="panel" id="panelBattle">
         <h3 id="battleTitle">⚔️ Batalla de colegas (tú + 3)</h3>
         <div class="friends">
@@ -256,16 +295,13 @@
         </div>
       </div>
 
+      <!-- PANEL: INVERSA -->
       <div class="panel" id="panelInverse">
         <h3 id="inverseTitle">🔁 Calculadora inversa</h3>
         <div class="row2">
           <div class="field">
             <label for="invSport" id="lblInvSport">Deporte</label>
-            <select id="invSport">
-              <option value="run">Correr suave</option>
-              <option value="walk">Caminar rápido</option>
-              <option value="bike">Bici moderada</option>
-            </select>
+            <select id="invSport"></select>
           </div>
           <div class="field">
             <label for="invHours" id="lblInvHours">Duración (horas)</label>
@@ -275,13 +311,12 @@
         </div>
       </div>
 
-      <!-- CTA central (en móvil lo ocultamos por CSS) -->
       <button class="cta" id="btnCalc" type="button">CALCULAR EJERCICIO NECESARIO 💪</button>
 
-      <section class="results" id="results">
+      <section class="results" id="results" aria-label="Resultados">
         <h2 id="resTitle">🎯 Resultados</h2>
 
-        <div class="kpi">
+        <div class="kpi" id="kpiBlock">
           <div class="box">
             <p class="big" id="kcalOut">0 kcal</p>
             <p class="small" id="kcalSub">Calorías totales estimadas</p>
@@ -313,15 +348,19 @@
           <div class="sports" id="inverseList"></div>
         </div>
 
-        <div class="btnRow">
+        <div class="btnRow" aria-label="Acciones meme">
+          <button class="btnLite" id="btnShareTop" type="button" style="display:none;">📲 Compartir MEME</button>
+          <a class="btnLite" id="btnDownloadTop" download="lovasasudar-meme.png" href="#" style="display:none;">⬇️ Descargar MEME</a>
           <button class="btnLite" id="btnMeme" type="button">📸 Generar MEME</button>
-          <button class="btnLite" id="btnOpenMeme" type="button" style="display:none;">🖼️ Ver MEME full-screen</button>
-          <button class="btnLite" id="btnShare" type="button" style="display:none;">📲 Compartir</button>
-          <a class="btnLite" id="btnDownload" download="lovasasudar-meme.png" href="#" style="display:none;">⬇️ Descargar MEME</a>
         </div>
 
         <div class="memeWrap" id="memeWrap">
           <canvas id="memeCanvas" width="1200" height="630"></canvas>
+        </div>
+
+        <div class="btnRow" aria-label="Acciones meme (abajo)">
+          <button class="btnLite" id="btnShare" type="button" style="display:none;">📲 Compartir</button>
+          <a class="btnLite" id="btnDownload" download="lovasasudar-meme.png" href="#" style="display:none;">⬇️ Descargar MEME</a>
         </div>
 
         <div class="fineprint" id="fineprint">
@@ -331,30 +370,7 @@
     </main>
   </div>
 
-  <!-- Sticky CTA móvil -->
-  <div class="stickyCta" id="stickyCta">
-    <button class="stickyBtn" id="btnCalcSticky" type="button">CALCULAR 💪</button>
-  </div>
-
-  <!-- Meme modal -->
-  <div class="memeModal" id="memeModal" aria-hidden="true">
-    <div class="memeModalInner" role="dialog" aria-modal="true">
-      <button class="memeClose" id="btnCloseMeme" type="button">✕</button>
-      <div class="memeModalTitle">
-        <span id="memeModalTitle">MEME OFICIAL</span>
-        <span class="memeModalSub" id="memeModalSub">Comparte el crimen</span>
-      </div>
-      <div class="memeModalCanvasWrap">
-        <canvas id="memeCanvasModal" width="1200" height="630"></canvas>
-      </div>
-      <div class="memeModalActions">
-        <button class="btnLite" id="btnShareModal" type="button" style="display:none;">📲 Compartir</button>
-        <a class="btnLite" id="btnDownloadModal" download="lovasasudar-meme.png" href="#" style="display:none;">⬇️ Descargar</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- IMPORTANT: script al final y sin defer -->
-  <script src="./assets/js/app.js"></script>
+  <!-- JS modular -->
+  <script type="module" src="./assets/js/app.js"></script>
 </body>
 </html>

@@ -1,0 +1,7 @@
+[
+  {
+    "id": "daily_1",
+    "es": { "title": "🎯 Reto del día", "text": "Haz un cálculo modo noche de copas aunque sea martes. Ciencia.", "chip": "#RetoDelDía" },
+    "en": { "title": "🎯 Daily challenge", "text": "Do a night-out calculation even if it’s Tuesday. Science.", "chip": "#Daily" }
+  }
+]

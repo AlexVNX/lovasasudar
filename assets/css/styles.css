@@ -19,12 +19,6 @@
 *{box-sizing:border-box}
 html,body{height:100%}
 
-/* ===== IMPORTANT: stop mobile right-gap / horizontal bounce ===== */
-html, body{
-  width:100%;
-  overflow-x:hidden;
-}
-
 body{
   margin:0;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -34,18 +28,16 @@ body{
     radial-gradient(900px 700px at 88% 18%, rgba(255,79,216,.20), transparent 55%),
     radial-gradient(900px 900px at 70% 90%, rgba(56,232,255,.14), transparent 50%),
     linear-gradient(180deg, var(--bg2), var(--bg1) 70%);
-  overflow-x:hidden;
+  overflow-x:hidden; /* evita el “hueco raro” a la derecha */
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* FX background layer (avoid inset:-2px to prevent some mobile overflow quirks) */
 .fx{
   position:fixed;
-  inset:0;
+  inset:-2px;
   pointer-events:none;
   z-index:0;
   opacity:.9;
-  overflow:hidden;
   background:
     radial-gradient(600px 900px at 100% 15%, rgba(255,180,72,.18), transparent 60%),
     radial-gradient(800px 700px at 0% 40%, rgba(56,232,255,.12), transparent 55%);
@@ -55,9 +47,8 @@ body{
   position:relative;
   z-index:2;
   max-width:1150px;
-  margin: 18px auto 70px;
+  margin: 18px auto 90px; /* deja espacio para sticky en móvil */
   padding: 0 14px;
-  overflow-x: clip; /* helps kill right gap in modern browsers */
 }
 
 header{
@@ -98,9 +89,7 @@ header{
   border-color: rgba(91,124,250,.5);
 }
 
-/* =========================
-   NEON IZQUIERDO
-========================= */
+/* NEON IZQUIERDO */
 .neon-sign{
   position:fixed;
   left: 16px;
@@ -138,7 +127,6 @@ header{
   z-index:-1;
   pointer-events:none;
   animation: glowSpin 6.5s linear infinite;
-  max-width:100%;
 }
 @keyframes glowSpin{ 0%{transform: rotate(0deg)} 100%{transform: rotate(360deg)} }
 
@@ -175,9 +163,7 @@ header{
   21% { opacity: .75; }
 }
 
-/* =========================
-   NEON DERECHO (JP)
-========================= */
+/* NEON DERECHO (JP) */
 .neon-sign-right{
   position:fixed;
   right: 16px;
@@ -214,7 +200,6 @@ header{
   z-index:-1;
   pointer-events:none;
   animation: glowSpin 7.2s linear infinite reverse;
-  max-width:100%;
 }
 .jp-text{
   writing-mode: vertical-rl;
@@ -234,6 +219,22 @@ header{
   0%, 18%, 21%, 60%, 100% { opacity: 1; filter: brightness(1); }
   19%, 61% { opacity: .85; filter: brightness(1.1); }
   20% { opacity: .7; }
+}
+
+/* Móvil: neones discretos (no “barra cutre” ni scroll lateral) */
+@media (max-width: 980px){
+  .neon-sign, .neon-sign-right{
+    position: static;
+    width: 100%;
+    margin: 0 0 10px;
+    flex-direction:row;
+    gap:12px;
+    border-radius: 16px;
+  }
+  .neon-text,.neon-sub,.jp-text{ writing-mode: horizontal-tb; }
+  header{ flex-direction: column; align-items: stretch; }
+  .brand-pill{ justify-content:center; text-align:center; }
+  .langBtns{ justify-content:center; }
 }
 
 .card{
@@ -283,9 +284,7 @@ h1{
   gap:16px;
   align-items:start;
 }
-@media (max-width: 960px){
-  .grid{grid-template-columns:1fr}
-}
+@media (max-width: 960px){ .grid{grid-template-columns:1fr} }
 
 .field label{
   display:block;
@@ -317,11 +316,8 @@ select:focus, input:focus{
   gap:14px;
   margin-top: 8px;
 }
-@media (max-width: 960px){
-  .row2{grid-template-columns:1fr}
-}
+@media (max-width: 960px){ .row2{grid-template-columns:1fr} }
 
-/* ===== MODES ===== */
 .modes{
   display:flex;
   flex-wrap:nowrap;
@@ -353,25 +349,6 @@ select:focus, input:focus{
 .mode.active{
   border-color: rgba(56,232,255,.55);
   box-shadow: 0 0 0 3px rgba(56,232,255,.14);
-}
-
-/* MOBILE: modes as 2x2 grid (no horizontal scroll) */
-@media (max-width: 980px){
-  .modes{
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap:10px;
-    overflow: visible;
-    padding: 10px 0 0;
-    margin-top: 12px;
-  }
-  .mode{
-    width:100%;
-    justify-content:flex-start;
-    border-radius: 16px;
-    padding: 12px 12px;
-  }
-  .mode input{ flex:0 0 auto; }
 }
 
 .panel{
@@ -406,6 +383,17 @@ select:focus, input:focus{
 }
 .cta:hover{ transform: translateY(-1px); filter: brightness(1.05); }
 
+/* CTA arriba */
+.ctaTopWrap{ margin-top: 14px; }
+.ctaTop{ margin-top: 10px; }
+#hintAutoCalc{ margin-top: 10px; }
+
+/* En móvil, evita duplicar demasiado: oculta el CTA grande del medio si quieres.
+   Yo lo dejo visible; el sticky es el que manda. */
+@media (max-width: 960px){
+  .ctaTopWrap{ margin-bottom: 6px; }
+}
+
 .results{
   margin-top:18px;
   border:1px solid rgba(255,255,255,.10);
@@ -421,9 +409,7 @@ select:focus, input:focus{
   grid-template-columns: repeat(3, 1fr);
   gap:12px;
 }
-@media (max-width: 960px){
-  .kpi{grid-template-columns:1fr}
-}
+@media (max-width: 960px){ .kpi{grid-template-columns:1fr} }
 
 .kpi .box{
   padding:14px 14px;
@@ -450,9 +436,7 @@ select:focus, input:focus{
   grid-template-columns: 1fr 1fr;
   gap:12px;
 }
-@media (max-width: 960px){
-  .sports{grid-template-columns:1fr}
-}
+@media (max-width: 960px){ .sports{grid-template-columns:1fr} }
 
 .sportRow{
   border:1px solid rgba(255,255,255,.10);
@@ -518,9 +502,7 @@ canvas{display:block; width:100%; height:auto;}
   grid-template-columns: 1fr 1fr;
   gap:12px;
 }
-@media (max-width: 960px){
-  .friends{grid-template-columns:1fr}
-}
+@media (max-width: 960px){ .friends{grid-template-columns:1fr} }
 
 .friendCard{
   border:1px solid rgba(255,255,255,.10);
@@ -535,79 +517,110 @@ canvas{display:block; width:100%; height:auto;}
   gap:10px;
 }
 
+/* Sticky CTA móvil (Acción 2) */
+.stickyCta{
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, rgba(5,6,23,0), rgba(5,6,23,.85) 40%, rgba(5,6,23,.95));
+  backdrop-filter: blur(10px);
+  display:none;
+}
+.stickyBtn{
+  width:100%;
+  border:0;
+  border-radius: 999px;
+  padding: 16px 18px;
+  font-size: 16px;
+  font-weight: 950;
+  color:#fff;
+  cursor:pointer;
+  background: linear-gradient(90deg, rgba(91,124,250,1), rgba(255,79,216,1));
+  box-shadow: 0 18px 70px rgba(91,124,250,.18), 0 18px 70px rgba(255,79,216,.14);
+  touch-action: manipulation;
+}
+@media (max-width: 980px){
+  .stickyCta{ display:block; }
+}
+
+/* Meme modal (Acción 3) */
+.memeModal{
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0,0,0,.68);
+  backdrop-filter: blur(8px);
+  display:none;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+}
+.memeModal.isOpen{ display:flex; }
+
+.memeModalInner{
+  width: min(980px, 100%);
+  max-height: 92vh;
+  border-radius: 20px;
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(10,14,40,.78);
+  box-shadow: 0 26px 90px rgba(0,0,0,.60);
+  overflow: hidden;
+  position: relative;
+  display:flex;
+  flex-direction: column;
+}
+
+.memeClose{
+  position:absolute;
+  top:10px;
+  right:10px;
+  width:42px;
+  height:42px;
+  border-radius: 14px;
+  border:1px solid rgba(255,255,255,.14);
+  background: rgba(4,7,22,.55);
+  color: rgba(255,255,255,.92);
+  cursor:pointer;
+  font-weight: 950;
+}
+
+.memeModalTitle{
+  padding: 16px 54px 10px 16px;
+  display:flex;
+  gap:10px;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,.10);
+}
+.memeModalSub{
+  color: var(--muted2);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.memeModalCanvasWrap{
+  padding: 14px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+#memeCanvasModal{
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.20);
+}
+
+.memeModalActions{
+  padding: 12px 14px 16px;
+  border-top: 1px solid rgba(255,255,255,.10);
+  display:flex;
+  gap:10px;
+}
+
 /* Seguridad anti “no funciona nada” */
 .card, .field, select, input, button, label, a { pointer-events:auto; }
-
-/* ===== Mobile: better CTA + buttons ===== */
-@media (max-width: 980px){
-  .cta{
-    font-size: 17px;
-    padding: 16px 16px;
-  }
-  .btnRow{ gap:8px; }
-  .btnLite{ flex: 1 1 100%; }
-}
-
-/* ===== Mobile: header + neons as clean sticky banners ===== */
-@media (max-width: 980px){
-  header{
-    flex-direction: column;
-    align-items: stretch;
-    gap:10px;
-    margin-bottom:12px;
-  }
-  .brand-pill{
-    justify-content:center;
-    text-align:center;
-  }
-  .langBtns{
-    justify-content:center;
-  }
-
-  .neon-sign, .neon-sign-right{
-    position: sticky;
-    top: 10px;
-    left: 0;
-    right: 0;
-    margin: 0 0 10px;
-    width: 100%;
-    padding: 10px 12px;
-    border-radius: 16px;
-    flex-direction:row;
-    gap:12px;
-    justify-content:center;
-    box-shadow:
-      0 10px 40px rgba(0,0,0,.35),
-      0 0 18px rgba(56,232,255,.10);
-  }
-
-  .neon-sign::before,
-  .neon-sign-right::before{
-    inset:-10px;
-    filter: blur(18px);
-    opacity:.55;
-  }
-
-  .neon-text,.neon-sub,.jp-text{
-    writing-mode: horizontal-tb;
-    text-orientation: mixed;
-  }
-
-  .neon-text{
-    font-size: 16px;
-    letter-spacing: 1.5px;
-  }
-  .neon-sub{
-    font-size: 12px;
-    margin-top: 0;
-    margin-left: 10px;
-  }
-  .jp-text{
-    font-size: 16px;
-    letter-spacing: .5px;
-  }
-
-  .grid{
-    grid-template-columns:1fr;
-  }
-}

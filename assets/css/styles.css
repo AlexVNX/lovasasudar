@@ -353,3 +353,20 @@ canvas{
   width:100%;
   height:auto;
 }
+
+/* ===== Mobile overflow fix (right gap / horizontal scroll) ===== */
+html, body{
+  width:100%;
+  overflow-x:hidden;
+}
+
+.wrap{
+  overflow-x: clip; /* mejor que hidden en navegadores modernos */
+}
+
+/* Evita que los neones y sus halos (blur) "empujen" el layout */
+.neon-sign::before,
+.neon-sign-right::before{
+  max-width:100%;
+}
+

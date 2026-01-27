@@ -10,8 +10,7 @@
   <meta name="robots" content="index,follow,max-image-preview:large" />
 
   <title id="metaTitle">LoVasASudar.com · Calculadora de castigo calórico</title>
-<meta id="metaDesc" name="description" content="Calcula el castigo calórico de tu cena/noche de copas y descubre cuánto ejercicio tendrías que hacer para sudarlo." />
-
+  <meta id="metaDesc" name="description" content="Calcula el castigo calórico de tu cena/noche de copas y descubre cuánto ejercicio tendrías que hacer para sudarlo." />
 
   <!-- Canonical + alternates (misma página con ?lang=) -->
   <link id="linkCanonical" rel="canonical" href="https://lovasasudar.com/" />
@@ -98,6 +97,7 @@
       --radius: 22px;
       --good:#63ffb8;
       --warn:#ffd66a;
+      --bad:#ff6b6b;
     }
 
     *{box-sizing:border-box}
@@ -191,7 +191,7 @@
         0 16px 70px rgba(0,0,0,.55),
         0 0 22px rgba(56,232,255,.18),
         0 0 38px rgba(255,79,216,.16);
-      pointer-events:none; /* IMPORTANTE: flotante y no molesta */
+      pointer-events:none;
     }
     .neon-sign::before{
       content:"";
@@ -265,7 +265,7 @@
         0 16px 70px rgba(0,0,0,.55),
         0 0 26px rgba(255,182,72,.22),
         0 0 44px rgba(255,182,72,.18);
-      pointer-events:none; /* IMPORTANTE: flotante y no molesta */
+      pointer-events:none;
     }
     .neon-sign-right::before{
       content:"";
@@ -304,7 +304,6 @@
       20% { opacity: .7; }
     }
 
-    /* En móvil: neones a barra + layout más compacto */
     @media (max-width: 980px){
       .neon-sign, .neon-sign-right{
         position: sticky;
@@ -557,7 +556,7 @@
       align-items:center;
       justify-content:center;
       touch-action: manipulation;
-      flex: 1 1 170px; /* mobile friendly */
+      flex: 1 1 170px;
     }
     .btnLite:hover{ box-shadow: 0 0 0 3px rgba(91,124,250,.16); }
 
@@ -589,6 +588,111 @@
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap:10px;
+    }
+
+    /* =========================
+       NUEVO: Reto del día + Leaderboard + Evolución
+    ========================== */
+    .banner{
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(90deg, rgba(91,124,250,.18), rgba(255,79,216,.10));
+      border-radius: 18px;
+      padding: 12px 12px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      margin: 10px 0 16px;
+    }
+    .banner b{font-weight:950}
+    .banner .meta{color:var(--muted2); font-size:13px; margin-top:4px; line-height:1.25}
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(4,7,22,.35);
+      color:rgba(255,255,255,.88);
+      font-weight:900;
+      white-space:nowrap;
+      user-select:none;
+    }
+    .pillOk{ border-color: rgba(99,255,184,.35); box-shadow: 0 0 0 3px rgba(99,255,184,.10); }
+    .pillWarn{ border-color: rgba(255,214,106,.35); box-shadow: 0 0 0 3px rgba(255,214,106,.10); }
+    .pillBad{ border-color: rgba(255,107,107,.35); box-shadow: 0 0 0 3px rgba(255,107,107,.10); }
+
+    .miniGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-top:12px;
+    }
+    @media (max-width: 960px){ .miniGrid{grid-template-columns:1fr} }
+
+    .miniPanel{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(4,7,22,.32);
+      border-radius: 18px;
+      padding: 14px;
+    }
+    .miniPanel h3{
+      margin:0 0 10px;
+      font-size:16px;
+      font-weight:950;
+      letter-spacing:.2px;
+    }
+    .smallRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:10px 10px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(4,7,22,.28);
+      margin-top:10px;
+    }
+    .smallRow .l{min-width:0}
+    .smallRow .l b{display:block; font-weight:950}
+    .smallRow .l span{display:block; color:var(--muted2); font-size:13px}
+    .smallRow .r{font-weight:950}
+    .muted{ color: var(--muted2); font-size: 13px; line-height:1.35; }
+
+    .inlineForm{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-top:10px;
+    }
+    .inlineForm input[type="text"]{
+      flex: 1 1 200px;
+      padding: 12px 12px;
+      border-radius: 14px;
+    }
+    .btnPrimary{
+      border:0;
+      border-radius: 14px;
+      padding: 12px 12px;
+      font-weight:950;
+      cursor:pointer;
+      color:#fff;
+      background: linear-gradient(90deg, rgba(91,124,250,1), rgba(255,79,216,1));
+      box-shadow: 0 12px 40px rgba(91,124,250,.18), 0 12px 40px rgba(255,79,216,.12);
+      flex: 0 0 auto;
+    }
+    .btnPrimary:hover{ filter: brightness(1.05); }
+
+    .toast{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(10,14,40,.35);
+      color: rgba(255,255,255,.88);
+      display:none;
     }
 
     /* Seguridad anti “no funciona nada” */
@@ -628,10 +732,20 @@
         Mete lo que vas a comer y beber y descubre cuánto ejercicio tendrías que hacer para sudarlo. Perfecta para cenas con amigos y noches de copas.
       </p>
 
+      <!-- =========================
+           NUEVO: Reto del día/semana (sin BBDD)
+      ========================== -->
+      <div class="banner" id="challengeBanner" style="display:none;">
+        <div style="min-width:0;">
+          <b id="challengeTitle">🎯 Reto del día</b>
+          <div class="meta" id="challengeText">…</div>
+        </div>
+        <div class="chip" id="challengeChip">#Reto</div>
+      </div>
+
       <section class="grid" aria-label="Formulario de cálculo">
         <div class="field">
           <label for="food" id="lblFood">Alimento o bebida</label>
-
           <select id="food" aria-label="Alimento o bebida"></select>
 
           <div class="row2">
@@ -866,7 +980,6 @@
         <div class="btnRow" aria-label="Acciones meme">
           <button class="btnLite" id="btnShareTop" type="button" style="display:none;">📲 Compartir MEME</button>
           <a class="btnLite" id="btnDownloadTop" download="lovasasudar-meme.png" href="#" style="display:none;">⬇️ Descargar MEME</a>
-          <!-- mantenemos el antiguo por compatibilidad -->
           <button class="btnLite" id="btnMeme" type="button">📸 Generar MEME</button>
         </div>
 
@@ -874,7 +987,6 @@
           <canvas id="memeCanvas" width="1200" height="630"></canvas>
         </div>
 
-        <!-- Botones repetidos abajo (menos fricción móvil) -->
         <div class="btnRow" aria-label="Acciones meme (abajo)">
           <button class="btnLite" id="btnShare" type="button" style="display:none;">📲 Compartir</button>
           <a class="btnLite" id="btnDownload" download="lovasasudar-meme.png" href="#" style="display:none;">⬇️ Descargar MEME</a>
@@ -882,6 +994,82 @@
 
         <div class="fineprint" id="fineprint">
           Estimaciones aproximadas basadas en MET (la física no negocia, pero sí te deja elegir dardos).
+        </div>
+
+        <!-- =========================
+             NUEVO: Evolución + Ranking semanal (local + preparado para BBDD)
+        ========================== -->
+        <div class="divider"></div>
+
+        <div class="miniGrid" aria-label="Evolución y ranking">
+          <div class="miniPanel" id="panelHistory">
+            <h3 id="historyTitle">📈 Tu evolución (local)</h3>
+            <div class="muted" id="historySub">
+              Guardado en tu navegador (anónimo). Cuando metamos BBDD, esto podrá sincronizarse.
+            </div>
+
+            <div class="smallRow">
+              <div class="l">
+                <b id="histBestLabel">Mejor (menos kcal)</b>
+                <span id="histBestSub">—</span>
+              </div>
+              <div class="r" id="histBestVal">—</div>
+            </div>
+
+            <div class="smallRow">
+              <div class="l">
+                <b id="histWorstLabel">Peor (más kcal)</b>
+                <span id="histWorstSub">—</span>
+              </div>
+              <div class="r" id="histWorstVal">—</div>
+            </div>
+
+            <div class="smallRow">
+              <div class="l">
+                <b id="histCountLabel">Total cálculos</b>
+                <span id="histCountSub">últimos 10</span>
+              </div>
+              <div class="r" id="histCountVal">0</div>
+            </div>
+
+            <div id="historyList" style="margin-top:10px;"></div>
+
+            <div class="btnRow" style="margin-top:12px;">
+              <button class="btnLite" id="btnClearHistory" type="button">🧽 Borrar historial local</button>
+            </div>
+          </div>
+
+          <div class="miniPanel" id="panelLeaderboard">
+            <h3 id="lbTitle">🏆 Ranking semanal</h3>
+            <div class="muted" id="lbSub">
+              Sin BBDD: demo local. Con Supabase: ranking global real.
+            </div>
+
+            <div class="smallRow" style="margin-top:12px;">
+              <div class="l">
+                <b id="lbWeekLabel">Semana</b>
+                <span id="lbWeekSub">clave</span>
+              </div>
+              <div class="r" id="lbWeekVal">—</div>
+            </div>
+
+            <div class="inlineForm" aria-label="Unirse al ranking">
+              <input id="nickname" type="text" maxlength="24" placeholder="Nickname para entrar al ranking (opcional)" />
+              <button class="btnPrimary" id="btnJoin" type="button">Entrar</button>
+            </div>
+
+            <div class="toast" id="lbToast"></div>
+
+            <div class="btnRow" style="margin-top:10px;">
+              <button class="btnLite" id="btnRefreshLB" type="button">🔄 Actualizar ranking</button>
+            </div>
+
+            <div id="lbList" style="margin-top:10px;"></div>
+
+            <div class="muted" style="margin-top:10px;">
+              Anti-troll: si el total supera 20.000 kcal, se permite meme pero no entra al ranking.
+            </div>
+          </div>
         </div>
       </section>
     </main>
@@ -911,6 +1099,12 @@
         pageDesc:"Calcula el castigo calórico de tu cena/noche de copas y descubre cuánto ejercicio tendrías que hacer para sudarlo.",
         title:"LoVasASudar.com",
         subtitle:"Mete lo que vas a comer y beber y descubre cuánto ejercicio tendrías que hacer para sudarlo. Perfecta para cenas con amigos y noches de copas.",
+
+        // Challenge
+        challengeTitle:"🎯 Reto del día",
+        challengeChip:"Reto",
+        challengeSub:"Micro-reto para darle juego (sin BBDD).",
+
         lblFood:"Alimento o bebida",
         lblUnits:"Nº de unidades",
         hintUnits:"Ej: 3 cervezas → pon 3 unidades.",
@@ -964,7 +1158,34 @@
         memeSub:"Castigo calórico (oficial y sin abogados)",
         memeFoodFallback:"misterio comestible",
         memeShareText:"Mira mi castigo calórico 😭",
-        memeShareFail:"No se pudo compartir. Descárgalo y súbelo manualmente."
+        memeShareFail:"No se pudo compartir. Descárgalo y súbelo manualmente.",
+
+        // History
+        historyTitle:"📈 Tu evolución (local)",
+        historySub:"Guardado en tu navegador (anónimo).",
+        best:"Mejor (menos kcal)",
+        worst:"Peor (más kcal)",
+        total:"Total cálculos",
+        last10:"últimos 10",
+        clear:"🧽 Borrar historial local",
+        cleared:"Historial local borrado.",
+
+        // Leaderboard
+               // Leaderboard
+        lbTitle:"🏆 Ranking semanal",
+        lbSub:"Sin BBDD: demo local. Con Supabase: ranking global real.",
+        lbWeek:"Semana",
+        lbKey:"clave",
+        nicknamePh:"Nickname para entrar al ranking (opcional)",
+        join:"Entrar",
+        joinedAs:(n)=>`Listo: entras como “${n}”.`,
+        needNick:"Pon un nickname primero 🙂",
+        rateLimited:"Espera un poco antes de volver a enviar (anti-spam).",
+        tooHigh:"Demasiadas kcal para ranking (meme sí, ranking no).",
+        lbRefresh:"🔄 Actualizar ranking",
+        lbEmpty:"Aún no hay nadie en el ranking de esta semana. Sé el primero 😈",
+        you:"(tú)",
+        weekKeyLabel:"Semana"
       },
       en:{
         brand:"LoVasASudar.com · Calorie payback calculator",
@@ -972,6 +1193,12 @@
         pageDesc:"Estimate your calorie payback and how much exercise you’d need to sweat it off.",
         title:"LoVasASudar.com",
         subtitle:"Add what you’ll eat and drink and see how much exercise you’d need to sweat it off. Perfect for dinners with friends and nights out.",
+
+        // Challenge
+        challengeTitle:"🎯 Daily challenge",
+        challengeChip:"Challenge",
+        challengeSub:"A tiny challenge to make it sticky (no DB).",
+
         lblFood:"Food or drink",
         lblUnits:"Units",
         hintUnits:"Ex: 3 beers → enter 3 units.",
@@ -1025,7 +1252,33 @@
         memeSub:"Calorie payback (official-ish, lawyers asleep)",
         memeFoodFallback:"mysterious edible object",
         memeShareText:"Look at my calorie payback 😭",
-        memeShareFail:"Couldn’t share. Download it and upload manually."
+        memeShareFail:"Couldn’t share. Download it and upload manually.",
+
+        // History
+        historyTitle:"📈 Your progress (local)",
+        historySub:"Saved in your browser (anonymous).",
+        best:"Best (lowest kcal)",
+        worst:"Worst (highest kcal)",
+        total:"Total calculations",
+        last10:"last 10",
+        clear:"🧽 Clear local history",
+        cleared:"Local history cleared.",
+
+        // Leaderboard
+        lbTitle:"🏆 Weekly leaderboard",
+        lbSub:"No DB: local demo. With Supabase: real global leaderboard.",
+        lbWeek:"Week",
+        lbKey:"key",
+        nicknamePh:"Nickname to join (optional)",
+        join:"Join",
+        joinedAs:(n)=>`Done: you’re “${n}”.`,
+        needNick:"Type a nickname first 🙂",
+        rateLimited:"Wait a bit before submitting again (anti-spam).",
+        tooHigh:"Too many calories for leaderboard (meme yes, leaderboard no).",
+        lbRefresh:"🔄 Refresh leaderboard",
+        lbEmpty:"Nobody on this week’s leaderboard yet. Be the first 😈",
+        you:"(you)",
+        weekKeyLabel:"Week"
       }
     };
 
@@ -1034,77 +1287,61 @@
     // =========================
     const CATALOG = [
       // Food
-      { id:"pizza_medium", group:"food", kcal:850,  es:"Pizza mediana", en:"Medium pizza" },
-      { id:"burger",      group:"food", kcal:650,  es:"Hamburguesa", en:"Burger" },
-      { id:"kebab_full",  group:"food", kcal:1050, es:"Kebab completo", en:"Full kebab" },
-      { id:"bravas",      group:"food", kcal:520,  es:"Ración bravas", en:"Patatas bravas (portion)" },
-      { id:"bocata_calam",group:"food", kcal:460,  es:"Bocata calamares", en:"Calamari sandwich" },
-      { id:"happy_meal",  group:"food", kcal:500,  es:"Happy Meal McDonald's", en:"McDonald's Happy Meal" },
-      { id:"big_mac",     group:"food", kcal:550,  es:"Big Mac", en:"Big Mac" },
-      { id:"mc_menu_med", group:"food", kcal:510,  es:"Menú mediano McDonald's", en:"McDonald's medium meal" },
-      { id:"mc_nug_6",    group:"food", kcal:250,  es:"6 Nuggets McDonald's", en:"McDonald's 6 nuggets" },
-      { id:"mc_fries_med",group:"food", kcal:340,  es:"Patatas fritas medianas McDonald's", en:"McDonald's medium fries" },
-      { id:"bk_wedges",   group:"food", kcal:420,  es:"Patatas gajo Burger King", en:"Burger King wedges" },
-      { id:"pizza_slice_cheese", group:"food", kcal:450, es:"Porción pizza queso (1/8 mediana)", en:"Cheese pizza slice (1/8 medium)" },
-      { id:"pizza_slice_pep",    group:"food", kcal:500, es:"Porción pizza pepperoni (1/8 mediana)", en:"Pepperoni pizza slice (1/8 medium)" },
-      { id:"pizza_family_cheese",group:"food", kcal:3600,es:"Pizza familiar queso entera", en:"Family cheese pizza (whole)" },
-      { id:"pizza_family_pep",   group:"food", kcal:4000,es:"Pizza familiar pepperoni entera", en:"Family pepperoni pizza (whole)" },
-      { id:"lasagna",     group:"food", kcal:600,  es:"Lasaña boloñesa", en:"Bolognese lasagna" },
-      { id:"pasta_carbon",group:"food", kcal:700,  es:"Ración pasta carbonara", en:"Carbonara pasta (portion)" },
+      { id:"pizza_medium", kcal:850,  group:"food",  es:"Pizza mediana", en:"Medium pizza" },
+      { id:"burger",      kcal:650,  group:"food",  es:"Hamburguesa", en:"Burger" },
+      { id:"kebab_full",  kcal:1050, group:"food",  es:"Kebab completo", en:"Full kebab" },
+      { id:"bravas",      kcal:520,  group:"food",  es:"Ración bravas", en:"Patatas bravas (portion)" },
+      { id:"bocata_calam",kcal:460,  group:"food",  es:"Bocata calamares", en:"Calamari sandwich" },
+      { id:"happy_meal",  kcal:500,  group:"food",  es:"Happy Meal McDonald's", en:"McDonald's Happy Meal" },
+      { id:"big_mac",     kcal:550,  group:"food",  es:"Big Mac", en:"Big Mac" },
+      { id:"mc_menu_med", kcal:510,  group:"food",  es:"Menú mediano McDonald's", en:"McDonald's medium meal" },
+      { id:"mc_nug_6",    kcal:250,  group:"food",  es:"6 Nuggets McDonald's", en:"McDonald's 6 nuggets" },
+      { id:"mc_fries_med",kcal:340,  group:"food",  es:"Patatas fritas medianas McDonald's", en:"McDonald's medium fries" },
+      { id:"bk_wedges",   kcal:420,  group:"food",  es:"Patatas gajo Burger King", en:"Burger King wedges" },
+      { id:"pizza_slice_cheese", kcal:450, group:"food", es:"Porción pizza queso (1/8 mediana)", en:"Cheese pizza slice (1/8 medium)" },
+      { id:"pizza_slice_pep",    kcal:500, group:"food", es:"Porción pizza pepperoni (1/8 mediana)", en:"Pepperoni pizza slice (1/8 medium)" },
+      { id:"pizza_family_cheese",kcal:3600,group:"food", es:"Pizza familiar queso entera", en:"Family cheese pizza (whole)" },
+      { id:"pizza_family_pep",   kcal:4000,group:"food", es:"Pizza familiar pepperoni entera", en:"Family pepperoni pizza (whole)" },
+      { id:"lasagna",     kcal:600,  group:"food",  es:"Lasaña boloñesa", en:"Bolognese lasagna" },
+      { id:"pasta_carbon",kcal:700,  group:"food",  es:"Ración pasta carbonara", en:"Carbonara pasta (portion)" },
 
-      { id:"tortilla_pincho",group:"food", kcal:250, es:"Pincho de tortilla", en:"Spanish omelette slice" },
-      { id:"bravas_2",       group:"food", kcal:500, es:"Ración patatas bravas", en:"Patatas bravas (portion)" },
-      { id:"croquetas_3",    group:"food", kcal:350, es:"3 croquetas de jamón", en:"3 ham croquettes" },
-      { id:"bocata_jamon",   group:"food", kcal:450, es:"Bocadillo de jamón serrano", en:"Serrano ham sandwich" },
-      { id:"bocata_calam_2", group:"food", kcal:550, es:"Bocadillo de calamares", en:"Calamari sandwich" },
+      { id:"tortilla_pincho",kcal:250, group:"food", es:"Pincho de tortilla", en:"Spanish omelette slice" },
+      { id:"croquetas_3",   kcal:350, group:"food", es:"3 croquetas de jamón", en:"3 ham croquettes" },
+      { id:"bocata_jamon",  kcal:450, group:"food", es:"Bocadillo de jamón serrano", en:"Serrano ham sandwich" },
 
-      { id:"donut",      group:"food", kcal:280, es:"Donut clásico", en:"Classic donut" },
-      { id:"croissant",  group:"food", kcal:220, es:"Croissant de mantequilla", en:"Butter croissant" },
-      { id:"palmera_choc",group:"food",kcal:400, es:"Palmera de chocolate", en:"Chocolate palmier" },
-      { id:"brownie",    group:"food", kcal:450, es:"Brownie de chocolate", en:"Chocolate brownie" },
-      { id:"muffin",     group:"food", kcal:450, es:"Muffin de chocolate", en:"Chocolate muffin" },
-      { id:"cheesecake", group:"food", kcal:550, es:"Tarta de queso porción", en:"Cheesecake slice" },
-      { id:"choc_cake",  group:"food", kcal:500, es:"Tarta de chocolate porción", en:"Chocolate cake slice" },
+      { id:"donut",      kcal:280, group:"food", es:"Donut clásico", en:"Classic donut" },
+      { id:"croissant",  kcal:220, group:"food", es:"Croissant de mantequilla", en:"Butter croissant" },
+      { id:"palmera_choc",kcal:400, group:"food", es:"Palmera de chocolate", en:"Chocolate palmier" },
+      { id:"brownie",    kcal:450, group:"food", es:"Brownie de chocolate", en:"Chocolate brownie" },
+      { id:"cheesecake", kcal:550, group:"food", es:"Tarta de queso porción", en:"Cheesecake slice" },
 
-      { id:"kitkat",     group:"food", kcal:150, es:"Barrita chocolate tipo KitKat", en:"KitKat-style bar" },
-      { id:"snickers",   group:"food", kcal:240, es:"Barrita Snickers", en:"Snickers bar" },
-      { id:"chips_small",group:"food", kcal:250, es:"Bolsa patatas fritas pequeña", en:"Small bag of chips" },
-      { id:"chips_big",  group:"food", kcal:500, es:"Bolsa patatas fritas grande", en:"Large bag of chips" },
-      { id:"kinder_bueno",group:"food",kcal:200, es:"Kinder Bueno (2 barritas)", en:"Kinder Bueno (2 bars)" },
-      { id:"ice_cream_pop",group:"food",kcal:200, es:"Helado de palo cremoso", en:"Creamy ice cream pop" },
-      { id:"magnum",     group:"food", kcal:280, es:"Helado tipo Magnum", en:"Magnum-style ice cream" },
+      { id:"kitkat",     kcal:150, group:"food", es:"Barrita chocolate tipo KitKat", en:"KitKat-style bar" },
+      { id:"snickers",   kcal:240, group:"food", es:"Barrita Snickers", en:"Snickers bar" },
+      { id:"chips_small",kcal:250, group:"food", es:"Bolsa patatas fritas pequeña", en:"Small bag of chips" },
+      { id:"chips_big",  kcal:500, group:"food", es:"Bolsa patatas fritas grande", en:"Large bag of chips" },
 
-      { id:"homemade_burger", group:"food", kcal:650, es:"Hamburguesa casera completa", en:"Homemade burger (full)" },
-      { id:"sushi_8",         group:"food", kcal:350, es:"Ración de sushi (8 piezas)", en:"Sushi (8 pieces)" },
-      { id:"caesar_salad",    group:"food", kcal:300, es:"Ensalada César completa", en:"Caesar salad (full)" },
-
-      { id:"shawarma_big", group:"food", kcal:950, es:"Shawarma grande extra salsas", en:"Large shawarma (extra sauces)" },
-      { id:"nachos_loaded",group:"food", kcal:700, es:"Nachos con queso y guacamole", en:"Loaded nachos" },
-      { id:"wings_10",     group:"food", kcal:600, es:"10 alitas barbacoa", en:"10 BBQ wings" },
-      { id:"ramen_big",    group:"food", kcal:650, es:"Ramen grande", en:"Large ramen" },
-      { id:"sushi_for_2",  group:"food", kcal:1200,es:"Sushi para 2 (20-24 piezas)", en:"Sushi for 2 (20–24 pieces)" },
-      { id:"double_bacon", group:"food", kcal:900, es:"Hamburguesa doble bacon cheese", en:"Double bacon cheeseburger" },
+      { id:"sushi_8",         kcal:350, group:"food", es:"Ración de sushi (8 piezas)", en:"Sushi (8 pieces)" },
+      { id:"caesar_salad",    kcal:300, group:"food", es:"Ensalada César completa", en:"Caesar salad (full)" },
+      { id:"nachos_loaded",   kcal:700, group:"food", es:"Nachos con queso y guacamole", en:"Loaded nachos" },
 
       // Drinks
-      { id:"beer_330",    group:"drink", kcal:150, es:"Cerveza 330 ml", en:"Beer (330 ml)" },
-      { id:"craft_beer",  group:"drink", kcal:180, es:"Cerveza artesana 330 ml", en:"Craft beer (330 ml)" },
-      { id:"red_wine",    group:"drink", kcal:90,  es:"Copa vino tinto", en:"Glass of red wine" },
-      { id:"white_wine",  group:"drink", kcal:110, es:"Copa vino blanco", en:"Glass of white wine" },
-      { id:"gin_tonic",   group:"drink", kcal:210, es:"Gin-tonic", en:"Gin & tonic" },
-      { id:"rum_cola",    group:"drink", kcal:200, es:"Ron-cola", en:"Rum & cola" },
-      { id:"mojito",      group:"drink", kcal:240, es:"Mojito", en:"Mojito" },
-      { id:"sex_beach",   group:"drink", kcal:230, es:"Sex on the Beach", en:"Sex on the Beach" },
-      { id:"caipirinha",  group:"drink", kcal:250, es:"Caipiriña", en:"Caipirinha" },
-      { id:"pina_colada", group:"drink", kcal:300, es:"Piña colada", en:"Piña colada" },
-      { id:"whisky_cola", group:"drink", kcal:200, es:"Whisky-cola", en:"Whisky & cola" },
-      { id:"aperol",      group:"drink", kcal:200, es:"Aperol Spritz", en:"Aperol Spritz" },
-      { id:"shot_tequila",group:"drink", kcal:65,  es:"Chupito tequila", en:"Tequila shot" },
-      { id:"soda",        group:"drink", kcal:120, es:"Refresco azucarado 330 ml", en:"Sugary soda (330 ml)" },
-      { id:"vermouth",    group:"drink", kcal:100, es:"Vermú", en:"Vermouth" },
+      { id:"beer_330",    kcal:150, group:"drink", es:"Cerveza 330 ml", en:"Beer (330 ml)" },
+      { id:"craft_beer",  kcal:180, group:"drink", es:"Cerveza artesana 330 ml", en:"Craft beer (330 ml)" },
+      { id:"red_wine",    kcal:90,  group:"drink", es:"Copa vino tinto", en:"Glass of red wine" },
+      { id:"white_wine",  kcal:110, group:"drink", es:"Copa vino blanco", en:"Glass of white wine" },
+      { id:"gin_tonic",   kcal:210, group:"drink", es:"Gin-tonic", en:"Gin & tonic" },
+      { id:"rum_cola",    kcal:200, group:"drink", es:"Ron-cola", en:"Rum & cola" },
+      { id:"mojito",      kcal:240, group:"drink", es:"Mojito", en:"Mojito" },
+      { id:"caipirinha",  kcal:250, group:"drink", es:"Caipiriña", en:"Caipirinha" },
+      { id:"pina_colada", kcal:300, group:"drink", es:"Piña colada", en:"Piña colada" },
+      { id:"whisky_cola", kcal:200, group:"drink", es:"Whisky-cola", en:"Whisky & cola" },
+      { id:"aperol",      kcal:200, group:"drink", es:"Aperol Spritz", en:"Aperol Spritz" },
+      { id:"shot_tequila",kcal:65,  group:"drink", es:"Chupito tequila", en:"Tequila shot" },
+      { id:"soda",        kcal:120, group:"drink", es:"Refresco azucarado 330 ml", en:"Sugary soda (330 ml)" },
+      { id:"vermouth",    kcal:100, group:"drink", es:"Vermú", en:"Vermouth" },
 
-      // “graciosas”
-      { id:"sangria_glass", group:"drink", kcal:200, es:"Sangría (vaso)", en:"Sangria (glass)" },
-      { id:"beer_bucket",   group:"drink", kcal:320, es:"Cubo cerveza (vaso)", en:"Beer bucket (per glass)" }
+      { id:"sangria_glass",kcal:200, group:"drink", es:"Sangría (vaso)", en:"Sangria (glass)" },
+      { id:"beer_bucket",  kcal:320, group:"drink", es:"Cubo cerveza (vaso)", en:"Beer bucket (per glass)" }
     ];
 
     // =========================
@@ -1112,32 +1349,29 @@
     // =========================
     const $ = (id)=>document.getElementById(id);
 
+    function clamp(n,a,b){ return Math.min(b, Math.max(a,n)); }
+
     // kcal/min = (MET * 3.5 * weightKg) / 200
     function kcalPerMinute(met, weightKg){
       return (met * 3.5 * weightKg) / 200;
     }
-    function clamp(n,a,b){ return Math.min(b, Math.max(a,n)); }
-    function round(n){ return Math.round(n); }
 
     const GENDER_FACTOR = { na:1.00, male:1.00, female:0.95 };
 
-    // =========================
-    // Sports list (MET approximate)
-    // =========================
     const SPORTS = [
-      { key:"run",     es:"Correr suave",     en:"Easy run",            met:8.0 },
-      { key:"walk",    es:"Caminar rápido",   en:"Brisk walk",          met:4.3 },
-      { key:"bike",    es:"Bici moderada",    en:"Cycling (moderate)",  met:6.8 },
-      { key:"swim",    es:"Natación",         en:"Swimming",            met:6.0 },
-      { key:"hiit",    es:"HIIT",             en:"HIIT",                met:9.0 },
-      { key:"weights", es:"Pesas",            en:"Weight training",     met:5.0 },
-      { key:"football",es:"Fútbol",           en:"Soccer",              met:7.0 },
-      { key:"dance",   es:"Bailar",           en:"Dancing",             met:5.5 },
-      { key:"stairs",  es:"Subir escaleras",  en:"Stairs",              met:8.8 },
-      { key:"yoga",    es:"Yoga",             en:"Yoga",                met:2.5 },
-      { key:"bowling", es:"Bolos",            en:"Bowling",             met:3.0 },
-      { key:"darts",   es:"Dardos",           en:"Darts",               met:2.5 },
-      { key:"petanque",es:"Petanca",          en:"Bocce / Petanque",    met:3.0 }
+      { key:"run",     es:"Correr suave",     en:"Easy run",           met:8.0 },
+      { key:"walk",    es:"Caminar rápido",   en:"Brisk walk",         met:4.3 },
+      { key:"bike",    es:"Bici moderada",    en:"Cycling (moderate)", met:6.8 },
+      { key:"swim",    es:"Natación",         en:"Swimming",           met:6.0 },
+      { key:"hiit",    es:"HIIT",             en:"HIIT",               met:9.0 },
+      { key:"weights", es:"Pesas",            en:"Weight training",    met:5.0 },
+      { key:"football",es:"Fútbol",           en:"Soccer",             met:7.0 },
+      { key:"dance",   es:"Bailar",           en:"Dancing",            met:5.5 },
+      { key:"stairs",  es:"Subir escaleras",  en:"Stairs",             met:8.8 },
+      { key:"yoga",    es:"Yoga",             en:"Yoga",               met:2.5 },
+      { key:"bowling", es:"Bolos",            en:"Bowling",            met:3.0 },
+      { key:"darts",   es:"Dardos",           en:"Darts",              met:2.5 },
+      { key:"petanque",es:"Petanca",          en:"Bocce / Petanque",   met:3.0 }
     ];
 
     function genderLabel(g){
@@ -1151,6 +1385,47 @@
       return String(s).replace(/[&<>"']/g, (m)=>({
         "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
       }[m]));
+    }
+
+    // =========================
+    // NEW: User id (anon) + week key
+    // =========================
+    const LS = {
+      uid:"lvas_uid",
+      nick:"lvas_nick",
+      hist:"lvas_hist_v1",
+      lb:"lvas_lb_local_v1",
+      lastSubmit:"lvas_last_submit_ts",
+      challengesCache:"lvas_challenges_cache_v1"
+    };
+
+    function uuid(){
+      // simple UUID v4-ish
+      return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, c=>{
+        const r = (crypto.getRandomValues(new Uint8Array(1))[0] % 16) | 0;
+        const v = c==="x" ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      });
+    }
+
+    function getUserId(){
+      let id = localStorage.getItem(LS.uid);
+      if (!id){
+        id = uuid();
+        localStorage.setItem(LS.uid, id);
+      }
+      return id;
+    }
+
+    // ISO week key: YYYY-Www
+    function isoWeekKey(d=new Date()){
+      const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+      const dayNum = date.getUTCDay() || 7;
+      date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+      const yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1));
+      const weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+      const ww = String(weekNo).padStart(2,"0");
+      return `${date.getUTCFullYear()}-W${ww}`;
     }
 
     // =========================
@@ -1169,9 +1444,7 @@
       groups.forEach(g=>{
         const og = document.createElement("optgroup");
         og.label = g.label;
-
-        const items = CATALOG.filter(x=>x.group===g.key);
-        items.forEach(it=>{
+        CATALOG.filter(x=>x.group===g.key).forEach(it=>{
           const opt = document.createElement("option");
           opt.value = it.id;
           opt.dataset.kcal = String(it.kcal);
@@ -1180,7 +1453,6 @@
           opt.textContent = `${(LANG==="es"?it.es:it.en)} (~${it.kcal} kcal)`;
           og.appendChild(opt);
         });
-
         sel.appendChild(og);
       });
 
@@ -1217,8 +1489,7 @@
 
     function fillDrinkSelects(){
       const opts = getDrinkItems();
-      const ids = ["drink1","drink2","drink3"];
-      ids.forEach(id=>{
+      ["drink1","drink2","drink3"].forEach(id=>{
         const sel = $(id);
         const preserve = sel.value;
         sel.innerHTML = "";
@@ -1288,8 +1559,7 @@
       }
       kcal += extra;
 
-      const mode = getSelectedMode();
-      if (mode === "drinks"){
+      if (getSelectedMode() === "drinks"){
         const d1 = drinkKcalById($("drink1").value) * Math.max(0, parseInt($("drink1n").value || "0",10));
         const d2 = drinkKcalById($("drink2").value) * Math.max(0, parseInt($("drink2n").value || "0",10));
         const d3 = drinkKcalById($("drink3").value) * Math.max(0, parseInt($("drink3n").value || "0",10));
@@ -1372,10 +1642,7 @@
 
       const options = CATALOG
         .filter(x=>x.id!=="custom" && Number.isFinite(x.kcal) && x.kcal > 0)
-        .map(x=>({
-          kcal:x.kcal,
-          label: (LANG==="es" ? x.es : x.en)
-        }));
+        .map(x=>({ kcal:x.kcal, label:(LANG==="es"?x.es:x.en) }));
 
       const scored = options.map(it=>{
         const units = burned / it.kcal;
@@ -1423,7 +1690,8 @@
     }
 
     // =========================
-    // Meme generation (Canvas) + VARIANTES por severidad
+    // Meme generation (Canvas) + variantes por severidad
+    // (idéntico al que ya tenías arriba; lo mantengo tal cual para continuidad)
     // =========================
     function blob(ctx, x, y, r, color){
       const g = ctx.createRadialGradient(x,y,0,x,y,r);
@@ -1434,7 +1702,6 @@
       ctx.arc(x,y,r,0,Math.PI*2);
       ctx.fill();
     }
-
     function roundRect(ctx, x, y, w, h, r){
       ctx.beginPath();
       ctx.moveTo(x+r, y);
@@ -1444,7 +1711,6 @@
       ctx.arcTo(x, y, x+w, y, r);
       ctx.closePath();
     }
-
     function trimTo(ctx, text, maxWidth){
       if (ctx.measureText(text).width <= maxWidth) return text;
       let t = text;
@@ -1453,17 +1719,13 @@
       }
       return t + "…";
     }
-
     function pickMemeVariant(kcal){
-      // 4 niveles (tuneables). Objetivo: que “pique” más según castigo.
       if (kcal < 400) return "light";
       if (kcal < 900) return "mid";
       if (kcal < 1600) return "hard";
       return "apocalypse";
     }
-
     function memeCopy(variant){
-      // Titulares + “taunts” cortos para que se compartan
       const ES = {
         light:      { title:"PECADO VENIAL", sub:"Esto se arregla andando y sin llorar.", stamp:"✅ SALVABLE" },
         mid:        { title:"PECADO SERIO",  sub:"El cardio te está escribiendo un WhatsApp.", stamp:"⚠️ DOLORCITO" },
@@ -1479,6 +1741,18 @@
       return (LANG==="es" ? ES[variant] : EN[variant]);
     }
 
+    function pickSportForMeme(kcal, weight, gender){
+      const rows = SPORTS.map(s=>{
+        const m = minutesNeeded(kcal, s.met, weight, gender);
+        return {s, m};
+      }).filter(x => isFinite(x.m)).sort((a,b)=>a.m-b.m);
+      const mid = rows[Math.floor(rows.length/2)] || rows[0];
+      const name = (LANG==="es" ? mid.s.es : mid.s.en);
+      const mins = Math.round(mid.m);
+      const mins5 = Math.max(5, Math.round(mins/5)*5);
+      return (LANG==="es") ? `${mins5} min de ${name}` : `${mins5} min of ${name}`;
+    }
+
     function generateMeme({kcal, modeName, label, weight, sportPick}){
       const wrap = $("memeWrap");
       const canvas = $("memeCanvas");
@@ -1488,7 +1762,6 @@
       const variant = pickMemeVariant(kcal);
       const copy = memeCopy(variant);
 
-      // Fondo
       const g = ctx.createLinearGradient(0,0,w,h);
       g.addColorStop(0, "rgba(91,124,250,1)");
       g.addColorStop(1, "rgba(255,79,216,1)");
@@ -1501,7 +1774,6 @@
       blob(ctx, 820, 540, 300, "rgba(56,232,255,1)");
       ctx.globalAlpha = 1;
 
-      // Tarjeta
       roundRect(ctx, 60, 60, w-120, h-120, 34);
       ctx.fillStyle = "rgba(10,14,40,.74)";
       ctx.fill();
@@ -1509,19 +1781,16 @@
       ctx.strokeStyle = "rgba(255,255,255,.12)";
       ctx.stroke();
 
-      // Header brand
       ctx.fillStyle = "rgba(255,255,255,.95)";
       ctx.font = "900 56px system-ui, -apple-system, Segoe UI, Roboto, Arial";
       ctx.fillText("LOVASASUDAR.COM", 100, 140);
 
-      // Big stamp (arriba derecha)
       ctx.font = "950 38px system-ui, -apple-system, Segoe UI, Roboto, Arial";
       ctx.fillStyle = "rgba(255,227,106,.95)";
       const stamp = copy.stamp;
       const sw = ctx.measureText(stamp).width;
       ctx.fillText(stamp, w - 100 - sw, 140);
 
-      // Variant title
       ctx.font = "950 48px system-ui, -apple-system, Segoe UI, Roboto, Arial";
       ctx.fillStyle = "rgba(255,255,255,.93)";
       ctx.fillText(copy.title, 100, 205);
@@ -1530,7 +1799,6 @@
       ctx.fillStyle = "rgba(255,255,255,.78)";
       ctx.fillText(copy.sub, 100, 245);
 
-      // Kcal huge
       ctx.font = "950 130px system-ui, -apple-system, Segoe UI, Roboto, Arial";
       ctx.fillStyle = "#fff";
       ctx.fillText(`${kcal}`, 100, 370);
@@ -1539,7 +1807,6 @@
       ctx.fillStyle = "rgba(255,255,255,.9)";
       ctx.fillText("kcal", 450, 370);
 
-      // Details
       ctx.font = "800 30px system-ui, -apple-system, Segoe UI, Roboto, Arial";
       ctx.fillStyle = "rgba(255,255,255,.85)";
       const d1 = (LANG==="es")
@@ -1568,7 +1835,6 @@
 
       const url = canvas.toDataURL("image/png");
 
-      // Links/botones arriba + abajo (menos fricción)
       const dl = $("btnDownload");
       dl.href = url;
       dl.style.display = "inline-flex";
@@ -1577,38 +1843,16 @@
       dlTop.href = url;
       dlTop.style.display = "inline-flex";
 
-      const shareBtn = $("btnShare");
-      const shareTop = $("btnShareTop");
-
       const canShare = !!navigator.share;
-      shareBtn.style.display = canShare ? "inline-flex" : "none";
-      shareTop.style.display = canShare ? "inline-flex" : "none";
+      $("btnShare").style.display = canShare ? "inline-flex" : "none";
+      $("btnShareTop").style.display = canShare ? "inline-flex" : "none";
 
-      // Scroll al MEME (requisito #1)
-      // Espera al siguiente frame para asegurar display:block ya aplicado.
       requestAnimationFrame(()=>{
         wrap.scrollIntoView({ behavior:"smooth", block:"start" });
       });
 
+      track("meme_view", { lang: LANG, kcal });
       return url;
-    }
-
-    // Choose a fun sport suggestion for meme (la que “pica” más)
-    function pickSportForMeme(kcal, weight, gender){
-      const rows = SPORTS.map(s=>{
-        const m = minutesNeeded(kcal, s.met, weight, gender);
-        return {s, m};
-      }).filter(x => isFinite(x.m)).sort((a,b)=>a.m-b.m);
-
-      // “medio” para que no siempre sea correr, y que quede creíble
-      const mid = rows[Math.floor(rows.length/2)] || rows[0];
-      const name = (LANG==="es" ? mid.s.es : mid.s.en);
-      const mins = Math.round(mid.m);
-
-      // Redondeo a 5 min para que sea más “memeable”
-      const mins5 = Math.max(5, Math.round(mins/5)*5);
-
-      return (LANG==="es") ? `${mins5} min de ${name}` : `${mins5} min of ${name}`;
     }
 
     async function shareMeme(url){
@@ -1620,410 +1864,616 @@
           text: T[LANG].memeShareText,
           files: [file]
         });
-        track("share_meme", { lang: LANG });
+        track("share_click", { lang: LANG, ok: true });
       }catch(e){
         alert(T[LANG].memeShareFail);
-        track("share_meme_fail", { lang: LANG });
+        track("share_click", { lang: LANG, ok: false });
       }
     }
 
     // =========================
-    // Calculation + AUTO meme
+    // NEW: Challenge (sin BBDD)
     // =========================
-    function calculate(){
-      $("battleResultsWrap").style.display = "none";
-      $("inverseResultsWrap").style.display = "none";
-      $("memeWrap").style.display = "none";
-
-      // Ocultamos CTAs meme hasta regenerar
-      ["btnDownload","btnShare","btnDownloadTop","btnShareTop"].forEach(id=>{
-        const el = $(id);
-        if (el) el.style.display = "none";
-      });
-
-      const mode = getSelectedMode();
-      const modeName = T[LANG].modeNames[mode] || mode;
-
-      const weight = clamp(parseInt($("weight").value||"80",10),35,200);
-      const gender = $("gender").value;
-
-      const kcal = getTotalCaloriesWithMode();
-
-      $("kcalOut").textContent = `${kcal} kcal`;
-      $("kcalSub").textContent = T[LANG].kcalSub;
-      $("modeOut").textContent = modeName;
-      $("modeSub").textContent = T[LANG].modeSub;
-
-      let summary = "—";
-      let kcalForMeme = kcal;
-      let memeLabel = getSelectedLabel();
-
-      if (mode === "normal" || mode === "drinks"){
-        renderSportsTable(kcal, weight, gender);
-        summary = T[LANG].summaryNormal(kcal);
-        $("sportsTitle").textContent = T[LANG].sportsTitle;
+    const FALLBACK_CHALLENGES = [
+      {
+        id:"weekly_1",
+        scope:"week",
+        es:{ title:"🎯 Reto de la semana", text:"Calcula tu ‘castigo’ y compártelo en el grupo. Bonus: reta a 1 colega." , chip:"#RetoSemana" },
+        en:{ title:"🎯 Weekly challenge", text:"Calculate your payback and share it in the group. Bonus: challenge one friend.", chip:"#Weekly" }
+      },
+      {
+        id:"daily_1",
+        scope:"day",
+        es:{ title:"🎯 Reto del día", text:"Haz un cálculo ‘modo noche de copas’ aunque hoy sea martes. Ciencia.", chip:"#RetoDelDía" },
+        en:{ title:"🎯 Daily challenge", text:"Do a ‘night-out mode’ calculation even if it’s Tuesday. Science.", chip:"#Daily" }
+      },
+      {
+        id:"daily_2",
+        scope:"day",
+        es:{ title:"🎯 Reto del día", text:"Si sale > 1200 kcal: meme obligatorio. Si no: presume igualmente.", chip:"#MemeObligatorio" },
+        en:{ title:"🎯 Daily challenge", text:"If you get > 1200 kcal: meme is mandatory. If not: brag anyway.", chip:"#MemeMandatory" }
       }
+    ];
 
-      if (mode === "battle"){
-        renderSportsTable(kcal, weight, gender);
-        renderBattle(kcal);
-        summary = T[LANG].summaryBattle(kcal);
-        $("sportsTitle").textContent = T[LANG].sportsTitle;
-      }
-
-      if (mode === "inverse"){
-        const burned = renderInverse(weight, gender);
-        $("kcalOut").textContent = `${burned} kcal`;
-        $("kcalSub").textContent = T[LANG].burned;
-        $("sportsList").innerHTML = "";
-        $("sportsTitle").textContent = T[LANG].earnedTitle;
-        summary = T[LANG].summaryInverse(burned);
-
-        kcalForMeme = burned;
-        const sportKey = $("invSport").value;
-        const sport = SPORTS.find(s=>s.key===sportKey) || SPORTS[0];
-        const hours = Math.max(0, parseFloat($("invHours").value || "0"));
-        memeLabel = (LANG==="es")
-          ? `Ejercicio: ${sport.es} (${hours.toFixed(2)}h)`
-          : `Exercise: ${sport.en} (${hours.toFixed(2)}h)`;
-      }
-
-      $("mainOut").textContent = "OK";
-      $("mainSub").textContent = summary;
-
-      $("results").style.display = "block";
-      // Scroll a resultados, pero luego el meme se autoscrollea a sí mismo
-      $("results").scrollIntoView({ behavior:"smooth", block:"start" });
-
-      // Analytics
-      track("calculate", {
-        mode,
-        kcal: kcalForMeme,
-        weight,
-        gender,
-        item_id: $("food").value,
-        item_label: getSelectedLabel(),
-        lang: LANG
-      });
-
-      // AUTO MEME
-      const sportPick = (mode === "inverse")
-        ? (LANG==="es" ? "A comer con tranquilidad (moderada)" : "Eat with (moderate) peace")
-        : pickSportForMeme(kcalForMeme, weight, gender);
-
-      const url = generateMeme({
-        kcal: kcalForMeme,
-        modeName,
-        label: memeLabel,
-        weight,
-        sportPick
-      });
-
-      // Wire share botones (arriba y abajo) cada vez
-      const fnShare = ()=>shareMeme(url);
-      if ($("btnShare")) $("btnShare").onclick = fnShare;
-      if ($("btnShareTop")) $("btnShareTop").onclick = fnShare;
-
-      track("meme_generated", { mode, kcal: kcalForMeme, lang: LANG });
+    function dayIndex(){
+      const d = new Date();
+      // YYYYMMDD as int-ish, stable for rotation
+      return parseInt(`${d.getFullYear()}${String(d.getMonth()+1).padStart(2,"0")}${String(d.getDate()).padStart(2,"0")}`, 10);
     }
 
-    // Manual meme regenerate (kept)
-    function onMeme(){
-      // Re-run calculate to keep everything in sync and regenerate meme
-      calculate();
-    }
-
-    // =========================
-    // Language apply
-    // =========================
-    function setDocumentMeta(){
-      document.documentElement.lang = LANG;
-      document.title = T[LANG].pageTitle;
-      const desc = document.querySelector('meta[name="description"]');
-      if (desc) desc.setAttribute("content", T[LANG].pageDesc);
-    }
-
-    function applyLanguage(){
-      const t = T[LANG];
-
-      $("brand").textContent = t.brand;
-      $("title").textContent = t.title;
-      $("subtitle").textContent = t.subtitle;
-
-      $("lblFood").textContent = t.lblFood;
-      $("lblUnits").textContent = t.lblUnits;
-      $("hintUnits").textContent = t.hintUnits;
-      $("lblExtra").textContent = t.lblExtra;
-      $("hintExtra").textContent = t.hintExtra;
-      $("lblWeight").textContent = t.lblWeight;
-      $("hintWeight").textContent = t.hintWeight;
-      $("lblGender").textContent = t.lblGender;
-      $("hintGender").textContent = t.hintGender;
-
-      $("tNormal").textContent = t.modes.normal;
-      $("tDrinks").textContent = t.modes.drinks;
-      $("tBattle").textContent = t.modes.battle;
-      $("tInverse").textContent = t.modes.inverse;
-
-      $("btnCalc").textContent = t.btnCalc;
-
-      $("resTitle").textContent = t.results;
-      $("kcalSub").textContent = t.kcalSub;
-      $("modeSub").textContent = t.modeSub;
-      $("sportsTitle").textContent = t.sportsTitle;
-
-      $("btnMeme").textContent = t.meme;
-
-      // botones top + bottom
-      if ($("btnDownload")) $("btnDownload").textContent = t.download;
-      if ($("btnShare")) $("btnShare").textContent = t.share;
-      if ($("btnDownloadTop")) $("btnDownloadTop").textContent = t.downloadTop;
-      if ($("btnShareTop")) $("btnShareTop").textContent = t.shareTop;
-
-      $("fineprint").textContent = t.fine;
-
-      $("drinksTitle").textContent = t.drinksTitle;
-      $("drinksHint").textContent = t.drinksHint;
-
-      $("battleTitle").textContent = t.battleTitle;
-      $("youTitle").textContent = t.youTitle;
-      $("f1Title").textContent = t.friend1;
-      $("f2Title").textContent = t.friend2;
-      $("f3Title").textContent = t.friend3;
-
-      $("battleHint1").textContent = t.weightKg;
-      $("f1Hint").textContent = t.weightKg;
-      $("f2Hint").textContent = t.weightKg;
-      $("f3Hint").textContent = t.weightKg;
-
-      $("battleHint2").textContent = t.battleHint2;
-
-      $("inverseTitle").textContent = t.inverseTitle;
-      $("lblInvSport").textContent = t.invSport;
-      $("lblInvHours").textContent = t.invHours;
-      $("invHint").textContent = t.invHint;
-
-      $("battleResultsTitle").textContent = t.battleResultsTitle;
-      $("inverseResultsTitle").textContent = t.inverseResultsTitle;
-
-      // placeholders
-      if (LANG==="en"){
-        $("p1name").placeholder = "Name (optional)";
-        $("p2name").placeholder = "Name";
-        $("p3name").placeholder = "Name";
-        $("p4name").placeholder = "Name";
-      } else {
-        $("p1name").placeholder = "Nombre (opcional)";
-        $("p2name").placeholder = "Nombre";
-        $("p3name").placeholder = "Nombre";
-        $("p4name").placeholder = "Nombre";
-      }
-
-      const prevFood = $("food").value || "pizza_medium";
-      buildFoodSelect(prevFood);
-      fillDrinkSelects();
-      fillInverseSports();
-
-      setDocumentMeta();
-    }
-
-    // =========================
-    // URL lang (?lang=en)
-    // =========================
-    function getLangFromUrl(){
+    async function loadChallenges(){
+      // Intenta /data/challenges.json (si lo creas luego en GitHub) con fallback seguro.
+      const url = "/data/challenges.json";
       try{
-        const u = new URL(window.location.href);
-        const q = (u.searchParams.get("lang") || "").toLowerCase();
-        if (q === "en" || q === "es") return q;
-      }catch(_){}
+        const res = await fetch(url, { cache:"no-store" });
+        if (!res.ok) throw new Error("no json");
+        const data = await res.json();
+        if (!Array.isArray(data) || data.length===0) throw new Error("bad json");
+        localStorage.setItem(LS.challengesCache, JSON.stringify(data));
+        return data;
+      }catch(_){
+        try{
+          const cached = JSON.parse(localStorage.getItem(LS.challengesCache) || "null");
+          if (Array.isArray(cached) && cached.length) return cached;
+        }catch(__){}
+        return FALLBACK_CHALLENGES;
+      }
+    }
+
+    function pickChallenge(challenges){
+      const di = dayIndex();
+      const list = challenges.slice();
+      const idx = di % list.length;
+      return list[idx];
+    }
+
+    async function renderChallenge(){
+      const ch = pickChallenge(await loadChallenges());
+      const t = ch[LANG] || ch.es;
+      if (!t) return;
+
+      $("challengeTitle").textContent = t.title || T[LANG].challengeTitle;
+      $("challengeText").textContent  = t.text  || T[LANG].challengeSub;
+      $("challengeChip").textContent  = t.chip  || T[LANG].challengeChip;
+
+      $("challengeBanner").style.display = "flex";
+      track("challenge_view", { id: ch.id || "unknown", lang: LANG });
+    }
+
+    // =========================
+    // NEW: History (local)
+    // =========================
+    function readHist(){
+      try{
+        const arr = JSON.parse(localStorage.getItem(LS.hist) || "[]");
+        return Array.isArray(arr) ? arr : [];
+      }catch(_){ return []; }
+    }
+    function writeHist(arr){
+      localStorage.setItem(LS.hist, JSON.stringify(arr.slice(0,10)));
+    }
+
+    function pushHist(entry){
+      const hist = readHist();
+      hist.unshift(entry);
+      writeHist(hist);
+      renderHistory();
+    }
+
+    function renderHistory(){
+      const hist = readHist();
+      $("histCountVal").textContent = String(hist.length);
+
+      if (hist.length === 0){
+        $("histBestVal").textContent = "—";
+        $("histWorstVal").textContent = "—";
+        $("histBestSub").textContent = "—";
+        $("histWorstSub").textContent = "—";
+        $("historyList").innerHTML = `<div class="muted">${LANG==="es" ? "Aún no hay cálculos guardados." : "No saved calculations yet."}</div>`;
+        return;
+      }
+
+      const best = hist.reduce((a,b)=> (b.kcal < a.kcal ? b : a), hist[0]);
+      const worst= hist.reduce((a,b)=> (b.kcal > a.kcal ? b : a), hist[0]);
+
+      $("histBestVal").textContent = `${best.kcal} kcal`;
+      $("histWorstVal").textContent= `${worst.kcal} kcal`;
+      $("histBestSub").textContent = best.label || "—";
+      $("histWorstSub").textContent= worst.label || "—";
+
+      const rows = hist.map(h=>{
+        const when = new Date(h.ts);
+        const time = `${String(when.getDate()).padStart(2,"0")}/${String(when.getMonth()+1).padStart(2,"0")} ${String(when.getHours()).padStart(2,"0")}:${String(when.getMinutes()).padStart(2,"0")}`;
+        const chipClass = h.kcal < 600 ? "pillOk" : h.kcal < 1300 ? "pillWarn" : "pillBad";
+        const mode = (T[LANG].modeNames[h.mode] || h.mode);
+        return `
+          <div class="smallRow">
+            <div class="l">
+              <b>${escapeHtml(h.label || "—")}</b>
+              <span>${escapeHtml(mode)} · ${time}</span>
+            </div>
+            <div class="chip ${chipClass}">${h.kcal} kcal</div>
+          </div>
+        `;
+      }).join("");
+      $("historyList").innerHTML = rows;
+    }
+
+    // =========================
+    // NEW: Leaderboard (local demo + hooks para Supabase)
+    // =========================
+    const LEADERBOARD_MAX_KCAL = 20000;
+    const SUBMIT_COOLDOWN_MS = 12000;
+
+    function toast(msg){
+      const t = $("lbToast");
+      t.textContent = msg;
+      t.style.display = "block";
+      clearTimeout(toast._t);
+      toast._t = setTimeout(()=>{ t.style.display="none"; }, 2200);
+    }
+
+    function readLB(){
+      try{
+        const obj = JSON.parse(localStorage.getItem(LS.lb) || "{}");
+        return obj && typeof obj === "object" ? obj : {};
+      }catch(_){ return {}; }
+    }
+
+    function writeLB(obj){
+      localStorage.setItem(LS.lb, JSON.stringify(obj));
+    }
+
+    function getNickname(){
+      const v = ($("nickname").value || "").trim();
+      return v.slice(0,24);
+    }
+
+    function normalizeNick(n){
+      return n.replace(/\s+/g," ").trim().slice(0,24);
+    }
+
+    function getMyNick(){
+      return localStorage.getItem(LS.nick) || "";
+    }
+
+    function setMyNick(n){
+      localStorage.setItem(LS.nick, n);
+    }
+
+    function canSubmitNow(){
+      const last = parseInt(localStorage.getItem(LS.lastSubmit) || "0", 10);
+      const now = Date.now();
+      if (now - last < SUBMIT_COOLDOWN_MS) return false;
+      localStorage.setItem(LS.lastSubmit, String(now));
+      return true;
+    }
+
+    function localSubmit({week_key, nickname, user_id, calories_total, created_at}){
+      const db = readLB();
+      db[week_key] = Array.isArray(db[week_key]) ? db[week_key] : [];
+      db[week_key].push({ nickname, user_id, calories_total, created_at });
+      writeLB(db);
+    }
+
+    function localTop10(week_key){
+      const db = readLB();
+      const rows = Array.isArray(db[week_key]) ? db[week_key] : [];
+      // Top por SUM(calories_total) por nickname (como en el plan)
+      const agg = new Map();
+      rows.forEach(r=>{
+        const key = (r.nickname || "anon").toLowerCase();
+        const prev = agg.get(key) || { nickname:r.nickname,
+        const prev = agg.get(key) || { nickname:r.nickname, total:0, user_ids:new Set() };
+        prev.total += (r.calories_total||0);
+        prev.nickname = r.nickname || prev.nickname || "anon";
+        prev.user_ids.add(r.user_id);
+        agg.set(key, prev);
+      });
+
+      const list = Array.from(agg.values())
+        .map(x=>({ nickname:x.nickname, total:x.total, user_ids:x.user_ids }))
+        .sort((a,b)=>b.total - a.total)
+        .slice(0,10);
+
+      return list;
+    }
+
+    function renderLeaderboard(){
+      const wk = isoWeekKey(new Date());
+      $("lbWeekVal").textContent = wk;
+
+      const myNick = getMyNick();
+      if (myNick && !$("nickname").value) $("nickname").value = myNick;
+
+      const top = localTop10(wk);
+      if (!top.length){
+        $("lbList").innerHTML = `<div class="muted">${T[LANG].lbEmpty}</div>`;
+        return;
+      }
+
+      const uid = getUserId();
+      const rows = top.map((r, i)=>{
+        const isMe = myNick && normalizeNick(r.nickname).toLowerCase() === normalizeNick(myNick).toLowerCase();
+        const badge = isMe ? ` <span class="muted">${T[LANG].you}</span>` : "";
+        const chipClass = r.total < 3000 ? "pillOk" : r.total < 8000 ? "pillWarn" : "pillBad";
+        return `
+          <div class="smallRow">
+            <div class="l">
+              <b>#${i+1} ${escapeHtml(r.nickname || "anon")}${badge}</b>
+              <span>${LANG==="es" ? "Suma semana" : "Week sum"}</span>
+            </div>
+            <div class="chip ${chipClass}">${Math.round(r.total)} kcal</div>
+          </div>
+        `;
+      }).join("");
+
+      $("lbList").innerHTML = rows;
+    }
+
+    // =========================
+    // Hooks para Supabase (APAGADOS por ahora)
+    // =========================
+    const SUPABASE = {
+      enabled: false, // <--- cuando montemos BBDD lo ponemos en true
+      url: "",        // <--- tu SUPABASE_URL
+      anonKey: ""     // <--- tu SUPABASE_ANON_KEY
+    };
+
+    async function submitToBackend(payload){
+      // Preparado para Supabase REST. De momento NO hace nada.
+      if (!SUPABASE.enabled) return { ok:false, skipped:true };
+
+      // Nota: cuando lo activemos, usamos fetch al endpoint REST:
+      // POST {SUPABASE.url}/rest/v1/submissions
+      // headers: apikey, Authorization, Content-Type, Prefer:return=minimal
+      // y RLS (Row Level Security) para permitir inserts anon con rate limit básico (luego).
+      try{
+        const res = await fetch(`${SUPABASE.url}/rest/v1/submissions`, {
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json",
+            "apikey": SUPABASE.anonKey,
+            "Authorization": `Bearer ${SUPABASE.anonKey}`,
+            "Prefer": "return=minimal"
+          },
+          body: JSON.stringify(payload)
+        });
+        return { ok: res.ok, status: res.status };
+      }catch(e){
+        return { ok:false, error:String(e) };
+      }
+    }
+
+    async function fetchLeaderboardFromBackend(week_key){
+      if (!SUPABASE.enabled) return null;
+      // Cuando lo activemos: crear una VIEW o RPC que devuelva top semanal
+      // y aquí la consultamos. Por ahora null.
       return null;
     }
 
-    function setLangInUrl(lang){
-      try{
-        const u = new URL(window.location.href);
-        u.searchParams.set("lang", lang);
-        history.replaceState({}, "", u.toString());
-      }catch(_){}
-    }
-
     // =========================
-    // Init
+    // UI text updates (lang switch)
     // =========================
-    // =========================
-// SEO landings (NO UI changes)
-// =========================
-const SEO_LP = {
-  burn: {
-    canonicalPath: "/quemar-calorias-ejercicio/",
-    es: {
-      title: "Cuánto ejercicio necesito para quemar calorías | LoVasASudar",
-      desc: "Calcula cuánto ejercicio necesitas para quemar calorías de comida y alcohol. Estimación por MET + meme compartible."
-    },
-    en: {
-      title: "How much exercise to burn calories | LoVasASudar",
-      desc: "Estimate exercise needed to burn calories from food and drinks (MET-based) + shareable meme."
-    }
-  },
-  alcohol: {
-    canonicalPath: "/calorias-alcohol-ejercicio/",
-    es: {
-      title: "Calorías del alcohol y ejercicio equivalente | LoVasASudar",
-      desc: "Descubre cuántas calorías tienen tus copas y cuánto ejercicio necesitas para sudarlas. Incluye modo noche de copas."
-    },
-    en: {
-      title: "Alcohol calories & exercise equivalent | LoVasASudar",
-      desc: "See alcohol calories and the exercise needed to burn them. Includes night-out mode."
-    }
-  },
-  pizza: {
-    canonicalPath: "/calorias-pizza-como-quemarlas/",
-    es: {
-      title: "Calorías de una pizza y cómo quemarlas | LoVasASudar",
-      desc: "Pizza dentro, cardio fuera: calcula el tiempo de ejercicio aproximado para quemar una pizza y genera meme."
-    },
-    en: {
-      title: "Pizza calories & how to burn them | LoVasASudar",
-      desc: "Pizza in, cardio out: estimate exercise time to burn a pizza and generate a meme."
-    }
-  },
-  fast: {
-    canonicalPath: "/ejercicios-para-quemar-calorias/",
-    es: {
-      title: "Ejercicios para quemar calorías rápido | LoVasASudar",
-      desc: "Compara deportes (correr, bici, HIIT, pesas, incluso dardos) y mira cuánto tardas en quemar tus calorías."
-    },
-    en: {
-      title: "Best exercises to burn calories fast | LoVasASudar",
-      desc: "Compare sports (run, bike, HIIT, weights, even darts) and see how long it takes to burn your calories."
-    }
-  },
-  compare: {
-    canonicalPath: "/calorias-comida-vs-ejercicio/",
-    es: {
-      title: "Calorías de comida vs ejercicio necesario | LoVasASudar",
-      desc: "Traduce calorías a esfuerzo real: comida y bebida vs minutos de ejercicio. Simple, rápido y compartible."
-    },
-    en: {
-      title: "Food calories vs exercise needed | LoVasASudar",
-      desc: "Translate calories into real effort: food/drinks vs minutes of exercise. Simple, fast and shareable."
-    }
-  }
-};
+    function applyLang(){
+      // Meta
+      $("metaTitle").textContent = T[LANG].pageTitle;
+      $("metaDesc").setAttribute("content", T[LANG].pageDesc);
+      document.documentElement.lang = LANG;
 
-function applySeoLanding(){
-  let lp = null;
-  try{
-    const u = new URL(window.location.href);
-    lp = (u.searchParams.get("lp") || "").toLowerCase();
-  }catch(_){}
+      // Header
+      $("brand").textContent = T[LANG].brand;
+      $("title").textContent = T[LANG].title;
+      $("subtitle").textContent = T[LANG].subtitle;
 
-  if (!lp || !SEO_LP[lp]) return; // home normal
+      // Labels
+      $("lblFood").textContent = T[LANG].lblFood;
+      $("lblUnits").textContent = T[LANG].lblUnits;
+      $("hintUnits").textContent = T[LANG].hintUnits;
+      $("lblExtra").textContent = T[LANG].lblExtra;
+      $("hintExtra").textContent = T[LANG].hintExtra;
+      $("lblWeight").textContent = T[LANG].lblWeight;
+      $("hintWeight").textContent = T[LANG].hintWeight;
+      $("lblGender").textContent = T[LANG].lblGender;
+      $("hintGender").textContent = T[LANG].hintGender;
 
-  const cfg = SEO_LP[lp][LANG] || SEO_LP[lp].es;
+      // Modes
+      $("tNormal").textContent = T[LANG].modes.normal;
+      $("tDrinks").textContent = T[LANG].modes.drinks;
+      $("tBattle").textContent = T[LANG].modes.battle;
+      $("tInverse").textContent = T[LANG].modes.inverse;
 
-  // Title + Description (ids que hemos puesto)
-  const tEl = document.getElementById("metaTitle");
-  if (tEl) tEl.textContent = cfg.title;
+      // Panels
+      $("drinksTitle").textContent = T[LANG].drinksTitle;
+      $("drinksHint").textContent = T[LANG].drinksHint;
+      $("battleTitle").textContent = T[LANG].battleTitle;
+      $("youTitle").textContent = T[LANG].youTitle;
+      $("f1Title").textContent = T[LANG].friend1;
+      $("f2Title").textContent = T[LANG].friend2;
+      $("f3Title").textContent = T[LANG].friend3;
+      $("battleHint1").textContent = T[LANG].weightKg;
+      $("f1Hint").textContent = T[LANG].weightKg;
+      $("f2Hint").textContent = T[LANG].weightKg;
+      $("f3Hint").textContent = T[LANG].weightKg;
+      $("battleHint2").textContent = T[LANG].battleHint2;
 
-  const dEl = document.getElementById("metaDesc");
-  if (dEl) dEl.setAttribute("content", cfg.desc);
+      $("inverseTitle").textContent = T[LANG].inverseTitle;
+      $("lblInvSport").textContent = T[LANG].invSport;
+      $("lblInvHours").textContent = T[LANG].invHours;
+      $("invHint").textContent = T[LANG].invHint;
 
-  // Canonical
-  const cEl = document.getElementById("linkCanonical");
-  if (cEl) cEl.setAttribute("href", "https://lovasasudar.com" + SEO_LP[lp].canonicalPath);
+      // Results
+      $("resTitle").textContent = T[LANG].results;
+      $("kcalSub").textContent = T[LANG].kcalSub;
+      $("modeSub").textContent = T[LANG].modeSub;
+      $("sportsTitle").textContent = T[LANG].sportsTitle;
 
-  // (Opcional) tracking
-  track("seo_landing_view", { lp, lang: LANG });
-}
+      $("btnMeme").textContent = T[LANG].meme;
+      $("btnDownload").textContent = T[LANG].download;
+      $("btnShare").textContent = T[LANG].share;
+      $("btnDownloadTop").textContent = T[LANG].downloadTop;
+      $("btnShareTop").textContent = T[LANG].shareTop;
 
-    function init(){
-      const qLang = getLangFromUrl();
-      if (qLang) LANG = qLang;
-      else {
-        const nav = (navigator.language || "es").toLowerCase();
-        LANG = nav.startsWith("en") ? "en" : "es";
-      }
+      $("fineprint").textContent = T[LANG].fine;
 
-      // Language buttons
-      $("btnES").addEventListener("click", ()=>{
-        LANG = "es";
-        $("btnES").classList.add("active");
-        $("btnEN").classList.remove("active");
-        setLangInUrl("es");
-        applyLanguage();
-        track("lang_change", { lang: "es" });
-      });
-      $("btnEN").addEventListener("click", ()=>{
-        LANG = "en";
-        $("btnEN").classList.add("active");
-        $("btnES").classList.remove("active");
-        setLangInUrl("en");
-        applyLanguage();
-        track("lang_change", { lang: "en" });
-      });
+      $("battleResultsTitle").textContent = T[LANG].battleResultsTitle;
+      $("inverseResultsTitle").textContent = T[LANG].inverseResultsTitle;
 
-      if (LANG==="en"){ $("btnEN").classList.add("active"); $("btnES").classList.remove("active"); }
-      else { $("btnES").classList.add("active"); $("btnEN").classList.remove("active"); }
+      // History
+      $("historyTitle").textContent = T[LANG].historyTitle;
+      $("historySub").textContent = T[LANG].historySub;
+      $("histBestLabel").textContent = T[LANG].best;
+      $("histWorstLabel").textContent = T[LANG].worst;
+      $("histCountLabel").textContent = T[LANG].total;
+      $("histCountSub").textContent = T[LANG].last10;
+      $("btnClearHistory").textContent = T[LANG].clear;
 
-      buildFoodSelect("pizza_medium");
+      // Leaderboard
+      $("lbTitle").textContent = T[LANG].lbTitle;
+      $("lbSub").textContent = T[LANG].lbSub;
+      $("lbWeekLabel").textContent = T[LANG].lbWeek;
+      $("lbWeekSub").textContent = T[LANG].lbKey;
+      $("lbWeekVal").textContent = isoWeekKey(new Date());
+      $("nickname").placeholder = T[LANG].nicknamePh;
+      $("btnJoin").textContent = T[LANG].join;
+      $("btnRefreshLB").textContent = T[LANG].lbRefresh;
+
+      // Rebuild selects
+      buildFoodSelect();
       fillDrinkSelects();
       fillInverseSports();
-      setDocumentMeta();
-      applySeoLanding();
 
-      // Mode pills
+      // Challenge
+      renderChallenge();
+
+      // Re-render any computed blocks
+      renderHistory();
+      renderLeaderboard();
+    }
+
+    // =========================
+    // Main calculate flow
+    // =========================
+    let lastMemeUrl = null;
+    let lastCalc = null;
+
+    function bucket(kcal){
+      if (kcal < 400) return "low";
+      if (kcal < 900) return "mid";
+      if (kcal < 1600) return "high";
+      return "insane";
+    }
+
+    async function onCalculate(){
+      const mode = getSelectedMode();
+      const weight = clamp(parseInt($("weight").value||"80",10), 35, 200);
+      const gender = $("gender").value;
+
+      // sincroniza peso de “tú” en batalla
+      $("p1w").value = String(weight);
+      $("p1gender").value = gender;
+
+      let kcal = 0;
+      let label = getSelectedLabel();
+      let modeName = T[LANG].modeNames[mode] || mode;
+
+      $("battleResultsWrap").style.display = "none";
+      $("inverseResultsWrap").style.display = "none";
+
+      if (mode === "inverse"){
+        const burned = renderInverse(weight, gender);
+        kcal = burned;
+        $("mainOut").textContent = T[LANG].summaryInverse(kcal);
+      } else {
+        kcal = getTotalCaloriesWithMode();
+        if (mode === "battle"){
+          $("mainOut").textContent = T[LANG].summaryBattle(kcal);
+          renderBattle(kcal);
+        } else {
+          $("mainOut").textContent = T[LANG].summaryNormal(kcal);
+        }
+        renderSportsTable(kcal, weight, gender);
+      }
+
+      // KPI
+      $("kcalOut").textContent = `${kcal} kcal`;
+      $("modeOut").textContent = modeName;
+
+      // show results
+      $("results").style.display = "block";
+
+      // Track core submit (sin BBDD)
+      track("calc_submit", { lang: LANG, mode, calories_bucket: bucket(kcal), kcal });
+
+      // Save history local (solo si no inverse? aquí guardo todo)
+      const entry = {
+        ts: Date.now(),
+        mode,
+        kcal,
+        label: ($("food").value==="custom" ? (LANG==="es" ? "Personalizado" : "Custom") : label),
+      };
+      pushHist(entry);
+
+      lastCalc = { kcal, mode, modeName, label: entry.label, weight, gender };
+
+      // Leaderboard local (si hay nick guardado y kcal razonables)
+      const myNick = getMyNick();
+      const wk = isoWeekKey(new Date());
+      if (myNick && kcal <= LEADERBOARD_MAX_KCAL){
+        // anti-spam por cooldown
+        if (canSubmitNow()){
+          localSubmit({
+            week_key: wk,
+            nickname: myNick,
+            user_id: getUserId(),
+            calories_total: kcal,
+            created_at: new Date().toISOString()
+          });
+          renderLeaderboard();
+
+          // Payload preparado para backend
+          const payload = {
+            week_key: wk,
+            lang: LANG,
+            nickname: myNick,
+            user_id: getUserId(),
+            mode,
+            calories_total: kcal,
+            created_at: new Date().toISOString()
+          };
+          await submitToBackend(payload);
+        }
+      }
+
+      // reset meme area visibility (user decides)
+      $("memeWrap").style.display = "none";
+      $("btnDownload").style.display = "none";
+      $("btnShare").style.display = "none";
+      $("btnDownloadTop").style.display = "none";
+      $("btnShareTop").style.display = "none";
+
+      requestAnimationFrame(()=>{
+        $("results").scrollIntoView({ behavior:"smooth", block:"start" });
+      });
+    }
+
+    function onGenerateMeme(){
+      if (!lastCalc){
+        // fuerza cálculo
+        onCalculate();
+      }
+      if (!lastCalc) return;
+
+      const sportPick = pickSportForMeme(lastCalc.kcal, lastCalc.weight, lastCalc.gender);
+      lastMemeUrl = generateMeme({
+        kcal: lastCalc.kcal,
+        modeName: lastCalc.modeName,
+        label: lastCalc.label,
+        weight: lastCalc.weight,
+        sportPick
+      });
+    }
+
+    // =========================
+    // Leaderboard join actions
+    // =========================
+    function onJoin(){
+      const nick = normalizeNick(getNickname());
+      if (!nick){
+        toast(T[LANG].needNick);
+        return;
+      }
+      setMyNick(nick);
+      toast(T[LANG].joinedAs(nick));
+      track("leaderboard_join", { lang: LANG, nickname_len: nick.length });
+      renderLeaderboard();
+    }
+
+    // =========================
+    // Events + init
+    // =========================
+    function init(){
+      // ensure anon uid exists
+      getUserId();
+
+      // Build selects
+      buildFoodSelect();
+      fillDrinkSelects();
+      fillInverseSports();
+
+      // load nickname if exists
+      const myNick = getMyNick();
+      if (myNick) $("nickname").value = myNick;
+
+      // mode UI
       document.querySelectorAll('input[name="mode"]').forEach(r=>{
         r.addEventListener("change", syncModePills);
       });
       syncModePills();
 
-      // Button calculate
-      $("btnCalc").addEventListener("click", calculate);
+      // buttons
+      $("btnCalc").addEventListener("click", onCalculate);
+      $("btnMeme").addEventListener("click", onGenerateMeme);
 
-      // Meme manual
-      $("btnMeme").addEventListener("click", ()=>{
-        track("meme_click", { lang: LANG });
-        onMeme();
+      $("btnShare").addEventListener("click", ()=>{ if (lastMemeUrl) shareMeme(lastMemeUrl); });
+      $("btnShareTop").addEventListener("click", ()=>{ if (lastMemeUrl) shareMeme(lastMemeUrl); });
+
+      $("btnJoin").addEventListener("click", onJoin);
+      $("btnRefreshLB").addEventListener("click", ()=>{
+        renderLeaderboard();
+        track("leaderboard_view", { lang: LANG });
       });
 
-      // Normalize units
-      $("units").addEventListener("blur", ()=>{
-        const n = Math.max(1, parseInt($("units").value || "1",10));
-        $("units").value = String(n);
+      $("btnClearHistory").addEventListener("click", ()=>{
+        localStorage.removeItem(LS.hist);
+        renderHistory();
+        toast(T[LANG].cleared);
       });
 
-      // If custom -> focus extra
-      $("food").addEventListener("change", ()=>{
-        track("food_change", { item_id: $("food").value, lang: LANG });
-        if ($("food").value === "custom") $("extra").focus();
+      // language switch from URL (?lang=en)
+      const params = new URLSearchParams(location.search);
+      const ql = (params.get("lang") || "").toLowerCase();
+      if (ql === "en") LANG = "en"; else LANG = "es";
+
+      // lang buttons
+      $("btnES").addEventListener("click", ()=>{
+        LANG="es";
+        $("btnES").classList.add("active");
+        $("btnEN").classList.remove("active");
+        applyLang();
+        track("lang_change", { lang:"es" });
+      });
+      $("btnEN").addEventListener("click", ()=>{
+        LANG="en";
+        $("btnEN").classList.add("active");
+        $("btnES").classList.remove("active");
+        applyLang();
+        track("lang_change", { lang:"en" });
       });
 
-      // Track key interactions
-      ["weight","gender","extra","drink1","drink2","drink3","drink1n","drink2n","drink3n","invSport","invHours"].forEach(id=>{
-        const el = $(id);
-        if (!el) return;
-        el.addEventListener("change", ()=>track("input_change", { field:id, mode:getSelectedMode(), lang: LANG }));
-      });
+      // set active button initially
+      if (LANG==="en"){
+        $("btnEN").classList.add("active");
+        $("btnES").classList.remove("active");
+      } else {
+        $("btnES").classList.add("active");
+        $("btnEN").classList.remove("active");
+      }
 
-      applyLanguage();
+      // Apply translations + render blocks
+      applyLang();
 
-      // Page view (explicit)
-      track("page_view_custom", { lang: LANG });
+      // Default week key visible
+      $("lbWeekVal").textContent = isoWeekKey(new Date());
 
-      // UX mini: Enter para calcular (en desktop)
-      document.addEventListener("keydown", (e)=>{
-        if (e.key === "Enter"){
-          const tag = (e.target && e.target.tagName || "").toLowerCase();
-          if (tag === "textarea") return;
-          // Evita submit fantasma si algún browser interpreta
-          e.preventDefault();
-          calculate();
-        }
-      });
+      // If they click calculate and no nickname, still fine (leaderboard optional)
+      renderHistory();
+      renderLeaderboard();
     }
 
+    // boot
     init();
   </script>
 </body>
 </html>
+

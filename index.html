@@ -12,7 +12,7 @@
   <title id="metaTitle">LoVasASudar.com · Calculadora de castigo calórico</title>
   <meta id="metaDesc" name="description" content="Calcula el castigo calórico de tu cena/noche de copas y descubre cuánto ejercicio tendrías que hacer para sudarlo." />
 
-  <!-- Canonical + alternates (misma página con ?lang=) -->
+  <!-- Canonical + alternates -->
   <link id="linkCanonical" rel="canonical" href="https://lovasasudar.com/" />
   <link rel="alternate" hreflang="es" href="https://lovasasudar.com/?lang=es" />
   <link rel="alternate" hreflang="en" href="https://lovasasudar.com/?lang=en" />
@@ -79,7 +79,6 @@
     });
   </script>
 
-  <!-- CSS separado (misma estética) -->
   <link rel="stylesheet" href="./assets/css/styles.css" />
 </head>
 
@@ -132,6 +131,12 @@
               <input id="extra" type="number" min="0" step="10" value="0" inputmode="numeric" />
               <div class="hint" id="hintExtra">Se suman a lo anterior (comida + copas).</div>
             </div>
+          </div>
+
+          <!-- CTA DUPLICADO ARRIBA (Acción 2) -->
+          <div class="ctaTopWrap">
+            <button class="cta ctaTop" id="btnCalcTop" type="button">CALCULAR EJERCICIO NECESARIO 💪</button>
+            <div class="hint" id="hintAutoCalc">Tip: esto se recalcula solo cuando cambias algo.</div>
           </div>
         </div>
 
@@ -311,6 +316,7 @@
         </div>
       </div>
 
+      <!-- CTA principal (se mantiene) -->
       <button class="cta" id="btnCalc" type="button">CALCULAR EJERCICIO NECESARIO 💪</button>
 
       <section class="results" id="results" aria-label="Resultados">
@@ -352,6 +358,7 @@
           <button class="btnLite" id="btnShareTop" type="button" style="display:none;">📲 Compartir MEME</button>
           <a class="btnLite" id="btnDownloadTop" download="lovasasudar-meme.png" href="#" style="display:none;">⬇️ Descargar MEME</a>
           <button class="btnLite" id="btnMeme" type="button">📸 Generar MEME</button>
+          <button class="btnLite" id="btnOpenMeme" type="button" style="display:none;">🖼️ Ver MEME full-screen</button>
         </div>
 
         <div class="memeWrap" id="memeWrap">
@@ -370,7 +377,32 @@
     </main>
   </div>
 
-  <!-- JS modular -->
-  <script type="module" src="./assets/js/app.js"></script>
+  <!-- Sticky CTA móvil (Acción 2) -->
+  <div class="stickyCta" id="stickyCta" aria-label="Calcular (sticky)">
+    <button class="stickyBtn" id="btnCalcSticky" type="button">CALCULAR 💪</button>
+  </div>
+
+  <!-- Overlay Meme full-screen (Acción 3) -->
+  <div class="memeModal" id="memeModal" aria-hidden="true">
+    <div class="memeModalInner" role="dialog" aria-modal="true" aria-label="Meme full-screen">
+      <button class="memeClose" id="btnCloseMeme" type="button" aria-label="Cerrar">✕</button>
+
+      <div class="memeModalTitle">
+        <span id="memeModalTitle">MEME OFICIAL</span>
+        <span class="memeModalSub" id="memeModalSub">Comparte el crimen</span>
+      </div>
+
+      <div class="memeModalCanvasWrap">
+        <canvas id="memeCanvasModal" width="1200" height="630"></canvas>
+      </div>
+
+      <div class="memeModalActions">
+        <button class="btnLite" id="btnShareModal" type="button" style="display:none;">📲 Compartir</button>
+        <a class="btnLite" id="btnDownloadModal" download="lovasasudar-meme.png" href="#" style="display:none;">⬇️ Descargar</a>
+      </div>
+    </div>
+  </div>
+
+  <script defer src="./assets/js/app.js"></script>
 </body>
 </html>

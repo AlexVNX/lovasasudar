@@ -165,6 +165,19 @@
       flex: 1 1 180px;
       text-align: center;
     }
+    /* MODOS: en móvil se ven todos (2x2) sin scroll horizontal */
+@media (max-width: 768px) {
+  .modes{
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    overflow: visible !important;
+    white-space: normal !important;
+  }
+  .modes .mode{
+    width: 100% !important;
+  }
+}
   </style>
 </head>
 

@@ -106,8 +106,6 @@ function syncModePills(LANG){
   $("panelInverse").style.display = (getSelectedMode()==="inverse") ? "block" : "none";
 
   $("btnCalc").textContent = T[LANG].btnCalc;
-  if ($("btnCalcTop")) $("btnCalcTop").textContent = (LANG==="es" ? "CALCULAR (SIN SCROLL) 💥" : "CALCULATE (NO SCROLL) 💥");
-  if ($("btnCalcSticky")) $("btnCalcSticky").textContent = (LANG==="es" ? "CALCULAR AHORA 💪" : "CALCULATE NOW 💪");
 
   track("mode_change", { mode: getSelectedMode(), lang: LANG });
 }
@@ -142,8 +140,6 @@ function applyLanguage(LANG){
   $("tInverse").textContent = t.modes.inverse;
 
   $("btnCalc").textContent = t.btnCalc;
-  if ($("btnCalcTop")) $("btnCalcTop").textContent = (LANG==="es" ? "CALCULAR (SIN SCROLL) 💥" : "CALCULATE (NO SCROLL) 💥");
-  if ($("btnCalcSticky")) $("btnCalcSticky").textContent = (LANG==="es" ? "CALCULATE NOW 💪" : "CALCULATE NOW 💪");
 
   $("resTitle").textContent = t.results;
   $("kcalSub").textContent = t.kcalSub;
@@ -154,8 +150,6 @@ function applyLanguage(LANG){
 
   $("btnDownload").textContent = t.download;
   $("btnShare").textContent = t.share;
-  $("btnDownloadTop").textContent = t.downloadTop;
-  $("btnShareTop").textContent = t.shareTop;
 
   $("fineprint").textContent = t.fine;
 
@@ -206,6 +200,9 @@ function applyLanguage(LANG){
 // -------------------------
 // Meme overlay (A3)
 // -------------------------
+let overlayKeyHandler = null;
+let overlayClickHandler = null;
+
 function openMemeOverlay(url){
   const overlay = $("memeOverlay");
   const img = $("memeOverlayImg");
@@ -213,14 +210,12 @@ function openMemeOverlay(url){
 
   img.src = url;
 
-  // Download link inside overlay
   const dl = $("btnDownloadOverlay");
   if (dl){
     dl.href = url;
     dl.style.display = "inline-flex";
   }
 
-  // Share button inside overlay (solo si el navegador soporta share)
   const sh = $("btnShareOverlay");
   if (sh){
     sh.style.display = "inline-flex";
@@ -229,26 +224,33 @@ function openMemeOverlay(url){
 
   overlay.hidden = false;
 
-  // Cierra con click fuera
-  overlay.addEventListener("click", onOverlayBackdropClick);
-  document.addEventListener("keydown", onOverlayEsc);
-
-  function onOverlayBackdropClick(e){
+  // Click fuera
+  overlayClickHandler = (e)=>{
     if (e.target === overlay) closeMemeOverlay();
-  }
-  function onOverlayEsc(e){
+  };
+  overlay.addEventListener("click", overlayClickHandler);
+
+  // ESC
+  overlayKeyHandler = (e)=>{
     if (e.key === "Escape") closeMemeOverlay();
-  }
+  };
+  document.addEventListener("keydown", overlayKeyHandler);
 }
 
 function closeMemeOverlay(){
   const overlay = $("memeOverlay");
   if (!overlay) return;
+
   overlay.hidden = true;
 
-  // Limpieza listeners
-  overlay.replaceWith(overlay.cloneNode(true));
-  // OJO: al clonar, perdemos handlers; los reenganchamos en init()
+  if (overlayClickHandler){
+    overlay.removeEventListener("click", overlayClickHandler);
+    overlayClickHandler = null;
+  }
+  if (overlayKeyHandler){
+    document.removeEventListener("keydown", overlayKeyHandler);
+    overlayKeyHandler = null;
+  }
 }
 
 // -------------------------
@@ -259,14 +261,14 @@ let lastMemeUrl = null;
 
 /**
  * calculate({source, auto})
- * - source: string (btn / auto / enter / meme_btn ...)
- * - auto: boolean (si viene de autocalc, no contamos como "calculate" en GA)
+ * auto=true: autocalc (NO abre overlay)
  */
 function calculate({ source = "btn", auto = false } = {}){
   $("battleResultsWrap").style.display = "none";
   $("inverseResultsWrap").style.display = "none";
   $("memeWrap").style.display = "none";
 
+  // OJO: aquí ocultamos top duplicados y solo usamos bottom
   ["btnDownload","btnShare","btnDownloadTop","btnShareTop"].forEach(id=>{
     const el = $(id);
     if (el) el.style.display = "none";
@@ -325,7 +327,7 @@ function calculate({ source = "btn", auto = false } = {}){
   $("results").style.display = "block";
   $("results").scrollIntoView({ behavior:"smooth", block:"start" });
 
-  // Tracking: autocalc separado para no inflar "calculate"
+  // Tracking
   const baseTrack = {
     mode,
     kcal: kcalForMeme,
@@ -336,7 +338,6 @@ function calculate({ source = "btn", auto = false } = {}){
     lang: LANG,
     source
   };
-
   if (auto) track("auto_calculate", baseTrack);
   else track("calculate", baseTrack);
 
@@ -355,26 +356,24 @@ function calculate({ source = "btn", auto = false } = {}){
 
   lastMemeUrl = url;
 
+  // SOLO botones bottom
   const fnShare = ()=>shareMeme(T, LANG, track, url);
   $("btnShare").onclick = fnShare;
-  $("btnShareTop").onclick = fnShare;
 
-  // Deja listos botones download/share top/bottom (mantiene tu lógica actual)
   const dlBottom = $("btnDownload");
-  const dlTop = $("btnDownloadTop");
-  if (dlBottom){ dlBottom.href = url; dlBottom.style.display = "inline-flex"; }
-  if (dlTop){ dlTop.href = url; dlTop.style.display = "inline-flex"; }
-
+  if (dlBottom){
+    dlBottom.href = url;
+    dlBottom.style.display = "inline-flex";
+  }
   const shBottom = $("btnShare");
-  const shTop = $("btnShareTop");
-  if (shBottom){ shBottom.style.display = "inline-flex"; }
-  if (shTop){ shTop.style.display = "inline-flex"; }
+  if (shBottom){
+    shBottom.style.display = "inline-flex";
+  }
 
-  // Evento meme (una vez por cálculo)
   track("meme_generated", { mode, kcal: kcalForMeme, lang: LANG, source: auto ? "auto" : source });
 
-  // Overlay dominante (A3)
-  openMemeOverlay(url);
+  // Overlay dominante SOLO en acciones “humanas”, no en autocalc
+  if (!auto) openMemeOverlay(url);
 }
 
 // -------------------------
@@ -388,12 +387,8 @@ function debounce(fn, ms){
   };
 }
 
-let hasCalculatedOnce = false;
 const autoCalcDebounced = debounce((source)=>{
-  // Evita autocalcular antes de que haya catálogo/idioma listo
-  if (!document.body) return;
   calculate({ source, auto: true });
-  hasCalculatedOnce = true;
 }, 250);
 
 // -------------------------
@@ -407,7 +402,7 @@ function init(){
     LANG = nav.startsWith("en") ? "en" : "es";
   }
 
-  // Buttons lang
+  // Lang buttons
   $("btnES").addEventListener("click", ()=>{
     LANG = "es";
     $("btnES").classList.add("active");
@@ -416,8 +411,6 @@ function init(){
     applyLanguage(LANG);
     track("lang_change", { lang: "es" });
     applySeoLanding(LANG);
-
-    // Recalcula en el idioma nuevo (auto, para no inflar)
     autoCalcDebounced("lang_change");
   });
   $("btnEN").addEventListener("click", ()=>{
@@ -428,7 +421,6 @@ function init(){
     applyLanguage(LANG);
     track("lang_change", { lang: "en" });
     applySeoLanding(LANG);
-
     autoCalcDebounced("lang_change");
   });
 
@@ -449,52 +441,29 @@ function init(){
   });
   syncModePills(LANG);
 
-  // Conecta TODOS los CTAs de cálculo (original + top + sticky)
+  // Conecta TODOS los CTAs de cálculo
   document.querySelectorAll('[data-calc="1"]').forEach(btn=>{
     btn.addEventListener("click", ()=>{
       calculate({ source: btn.id || "btn", auto: false });
-      hasCalculatedOnce = true;
     });
   });
 
-  // Meme button: mantiene tu comportamiento (regenerar todo)
+  // Meme button: regenerar + overlay
   $("btnMeme").addEventListener("click", ()=>{
     track("meme_click", { lang: LANG });
     calculate({ source: "meme_btn", auto: false });
-    hasCalculatedOnce = true;
   });
 
-  // Overlay buttons
+  // Overlay controls
   const closeBtn = $("btnCloseMemeOverlay");
-  if (closeBtn){
-    closeBtn.addEventListener("click", ()=>{
-      closeMemeOverlay();
-      // Reenganchar handlers perdidos por el clone (ver closeMemeOverlay)
-      // Solución simple: recarga la página de overlay DOM con init handlers mínimos
-      hookOverlayHandlers();
-    });
-  }
+  if (closeBtn) closeBtn.addEventListener("click", closeMemeOverlay);
 
-  function hookOverlayHandlers(){
-    // Como closeMemeOverlay clona el nodo para limpiar listeners, hay que reenganchar:
-    const closeBtn2 = $("btnCloseMemeOverlay");
-    if (closeBtn2){
-      closeBtn2.addEventListener("click", ()=>{
-        closeMemeOverlay();
-        hookOverlayHandlers();
-      });
-    }
-    const regen = $("btnRegenOverlay");
-    if (regen){
-      regen.addEventListener("click", ()=>{
-        calculate({ source: "overlay_regen", auto: false });
-        hasCalculatedOnce = true;
-      });
-    }
-  }
-  hookOverlayHandlers();
+  const regen = $("btnRegenOverlay");
+  if (regen) regen.addEventListener("click", ()=>{
+    calculate({ source: "overlay_regen", auto: false });
+  });
 
-  // Inputs sanitización / tracking + autocalc
+  // Units sanitize + autocalc
   $("units").addEventListener("blur", ()=>{
     const n = Math.max(1, parseInt($("units").value || "1",10));
     $("units").value = String(n);
@@ -511,7 +480,6 @@ function init(){
     autoCalcDebounced("food_change");
   });
 
-  // Auto-calc para el resto (con tracking input_change como tenías)
   [
     "weight","gender","extra",
     "drink1","drink2","drink3","drink1n","drink2n","drink3n",
@@ -530,38 +498,18 @@ function init(){
 
   track("page_view_custom", { lang: LANG });
 
-  // Enter = calcular manual (cuenta como calculate)
+  // Enter = calcular manual
   document.addEventListener("keydown", (e)=>{
     if (e.key === "Enter"){
       const tag = (e.target && e.target.tagName || "").toLowerCase();
       if (tag === "textarea") return;
       e.preventDefault();
       calculate({ source: "enter", auto: false });
-      hasCalculatedOnce = true;
-    }
-    if (e.key === "Escape"){
-      // cerrar overlay si está abierto
-      const overlay = $("memeOverlay");
-      if (overlay && !overlay.hidden){
-        closeMemeOverlay();
-        // reenganchar handlers tras clone
-        // (si esto te parece feo, luego lo refactorizamos sin clone)
-        // aquí lo mínimo: intentar reenganchar
-        const closeBtn3 = $("btnCloseMemeOverlay");
-        if (closeBtn3){
-          closeBtn3.addEventListener("click", ()=>{
-            closeMemeOverlay();
-          });
-        }
-      }
     }
   });
 
-  // Autocalc inicial: “llegas → BOOM”
-  // Lo hacemos tras un tick para que el DOM esté listo.
-  setTimeout(()=>{
-    autoCalcDebounced("auto_initial");
-  }, 50);
+  // Autocalc inicial: resultados sin overlay
+  setTimeout(()=>autoCalcDebounced("auto_initial"), 50);
 }
 
 init();

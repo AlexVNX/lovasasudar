@@ -15,9 +15,13 @@ const ANON = window.SUPABASE_ANON_KEY || "";
 /* =========================
    Idioma
 ========================= */
-function getLang() {
-  const l = (document.documentElement.lang || "es").toLowerCase();
-  return l.startsWith("en") ? "en" : "es";
+function normalizeLang(l) {
+  const s = String(l || "").toLowerCase();
+  return s.startsWith("en") ? "en" : "es";
+}
+
+function getLangFallback() {
+  return normalizeLang(document.documentElement.lang || "es");
 }
 
 const STR = {
@@ -151,7 +155,7 @@ function streakUpdate() {
   }
 
   localStorage.setItem("lvas_streak_last", today);
-  localStorage.setItem("lvas_streak_count", count);
+  localStorage.setItem("lvas_streak_count", String(count));
   return count;
 }
 
@@ -227,12 +231,12 @@ function renderCountries(box, rows) {
 /* =========================
    INIT
 ========================= */
-export function initRanking() {
+export function initRanking(forcedLang) {
   try {
     const wrap = $("rankWrap");
     if (!wrap) return;
 
-    const LANG = getLang();
+    const LANG = normalizeLang(forcedLang || getLangFallback());
     const s = STR[LANG];
 
     $("rankTitle").textContent = s.title;
@@ -262,21 +266,29 @@ export function initRanking() {
 
     async function refresh() {
       try {
+        if (!ANON) {
+          list.innerHTML = `<div class="rankEmpty">${s.missingKey}</div>`;
+          countries.innerHTML = "";
+          dopamine.textContent = "";
+          status.textContent = "";
+          return;
+        }
+
         const data = await callLeaderboard({
           week_id,
           mode: filter.value,
           nick: nick.value.trim()
         });
 
-        data.entries?.length
-          ? renderEntries(list, data.entries)
-          : list.innerHTML = `<div class="rankEmpty">${s.empty}</div>`;
+        if (data.entries?.length) renderEntries(list, data.entries);
+        else list.innerHTML = `<div class="rankEmpty">${s.empty}</div>`;
 
         renderCountries(countries, data.countries || []);
 
         dopamine.textContent = data.you?.percentile
           ? s.youTop(data.you.percentile)
           : s.youNo;
+
       } catch {
         list.innerHTML = `<div class="rankEmpty">${s.netErr}</div>`;
       }
@@ -294,19 +306,23 @@ export function initRanking() {
       }
 
       status.textContent = out.deduped ? s.deduped : (out.is_valid === false ? s.rejected : s.ok);
-      dopamine.textContent = (streakUpdate() <= 1) ? s.streak0 : s.streakN(streakUpdate());
+
+      const streak = streakUpdate();
+      dopamine.textContent = (streak <= 1) ? s.streak0 : s.streakN(streak);
+
       refresh();
     };
 
     refresh();
   } catch {
-    // silencio total: nunca rompe la app
+    // nunca romper la app
   }
 }
 
 /* =========================
-   RE-INIT on language change
+   RE-INIT on language change (usa el detail.lang si existe)
 ========================= */
-document.addEventListener("lang_change", () => {
-  initRanking();
+document.addEventListener("lang_change", (e) => {
+  const langFromEvent = e?.detail?.lang;
+  initRanking(langFromEvent);
 });

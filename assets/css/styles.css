@@ -624,3 +624,17 @@ canvas{display:block; width:100%; height:auto;}
 
 /* Seguridad anti “no funciona nada” */
 .card, .field, select, input, button, label, a { pointer-events:auto; }
+
+/* --- Mobile: modos en columna (evita scroll horizontal) --- */
+@media (max-width: 560px){
+  .modes{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    overflow: visible;
+  }
+  .mode{
+    width: 100%;
+  }
+}
+

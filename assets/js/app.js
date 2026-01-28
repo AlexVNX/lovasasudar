@@ -16,6 +16,43 @@ import {
 
 import { generateMeme, pickSportForMeme, shareMeme } from "./meme.js";
 
+// ✅ Ranking
+import {
+  buildMemeHash,
+  submitEntry,
+  fetchLeaderboard,
+  renderLeaderboard
+} from "./ranking.js";
+
+// -------------------------
+// Supabase config (PON TUS VALORES)
+// -------------------------
+const SUPABASE_URL = "https://TU-PROYECTO.supabase.co";
+const SUPABASE_ANON_KEY = "TU_ANON_KEY";
+// Edge Functions base URL (Supabase): https://<project-ref>.functions.supabase.co
+const SUPABASE_FUNCTIONS_URL = "https://TU-PROYECTO.functions.supabase.co";
+
+// -------------------------
+// Helpers
+// -------------------------
+function getISOWeekId(d = new Date()) {
+  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const dayNum = date.getUTCDay() || 7;
+  date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+  const weekNo = Math.ceil((((date.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+  const ww = String(weekNo).padStart(2, "0");
+  return `${date.getUTCFullYear()}-W${ww}`;
+}
+
+function debounce(fn, ms){
+  let t = null;
+  return (...args)=>{
+    clearTimeout(t);
+    t = setTimeout(()=>fn(...args), ms);
+  };
+}
+
 // -------------------------
 // Select builders
 // -------------------------
@@ -146,8 +183,6 @@ function applyLanguage(LANG){
   $("modeSub").textContent = t.modeSub;
   $("sportsTitle").textContent = t.sportsTitle;
 
-  $("btnMeme").textContent = t.meme;
-
   $("btnDownload").textContent = t.download;
   $("btnShare").textContent = t.share;
 
@@ -198,7 +233,7 @@ function applyLanguage(LANG){
 }
 
 // -------------------------
-// Meme overlay (A3)
+// Meme overlay
 // -------------------------
 let overlayKeyHandler = null;
 let overlayClickHandler = null;
@@ -224,13 +259,11 @@ function openMemeOverlay(url){
 
   overlay.hidden = false;
 
-  // Click fuera
   overlayClickHandler = (e)=>{
     if (e.target === overlay) closeMemeOverlay();
   };
   overlay.addEventListener("click", overlayClickHandler);
 
-  // ESC
   overlayKeyHandler = (e)=>{
     if (e.key === "Escape") closeMemeOverlay();
   };
@@ -254,22 +287,37 @@ function closeMemeOverlay(){
 }
 
 // -------------------------
-// Main calculate
+// Ranking state
 // -------------------------
-let LANG = "es";
-let lastMemeUrl = null;
+let lastRankPayload = null;
 
-/**
- * calculate({source, auto})
- * auto=true: autocalc (NO abre overlay)
- */
+async function refreshLeaderboard(){
+  const list = $("leaderboardList");
+  if (!list) return;
+
+  const weekId = getISOWeekId();
+  const mode = $("rankMode") ? $("rankMode").value : "all";
+
+  const rows = await fetchLeaderboard({
+    supaUrl: SUPABASE_URL,
+    anonKey: SUPABASE_ANON_KEY,
+    weekId,
+    mode,
+    limit: 15
+  });
+
+  renderLeaderboard({ el: list, rows, lang: LANG });
+}
+
+// -------------------------
+// Calculate
+// -------------------------
 function calculate({ source = "btn", auto = false } = {}){
   $("battleResultsWrap").style.display = "none";
   $("inverseResultsWrap").style.display = "none";
   $("memeWrap").style.display = "none";
 
-  // OJO: aquí ocultamos top duplicados y solo usamos bottom
-  ["btnDownload","btnShare","btnDownloadTop","btnShareTop"].forEach(id=>{
+  ["btnDownload","btnShare"].forEach(id=>{
     const el = $(id);
     if (el) el.style.display = "none";
   });
@@ -313,6 +361,7 @@ function calculate({ source = "btn", auto = false } = {}){
     summary = T[LANG].summaryInverse(burned);
 
     kcalForMeme = burned;
+
     const sportKey = $("invSport").value;
     const sport = SPORTS.find(s=>s.key===sportKey) || SPORTS[0];
     const hours = Math.max(0, parseFloat($("invHours").value || "0"));
@@ -327,7 +376,6 @@ function calculate({ source = "btn", auto = false } = {}){
   $("results").style.display = "block";
   $("results").scrollIntoView({ behavior:"smooth", block:"start" });
 
-  // Tracking
   const baseTrack = {
     mode,
     kcal: kcalForMeme,
@@ -338,6 +386,7 @@ function calculate({ source = "btn", auto = false } = {}){
     lang: LANG,
     source
   };
+
   if (auto) track("auto_calculate", baseTrack);
   else track("calculate", baseTrack);
 
@@ -354,9 +403,7 @@ function calculate({ source = "btn", auto = false } = {}){
     sportPick
   });
 
-  lastMemeUrl = url;
-
-  // SOLO botones bottom
+  // botones bottom
   const fnShare = ()=>shareMeme(T, LANG, track, url);
   $("btnShare").onclick = fnShare;
 
@@ -372,21 +419,28 @@ function calculate({ source = "btn", auto = false } = {}){
 
   track("meme_generated", { mode, kcal: kcalForMeme, lang: LANG, source: auto ? "auto" : source });
 
-  // Overlay dominante SOLO en acciones “humanas”, no en autocalc
+  // ✅ Guardamos payload “subible” SOLO si es acción humana
+  if (!auto){
+    lastRankPayload = {
+      mode,
+      lang: LANG,
+      kcal: kcalForMeme,
+      item_id: $("food").value,
+      item_label: getSelectedLabel(LANG),
+      meme_hash: buildMemeHash(url)
+    };
+  }
+
+  // Overlay solo humano
   if (!auto) openMemeOverlay(url);
+
+  // refresca leaderboard cuando hay resultados visibles (no cuesta)
+  refreshLeaderboard().catch(()=>{});
 }
 
 // -------------------------
-// Autocalc (A1)
+// Autocalc
 // -------------------------
-function debounce(fn, ms){
-  let t = null;
-  return (...args)=>{
-    clearTimeout(t);
-    t = setTimeout(()=>fn(...args), ms);
-  };
-}
-
 const autoCalcDebounced = debounce((source)=>{
   calculate({ source, auto: true });
 }, 250);
@@ -396,11 +450,13 @@ const autoCalcDebounced = debounce((source)=>{
 // -------------------------
 function init(){
   const qLang = getLangFromUrl();
-  if (qLang) LANG = qLang;
+  let LANG_LOCAL = "es";
+  if (qLang) LANG_LOCAL = qLang;
   else {
     const nav = (navigator.language || "es").toLowerCase();
-    LANG = nav.startsWith("en") ? "en" : "es";
+    LANG_LOCAL = nav.startsWith("en") ? "en" : "es";
   }
+  LANG = LANG_LOCAL;
 
   // Lang buttons
   $("btnES").addEventListener("click", ()=>{
@@ -412,6 +468,7 @@ function init(){
     track("lang_change", { lang: "es" });
     applySeoLanding(LANG);
     autoCalcDebounced("lang_change");
+    refreshLeaderboard().catch(()=>{});
   });
   $("btnEN").addEventListener("click", ()=>{
     LANG = "en";
@@ -422,6 +479,7 @@ function init(){
     track("lang_change", { lang: "en" });
     applySeoLanding(LANG);
     autoCalcDebounced("lang_change");
+    refreshLeaderboard().catch(()=>{});
   });
 
   if (LANG==="en"){ $("btnEN").classList.add("active"); $("btnES").classList.remove("active"); }
@@ -441,17 +499,11 @@ function init(){
   });
   syncModePills(LANG);
 
-  // Conecta TODOS los CTAs de cálculo
+  // CTAs
   document.querySelectorAll('[data-calc="1"]').forEach(btn=>{
     btn.addEventListener("click", ()=>{
       calculate({ source: btn.id || "btn", auto: false });
     });
-  });
-
-  // Meme button: regenerar + overlay
-  $("btnMeme").addEventListener("click", ()=>{
-    track("meme_click", { lang: LANG });
-    calculate({ source: "meme_btn", auto: false });
   });
 
   // Overlay controls
@@ -463,7 +515,7 @@ function init(){
     calculate({ source: "overlay_regen", auto: false });
   });
 
-  // Units sanitize + autocalc
+  // Inputs
   $("units").addEventListener("blur", ()=>{
     const n = Math.max(1, parseInt($("units").value || "1",10));
     $("units").value = String(n);
@@ -495,8 +547,54 @@ function init(){
   });
 
   applyLanguage(LANG);
-
   track("page_view_custom", { lang: LANG });
+
+  // Ranking UI
+  if ($("rankMode")){
+    $("rankMode").addEventListener("change", ()=>refreshLeaderboard().catch(()=>{}));
+  }
+
+  if ($("btnSubmitRank")){
+    $("btnSubmitRank").addEventListener("click", async ()=>{
+      const st = $("rankStatus");
+      if (st) st.textContent = "";
+
+      if (!lastRankPayload){
+        if (st) st.textContent = (LANG==="es" ? "Primero calcula algo (y que sea bestia)." : "Calculate something first (make it brutal).");
+        return;
+      }
+
+      const nick = $("rankNick") ? $("rankNick").value : "";
+      const payload = { ...lastRankPayload, nick };
+
+      try{
+        if (st) st.textContent = (LANG==="es" ? "Subiendo…" : "Uploading…");
+
+        const r = await submitEntry({
+          supaFnUrl: SUPABASE_FUNCTIONS_URL,
+          anonKey: SUPABASE_ANON_KEY,
+          payload
+        });
+
+        if (!r.ok){
+          if (st) st.textContent = (LANG==="es" ? `No se pudo: ${r.error}` : `Failed: ${r.error}`);
+          track("rank_submit_fail", { lang: LANG, error: r.error });
+          return;
+        }
+
+        if (st) st.textContent = (LANG==="es" ? "✅ Enviado al ranking" : "✅ Submitted");
+        track("rank_submit_ok", { lang: LANG });
+
+        await refreshLeaderboard();
+      }catch(e){
+        if (st) st.textContent = (LANG==="es" ? "Error de red" : "Network error");
+        track("rank_submit_fail", { lang: LANG, error: "network" });
+      }
+    });
+  }
+
+  // Cargar leaderboard al inicio (aunque esté oculto hasta results)
+  refreshLeaderboard().catch(()=>{});
 
   // Enter = calcular manual
   document.addEventListener("keydown", (e)=>{
@@ -508,7 +606,7 @@ function init(){
     }
   });
 
-  // Autocalc inicial: resultados sin overlay
+  // Autocalc inicial (sin overlay)
   setTimeout(()=>autoCalcDebounced("auto_initial"), 50);
 }
 

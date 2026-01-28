@@ -470,6 +470,36 @@
           <button class="btnLite" id="btnShare" type="button" style="display:none;">📲 Compartir</button>
           <a class="btnLite" id="btnDownload" download="lovasasudar-meme.png" href="#" style="display:none;">⬇️ Descargar MEME</a>
         </div>
+<div class="divider"></div>
+
+<section aria-label="Ranking semanal">
+  <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+    <div style="font-weight:950;">🏆 Ranking semanal (lo más bestia)</div>
+    <select id="rankMode" class="btnLite" style="max-width:240px;">
+      <option value="all">Todos los modos</option>
+      <option value="normal">Modo normal</option>
+      <option value="drinks">Noche de copas</option>
+      <option value="battle">Batalla</option>
+      <option value="inverse">Inversa</option>
+    </select>
+  </div>
+
+  <div class="hint" style="margin-top:6px; opacity:.8;">
+    Bandera = país estimado (best-effort). Sin datos personales.
+  </div>
+
+  <div style="margin-top:10px;" class="sports" id="leaderboardList"></div>
+
+  <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+    <input id="rankNick" type="text" maxlength="16"
+      placeholder="Nick (opcional)"
+      style="flex:1 1 180px; min-width:160px;" />
+    <button class="btnLite" id="btnSubmitRank" type="button">
+      🚀 Subir este resultado
+    </button>
+    <span id="rankStatus" style="opacity:.75; font-size:13px;"></span>
+  </div>
+</section>
 
         <div class="fineprint" id="fineprint">
           Estimaciones aproximadas basadas en MET (la física no negocia, pero sí te deja elegir dardos).

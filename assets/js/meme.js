@@ -150,17 +150,19 @@ export function generateMeme({LANG, T, kcal, modeName, label, weight, sportPick}
 
   const url = canvas.toDataURL("image/png");
 
+  // SOLO botones bottom (evita duplicados top)
   const dl = $("btnDownload");
-  dl.href = url;
-  dl.style.display = "inline-flex";
+  if (dl){
+    dl.href = url;
+    dl.style.display = "inline-flex";
+  }
 
-  const dlTop = $("btnDownloadTop");
-  dlTop.href = url;
-  dlTop.style.display = "inline-flex";
+  const canShare =
+    !!navigator.share &&
+    (!navigator.canShare || navigator.canShare({ files: [new File([], "x.png", { type:"image/png" })] }));
 
-  const canShare = !!navigator.share;
-  $("btnShare").style.display = canShare ? "inline-flex" : "none";
-  $("btnShareTop").style.display = canShare ? "inline-flex" : "none";
+  const sh = $("btnShare");
+  if (sh) sh.style.display = canShare ? "inline-flex" : "none";
 
   requestAnimationFrame(()=>wrap.scrollIntoView({ behavior:"smooth", block:"start" }));
 
@@ -171,13 +173,27 @@ export async function shareMeme(T, LANG, track, url){
   try{
     const blob = await (await fetch(url)).blob();
     const file = new File([blob], "lovasasudar-meme.png", { type: "image/png" });
+
+    // Si el navegador soporta share pero NO archivos, mejor fallar limpio
+    if (navigator.canShare && !navigator.canShare({ files: [file] })){
+      alert(T[LANG].memeShareFail);
+      track("share_meme_fail", { lang: LANG, reason: "cannot_share_files" });
+      return;
+    }
+
     await navigator.share({
       title: "LoVasASudar.com",
       text: T[LANG].memeShareText,
       files: [file]
     });
+
     track("share_meme", { lang: LANG });
-  }catch(_){
+  }catch(err){
+    // Cancelación normal del usuario (no es “fallo”)
+    if (err && (err.name === "AbortError" || err.name === "NotAllowedError")){
+      track("share_meme_cancel", { lang: LANG });
+      return;
+    }
     alert(T[LANG].memeShareFail);
     track("share_meme_fail", { lang: LANG });
   }

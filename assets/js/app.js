@@ -15,6 +15,7 @@ import {
 } from "./calc.js";
 
 import { generateMeme, pickSportForMeme, shareMeme } from "./meme.js";
+import { initRanking } from "./ranking.js"; // ✅ IMPORTANTE: si no, ranking no arranca
 
 // -------------------------
 // Select builders
@@ -210,10 +211,8 @@ let lastMemeUrl = null;
  * - No hace scroll
  * - No genera meme
  * - No trackea calculate
- * - No toca botones de share/download
  */
 function rerenderResultsForLang(){
-  // Si aún no hay resultados visibles, no hacemos nada
   if (!$("results") || $("results").style.display !== "block") return;
 
   const mode = getSelectedMode();
@@ -224,11 +223,9 @@ function rerenderResultsForLang(){
 
   const kcal = getTotalCaloriesWithMode();
 
-  // Reseteo de wrappers secundarios
   $("battleResultsWrap").style.display = "none";
   $("inverseResultsWrap").style.display = "none";
 
-  // KPI
   $("kcalOut").textContent = `${kcal} kcal`;
   $("kcalSub").textContent = T[LANG].kcalSub;
   $("modeOut").textContent = modeName;
@@ -252,7 +249,6 @@ function rerenderResultsForLang(){
 
   if (mode === "inverse"){
     const burned = renderInverse(LANG, T, weight, gender);
-
     $("kcalOut").textContent = `${burned} kcal`;
     $("kcalSub").textContent = T[LANG].burned;
 
@@ -379,12 +375,12 @@ function init(){
     applyLanguage(LANG);
     track("lang_change", { lang: "es" });
 
-    // Avisar al resto de módulos (ranking, etc.)
+    // ✅ avisar a módulos externos (ranking.js escucha esto)
     document.dispatchEvent(new CustomEvent("lang_change", { detail: { lang: LANG } }));
 
     applySeoLanding(LANG);
 
-    // Re-render resultados (deportes, battle/inverse) sin recalcular ni hacer scroll
+    // ✅ re-render de resultados (deportes) sin recalcular ni scrollear
     rerenderResultsForLang();
   });
 
@@ -396,12 +392,12 @@ function init(){
     applyLanguage(LANG);
     track("lang_change", { lang: "en" });
 
-    // Avisar al resto de módulos (ranking, etc.)
+    // ✅ avisar a módulos externos (ranking.js escucha esto)
     document.dispatchEvent(new CustomEvent("lang_change", { detail: { lang: LANG } }));
 
     applySeoLanding(LANG);
 
-    // Re-render resultados (deportes, battle/inverse) sin recalcular ni hacer scroll
+    // ✅ re-render de resultados (deportes) sin recalcular ni scrollear
     rerenderResultsForLang();
   });
 
@@ -423,7 +419,7 @@ function init(){
 
   $("btnMeme").addEventListener("click", ()=>{
     track("meme_click", { lang: LANG });
-    calculate(); // tu comportamiento actual: regenerar todo sincronizado
+    calculate();
   });
 
   $("units").addEventListener("blur", ()=>{
@@ -431,9 +427,11 @@ function init(){
     $("units").value = String(n);
   });
 
+  // ✅ CLAVE: al cambiar el desplegable principal de comida, recalculamos y te lleva al meme
   $("food").addEventListener("change", ()=>{
     track("food_change", { item_id: $("food").value, lang: LANG });
     if ($("food").value === "custom") $("extra").focus();
+    calculate(); // 👈 vuelve el comportamiento que quieres: cambiar comida => meme
   });
 
   ["weight","gender","extra","drink1","drink2","drink3","drink1n","drink2n","drink3n","invSport","invHours"].forEach(id=>{
@@ -443,6 +441,9 @@ function init(){
   });
 
   applyLanguage(LANG);
+
+  // ✅ Inicializa ranking una vez al cargar (si no, no se monta)
+  try { initRanking(LANG); } catch(_) {}
 
   track("page_view_custom", { lang: LANG });
 

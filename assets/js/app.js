@@ -134,6 +134,25 @@ function applyLanguage(LANG){
   $("hintWeight").textContent = t.hintWeight;
   $("lblGender").textContent = t.lblGender;
   $("hintGender").textContent = t.hintGender;
+  // Traduce opciones del select de género
+const g = $("gender");
+if (g) {
+  const v = g.value || "na";
+  if (LANG === "en") {
+    g.innerHTML = `
+      <option value="na">Prefer not to say</option>
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+    `;
+  } else {
+    g.innerHTML = `
+      <option value="na">Prefiero no decirlo</option>
+      <option value="male">Hombre</option>
+      <option value="female">Mujer</option>
+    `;
+  }
+  g.value = v;
+}
 
   $("tNormal").textContent = t.modes.normal;
   $("tDrinks").textContent = t.modes.drinks;

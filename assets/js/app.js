@@ -205,8 +205,67 @@ function applyLanguage(LANG){
 let LANG = "es";
 let lastMemeUrl = null;
 
-// 🔒 control de scroll: NO lo hagas en cada toque, solo en cambios “grandes”
-let allowScrollToMeme = false;
+/**
+ * Re-renderiza SOLO los resultados (deportes/battle/inverse y textos) con el idioma actual.
+ * - No hace scroll
+ * - No genera meme
+ * - No trackea calculate
+ * - No toca botones de share/download
+ */
+function rerenderResultsForLang(){
+  // Si aún no hay resultados visibles, no hacemos nada
+  if (!$("results") || $("results").style.display !== "block") return;
+
+  const mode = getSelectedMode();
+  const modeName = T[LANG].modeNames[mode] || mode;
+
+  const weight = clamp(parseInt($("weight").value||"80",10),35,200);
+  const gender = $("gender").value;
+
+  const kcal = getTotalCaloriesWithMode();
+
+  // Reseteo de wrappers secundarios
+  $("battleResultsWrap").style.display = "none";
+  $("inverseResultsWrap").style.display = "none";
+
+  // KPI
+  $("kcalOut").textContent = `${kcal} kcal`;
+  $("kcalSub").textContent = T[LANG].kcalSub;
+  $("modeOut").textContent = modeName;
+  $("modeSub").textContent = T[LANG].modeSub;
+
+  let summary = "—";
+
+  if (mode === "normal" || mode === "drinks"){
+    renderSportsTable(LANG, T, kcal, weight, gender);
+    $("sportsTitle").textContent = T[LANG].sportsTitle;
+    summary = T[LANG].summaryNormal(kcal);
+  }
+
+  if (mode === "battle"){
+    renderSportsTable(LANG, T, kcal, weight, gender);
+    renderBattle(LANG, T, kcal);
+    $("sportsTitle").textContent = T[LANG].sportsTitle;
+    $("battleResultsWrap").style.display = "block";
+    summary = T[LANG].summaryBattle(kcal);
+  }
+
+  if (mode === "inverse"){
+    const burned = renderInverse(LANG, T, weight, gender);
+
+    $("kcalOut").textContent = `${burned} kcal`;
+    $("kcalSub").textContent = T[LANG].burned;
+
+    $("sportsList").innerHTML = "";
+    $("sportsTitle").textContent = T[LANG].earnedTitle;
+
+    $("inverseResultsWrap").style.display = "block";
+    summary = T[LANG].summaryInverse(burned);
+  }
+
+  $("mainOut").textContent = "OK";
+  $("mainSub").textContent = summary;
+}
 
 function calculate(){
   $("battleResultsWrap").style.display = "none";
@@ -301,19 +360,9 @@ function calculate(){
   $("btnShareTop").onclick = fnShare;
 
   track("meme_generated", { mode, kcal: kcalForMeme, lang: LANG });
-
-  // ✅ scroll al meme SOLO cuando lo hemos habilitado (por cambio de food / primer cálculo)
-  if (allowScrollToMeme){
-    allowScrollToMeme = false;
-    const wrap = $("memeWrap");
-    if (wrap) requestAnimationFrame(()=>wrap.scrollIntoView({ behavior:"smooth", block:"start" }));
-  }
 }
 
-// -------------------------
-// Init (ahora async) + Ranking a prueba de bombas
-// -------------------------
-async function init(){
+function init(){
   const qLang = getLangFromUrl();
   if (qLang) LANG = qLang;
   else {
@@ -329,11 +378,16 @@ async function init(){
     setLangInUrl("es");
     applyLanguage(LANG);
     track("lang_change", { lang: "es" });
-    document.dispatchEvent(new CustomEvent("lang_change", {
-  detail: { lang: LANG }
-}));
+
+    // Avisar al resto de módulos (ranking, etc.)
+    document.dispatchEvent(new CustomEvent("lang_change", { detail: { lang: LANG } }));
+
     applySeoLanding(LANG);
+
+    // Re-render resultados (deportes, battle/inverse) sin recalcular ni hacer scroll
+    rerenderResultsForLang();
   });
+
   $("btnEN").addEventListener("click", ()=>{
     LANG = "en";
     $("btnEN").classList.add("active");
@@ -341,20 +395,22 @@ async function init(){
     setLangInUrl("en");
     applyLanguage(LANG);
     track("lang_change", { lang: "en" });
-    document.dispatchEvent(new CustomEvent("lang_change", {
-  detail: { lang: LANG }
-}));
+
+    // Avisar al resto de módulos (ranking, etc.)
+    document.dispatchEvent(new CustomEvent("lang_change", { detail: { lang: LANG } }));
+
     applySeoLanding(LANG);
+
+    // Re-render resultados (deportes, battle/inverse) sin recalcular ni hacer scroll
+    rerenderResultsForLang();
   });
 
   if (LANG==="en"){ $("btnEN").classList.add("active"); $("btnES").classList.remove("active"); }
   else { $("btnES").classList.add("active"); $("btnEN").classList.remove("active"); }
 
-  // ✅ Estos tres son críticos para “que haya desplegable”
   buildFoodSelect(LANG, "pizza_medium");
   fillDrinkSelects(LANG);
   fillInverseSports(LANG);
-
   setDocumentMeta(LANG);
   applySeoLanding(LANG);
 
@@ -363,15 +419,11 @@ async function init(){
   });
   syncModePills(LANG);
 
-  $("btnCalc").addEventListener("click", ()=>{
-    allowScrollToMeme = true; // primer scroll permitido
-    calculate();
-  });
+  $("btnCalc").addEventListener("click", calculate);
 
   $("btnMeme").addEventListener("click", ()=>{
     track("meme_click", { lang: LANG });
-    // regenerar, pero sin scroll forzado (no molestar)
-    calculate();
+    calculate(); // tu comportamiento actual: regenerar todo sincronizado
   });
 
   $("units").addEventListener("blur", ()=>{
@@ -382,9 +434,6 @@ async function init(){
   $("food").addEventListener("change", ()=>{
     track("food_change", { item_id: $("food").value, lang: LANG });
     if ($("food").value === "custom") $("extra").focus();
-    // ✅ aquí sí: cambio “principal” → scroll permitido
-    allowScrollToMeme = true;
-    calculate();
   });
 
   ["weight","gender","extra","drink1","drink2","drink3","drink1n","drink2n","drink3n","invSport","invHours"].forEach(id=>{
@@ -402,18 +451,9 @@ async function init(){
       const tag = (e.target && e.target.tagName || "").toLowerCase();
       if (tag === "textarea") return;
       e.preventDefault();
-      allowScrollToMeme = true;
       calculate();
     }
   });
-
-  // ✅ Ranking: import dinámico con try/catch -> NUNCA rompe la app
-  try{
-    const mod = await import("./ranking.js");
-    if (mod && typeof mod.initRanking === "function") mod.initRanking();
-  }catch(e){
-    console.warn("Ranking disabled:", e);
-  }
 }
 
 init();

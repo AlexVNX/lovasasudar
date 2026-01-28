@@ -81,104 +81,6 @@
 
   <!-- CSS separado (misma estética) -->
   <link rel="stylesheet" href="./assets/css/styles.css" />
-
-  <!-- Parche mínimo para CTA sticky + overlay meme (lo movemos luego a styles.css si quieres) -->
-  <style>
-    /* CTA arriba SOLO en móvil (desktop: fuera) */
-    #btnCalcTop { width: 100%; margin-top: 12px; display: none; }
-    @media (max-width: 768px) { #btnCalcTop { display: block; } }
-
-    /* Sticky CTA en móvil */
-    #stickyCalcBar {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 9999;
-      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-      background: rgba(5, 6, 23, 0.88);
-      backdrop-filter: blur(10px);
-      border-top: 1px solid rgba(255,255,255,0.08);
-      display: none;
-    }
-    #stickyCalcBar .cta { width: 100%; margin: 0; }
-    @media (max-width: 768px) {
-      #stickyCalcBar { display: block; }
-      body { padding-bottom: 86px; }
-    }
-
-    /* Overlay meme */
-    #memeOverlay[hidden] { display: none !important; }
-    #memeOverlay {
-      position: fixed;
-      inset: 0;
-      z-index: 10000;
-      background: rgba(0,0,0,0.72);
-      backdrop-filter: blur(8px);
-      display: grid;
-      place-items: center;
-      padding: 18px;
-    }
-    #memeOverlay .panel {
-      width: min(980px, 96vw);
-      background: rgba(5, 6, 23, 0.96);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 18px;
-      padding: 14px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.55);
-      max-height: 92vh;
-      overflow: auto;
-    }
-    #memeOverlay .topRow {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-    #memeOverlay .topRow .title {
-      font-weight: 950;
-      letter-spacing: 0.2px;
-    }
-    #memeOverlay .closeBtn {
-      border: 1px solid rgba(255,255,255,0.16);
-      background: rgba(255,255,255,0.06);
-      color: #fff;
-      border-radius: 12px;
-      padding: 8px 10px;
-      cursor: pointer;
-    }
-    #memeOverlay .imgWrap {
-      border-radius: 14px;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: rgba(255,255,255,0.04);
-    }
-    #memeOverlay img { display: block; width: 100%; height: auto; }
-    #memeOverlay .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 12px;
-    }
-    #memeOverlay .actions .btnLite {
-      flex: 1 1 180px;
-      text-align: center;
-    }
-    /* MODOS: en móvil, 4 en columna (sin cortes ni scroll lateral) */
-@media (max-width: 768px) {
-  .modes{
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 10px !important;
-    overflow: visible !important;
-    white-space: normal !important;
-  }
-  .modes .mode{
-    width: 100% !important;
-  }
-}
-  </style>
 </head>
 
 <body>
@@ -217,11 +119,6 @@
         <div class="field">
           <label for="food" id="lblFood">Alimento o bebida</label>
           <select id="food" aria-label="Alimento o bebida"></select>
-
-          <!-- CTA arriba (solo móvil) -->
-          <button class="cta" id="btnCalcTop" type="button" data-calc="1">
-            CALCULAR 💪
-          </button>
 
           <div class="row2">
             <div class="field">
@@ -414,7 +311,7 @@
         </div>
       </div>
 
-      <button class="cta" id="btnCalc" type="button" data-calc="1">CALCULAR EJERCICIO NECESARIO 💪</button>
+      <button class="cta" id="btnCalc" type="button">CALCULAR EJERCICIO NECESARIO 💪</button>
 
       <section class="results" id="results" aria-label="Resultados">
         <h2 id="resTitle">🎯 Resultados</h2>
@@ -451,88 +348,62 @@
           <div class="sports" id="inverseList"></div>
         </div>
 
-        <!-- Dejo estos por compatibilidad pero el JS NO los mostrará (evita duplicados) -->
-        <div class="btnRow" aria-label="Acciones meme (top)" style="display:none;">
+        <div class="btnRow" aria-label="Acciones meme">
           <button class="btnLite" id="btnShareTop" type="button" style="display:none;">📲 Compartir MEME</button>
           <a class="btnLite" id="btnDownloadTop" download="lovasasudar-meme.png" href="#" style="display:none;">⬇️ Descargar MEME</a>
-        </div>
 
-        <div class="btnRow" aria-label="Acciones meme">
-          <button class="btnLite" id="btnMeme" type="button" style="display:none;">📸 Generar MEME</button>
+          <!-- Si quieres quitarlo, ponle style="display:none;" -->
+          <button class="btnLite" id="btnMeme" type="button">📸 Generar MEME</button>
         </div>
 
         <div class="memeWrap" id="memeWrap">
           <canvas id="memeCanvas" width="1200" height="630"></canvas>
         </div>
 
-        <!-- SOLO UNA PAREJA DE BOTONES (bottom) -->
         <div class="btnRow" aria-label="Acciones meme (abajo)">
           <button class="btnLite" id="btnShare" type="button" style="display:none;">📲 Compartir</button>
           <a class="btnLite" id="btnDownload" download="lovasasudar-meme.png" href="#" style="display:none;">⬇️ Descargar MEME</a>
         </div>
-<div class="divider"></div>
 
-<section aria-label="Ranking semanal">
-  <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-    <div style="font-weight:950;">🏆 Ranking semanal (lo más bestia)</div>
-    <select id="rankMode" class="btnLite" style="max-width:240px;">
-      <option value="all">Todos los modos</option>
-      <option value="normal">Modo normal</option>
-      <option value="drinks">Noche de copas</option>
-      <option value="battle">Batalla</option>
-      <option value="inverse">Inversa</option>
-    </select>
-  </div>
+        <!-- ======================
+             PLUS: RANKING SEMANAL
+        ======================= -->
+        <div class="divider"></div>
 
-  <div class="hint" style="margin-top:6px; opacity:.8;">
-    Bandera = país estimado (best-effort). Sin datos personales.
-  </div>
+        <section aria-label="Ranking semanal">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+            <div style="font-weight:950;">🏆 Ranking semanal (lo más bestia)</div>
+            <select id="rankMode" class="btnLite" style="max-width:240px;">
+              <option value="all">Todos los modos</option>
+              <option value="normal">Modo normal</option>
+              <option value="drinks">Noche de copas</option>
+              <option value="battle">Batalla</option>
+              <option value="inverse">Inversa</option>
+            </select>
+          </div>
 
-  <div style="margin-top:10px;" class="sports" id="leaderboardList"></div>
+          <div class="hint" style="margin-top:6px; opacity:.8;">
+            Bandera = país estimado (best-effort). Sin datos personales.
+          </div>
 
-  <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-    <input id="rankNick" type="text" maxlength="16"
-      placeholder="Nick (opcional)"
-      style="flex:1 1 180px; min-width:160px;" />
-    <button class="btnLite" id="btnSubmitRank" type="button">
-      🚀 Subir este resultado
-    </button>
-    <span id="rankStatus" style="opacity:.75; font-size:13px;"></span>
-  </div>
-</section>
+          <div style="margin-top:10px;" class="sports" id="leaderboardList"></div>
+
+          <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+            <input id="rankNick" type="text" maxlength="16"
+              placeholder="Nick (opcional)"
+              style="flex:1 1 180px; min-width:160px;" />
+            <button class="btnLite" id="btnSubmitRank" type="button">
+              🚀 Subir este resultado
+            </button>
+            <span id="rankStatus" style="opacity:.75; font-size:13px;"></span>
+          </div>
+        </section>
 
         <div class="fineprint" id="fineprint">
           Estimaciones aproximadas basadas en MET (la física no negocia, pero sí te deja elegir dardos).
         </div>
       </section>
     </main>
-  </div>
-
-  <!-- Sticky CTA móvil -->
-  <div id="stickyCalcBar" aria-label="Acción rápida calcular">
-    <button class="cta" id="btnCalcSticky" type="button" data-calc="1">
-      CALCULAR 💪
-    </button>
-  </div>
-
-  <!-- Overlay meme dominante -->
-  <div id="memeOverlay" role="dialog" aria-modal="true" aria-label="Meme generado" hidden>
-    <div class="panel">
-      <div class="topRow">
-        <div class="title">📸 Tu MEME</div>
-        <button class="closeBtn" id="btnCloseMemeOverlay" type="button" aria-label="Cerrar">✕</button>
-      </div>
-
-      <div class="imgWrap">
-        <img id="memeOverlayImg" alt="Meme generado" />
-      </div>
-
-      <div class="actions" aria-label="Acciones del meme">
-        <button class="btnLite" id="btnShareOverlay" type="button" style="display:none;">📲 Compartir</button>
-        <a class="btnLite" id="btnDownloadOverlay" download="lovasasudar-meme.png" href="#" style="display:none;">⬇️ Descargar</a>
-        <button class="btnLite" id="btnRegenOverlay" type="button">🔁 Regenerar</button>
-      </div>
-    </div>
   </div>
 
   <!-- JS modular -->

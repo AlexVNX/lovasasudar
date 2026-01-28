@@ -16,7 +16,6 @@ import {
 
 import { generateMeme, pickSportForMeme, shareMeme } from "./meme.js";
 
-// ✅ Ranking
 import { SUPABASE } from "./config.js";
 import { buildMemeHash, submitEntry, fetchLeaderboard, renderLeaderboard } from "./ranking.js";
 
@@ -34,16 +33,12 @@ function getISOWeekId(d = new Date()) {
 }
 
 let LANG = "es";
-let lastMemeUrl = null;
-
-// payload del último resultado para subir al ranking
 let lastRankPayload = null;
 
 async function refreshLeaderboard(){
   const list = $("leaderboardList");
   if (!list) return;
 
-  // Si aún no está configurado
   if (!SUPABASE?.URL || !SUPABASE?.ANON_KEY){
     list.innerHTML = `<div style="opacity:.75; padding:10px 0;">(Ranking pendiente de configurar Supabase)</div>`;
     return;
@@ -247,9 +242,9 @@ function applyLanguage(LANG){
 }
 
 // -------------------------
-// Main calculate (TU lógica original)
+// Calculate (con control de scroll)
 // -------------------------
-function calculate(){
+function calculate({ scrollToMeme = false } = {}){
   $("battleResultsWrap").style.display = "none";
   $("inverseResultsWrap").style.display = "none";
   $("memeWrap").style.display = "none";
@@ -310,7 +305,6 @@ function calculate(){
   $("mainSub").textContent = summary;
 
   $("results").style.display = "block";
-  $("results").scrollIntoView({ behavior:"smooth", block:"start" });
 
   track("calculate", {
     mode,
@@ -335,13 +329,10 @@ function calculate(){
     sportPick
   });
 
-  lastMemeUrl = url;
-
   const fnShare = ()=>shareMeme(T, LANG, track, url);
   $("btnShare").onclick = fnShare;
   $("btnShareTop").onclick = fnShare;
 
-  // ✅ payload “subible” para ranking
   lastRankPayload = {
     mode,
     lang: LANG,
@@ -353,10 +344,20 @@ function calculate(){
 
   track("meme_generated", { mode, kcal: kcalForMeme, lang: LANG });
 
-  // actualiza ranking
+  // ✅ Scroll SOLO si toca (al entrar o al cambiar el listado)
+  if (scrollToMeme){
+    $("memeWrap").scrollIntoView({ behavior:"smooth", block:"start" });
+  } else {
+    // mantiene el comportamiento de mostrar resultados sin “teletransporte”
+    $("results").scrollIntoView({ behavior:"smooth", block:"start" });
+  }
+
   refreshLeaderboard().catch(()=>{});
 }
 
+// -------------------------
+// Init
+// -------------------------
 function init(){
   const qLang = getLangFromUrl();
   if (qLang) LANG = qLang;
@@ -365,7 +366,6 @@ function init(){
     LANG = nav.startsWith("en") ? "en" : "es";
   }
 
-  // Buttons
   $("btnES").addEventListener("click", ()=>{
     LANG = "es";
     $("btnES").classList.add("active");
@@ -402,15 +402,13 @@ function init(){
   });
   syncModePills(LANG);
 
-  // ✅ TU botón original
-  $("btnCalc").addEventListener("click", calculate);
+  $("btnCalc").addEventListener("click", ()=>calculate({ scrollToMeme: false }));
 
-  // Si mantienes el botón oculto btnMeme, esto no molesta
   const btnMeme = $("btnMeme");
   if (btnMeme){
     btnMeme.addEventListener("click", ()=>{
       track("meme_click", { lang: LANG });
-      calculate();
+      calculate({ scrollToMeme: false });
     });
   }
 
@@ -419,9 +417,11 @@ function init(){
     $("units").value = String(n);
   });
 
+  // ✅ SOLO el listado dispara scroll al meme
   $("food").addEventListener("change", ()=>{
     track("food_change", { item_id: $("food").value, lang: LANG });
     if ($("food").value === "custom") $("extra").focus();
+    calculate({ scrollToMeme: true });
   });
 
   ["weight","gender","extra","drink1","drink2","drink3","drink1n","drink2n","drink3n","invSport","invHours"].forEach(id=>{
@@ -430,7 +430,6 @@ function init(){
     el.addEventListener("change", ()=>track("input_change", { field:id, mode:getSelectedMode(), lang: LANG }));
   });
 
-  // Ranking: filtro + submit
   const rankMode = $("rankMode");
   if (rankMode){
     rankMode.addEventListener("change", ()=>refreshLeaderboard().catch(()=>{}));
@@ -474,26 +473,29 @@ function init(){
         track("rank_submit_ok", { lang: LANG });
 
         await refreshLeaderboard();
-      }catch(_){
+      }catch(err){
+        // ✅ esto es el CORS/Network típico
         if (st) st.textContent = (LANG==="es" ? "Error de red" : "Network error");
         track("rank_submit_fail", { lang: LANG, error: "network" });
+        console.error("submit-entry network error:", err);
       }
     });
   }
 
   applyLanguage(LANG);
-
   track("page_view_custom", { lang: LANG });
 
-  // carga ranking aunque esté abajo
   refreshLeaderboard().catch(()=>{});
+
+  // ✅ Al entrar: calcula 1 vez y baja al meme (lo primero)
+  setTimeout(()=>calculate({ scrollToMeme: true }), 60);
 
   document.addEventListener("keydown", (e)=>{
     if (e.key === "Enter"){
       const tag = (e.target && e.target.tagName || "").toLowerCase();
       if (tag === "textarea") return;
       e.preventDefault();
-      calculate();
+      calculate({ scrollToMeme: false });
     }
   });
 }

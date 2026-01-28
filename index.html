@@ -78,9 +78,12 @@
       allow_ad_personalization_signals: false
     });
   </script>
-<script>
-  window.SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhqc3pldGd4aHJyZHF0eGdtZnZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1OTY0MDksImV4cCI6MjA4NTE3MjQwOX0.CTH-0yCG-4g76uRJcbI4wB9MJVDUnap6fl738Kgc-Yw";
-</script>
+
+  <!-- ✅ Supabase anon key para ranking/submit (pública por diseño) -->
+  <script>
+    window.SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhqc3pldGd4aHJyZHF0eGdtZnZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1OTY0MDksImV4cCI6MjA4NTE3MjQwOX0.CTH-0yCG-4g76uRJcbI4wB9MJVDUnap6fl738Kgc-Yw";
+  </script>
+
   <!-- CSS separado (misma estética) -->
   <link rel="stylesheet" href="./assets/css/styles.css" />
 </head>
@@ -351,11 +354,9 @@
         </div>
 
         <div class="btnRow" aria-label="Acciones meme">
-          <button class="btnLite" id="btnShareTop" type="button" style="display:none;">📲 Compartir MEME</button>
-          <a class="btnLite" id="btnDownloadTop" download="lovasasudar-meme.png" href="#" style="display:none;">⬇️ Descargar MEME</a>
-
-          <!-- Si quieres quitarlo, ponle style="display:none;" -->
           <button class="btnLite" id="btnMeme" type="button">📸 Generar MEME</button>
+          <button class="btnLite" id="btnShareTop" type="button" style="display:none;">📲 Compartir</button>
+          <a class="btnLite" id="btnDownloadTop" download="lovasasudar-meme.png" href="#" style="display:none;">⬇️ Descargar</a>
         </div>
 
         <div class="memeWrap" id="memeWrap">
@@ -364,40 +365,41 @@
 
         <div class="btnRow" aria-label="Acciones meme (abajo)">
           <button class="btnLite" id="btnShare" type="button" style="display:none;">📲 Compartir</button>
-          <a class="btnLite" id="btnDownload" download="lovasasudar-meme.png" href="#" style="display:none;">⬇️ Descargar MEME</a>
+          <a class="btnLite" id="btnDownload" download="lovasasudar-meme.png" href="#" style="display:none;">⬇️ Descargar</a>
         </div>
 
-        <!-- ======================
-             PLUS: RANKING SEMANAL
-        ======================= -->
+        <!-- ✅ RANKING (IDs estables) -->
         <div class="divider"></div>
+        <section id="rankWrap" class="panel" style="display:block;">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+            <div>
+              <h3 id="rankTitle" style="margin:0;">🏆 Ranking semanal (lo más bestia)</h3>
+              <div id="rankSub" class="hint" style="margin-top:6px;">Bandera = país estimado (best-effort). Sin datos personales.</div>
+            </div>
 
-        <section aria-label="Ranking semanal">
-          <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-            <div style="font-weight:950;">🏆 Ranking semanal (lo más bestia)</div>
-            <select id="rankMode" class="btnLite" style="max-width:240px;">
-              <option value="all">Todos los modos</option>
-              <option value="normal">Modo normal</option>
-              <option value="drinks">Noche de copas</option>
-              <option value="battle">Batalla</option>
-              <option value="inverse">Inversa</option>
-            </select>
+            <select id="rankFilter" class="btnLite" style="min-width:220px;"></select>
           </div>
 
-          <div class="hint" style="margin-top:6px; opacity:.8;">
-            Bandera = país estimado (best-effort). Sin datos personales.
-          </div>
+          <div id="rankDopamine" style="margin-top:10px; font-weight:950;"></div>
 
-          <div style="margin-top:10px;" class="sports" id="leaderboardList"></div>
+          <div id="rankList" class="rankList" style="margin-top:10px;"></div>
 
-          <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-            <input id="rankNick" type="text" maxlength="16"
-              placeholder="Nick (opcional)"
-              style="flex:1 1 180px; min-width:160px;" />
-            <button class="btnLite" id="btnSubmitRank" type="button">
-              🚀 Subir este resultado
-            </button>
-            <span id="rankStatus" style="opacity:.75; font-size:13px;"></span>
+          <div class="divider"></div>
+
+          <div style="font-weight:950; margin-bottom:8px;" id="rankCountriesTitle">🌍 Top países (semana)</div>
+          <div id="rankCountries"></div>
+
+          <div class="divider"></div>
+
+          <div class="row2" style="align-items:center;">
+            <div class="field" style="margin:0;">
+              <input id="rankNick" type="text" placeholder="Tu nick (opcional)" />
+              <div class="hint" style="margin-top:6px;" id="rankHintNick">Sin email, sin login, sin drama.</div>
+            </div>
+            <div class="field" style="margin:0;">
+              <button id="rankSubmit" class="cta" type="button">🚀 Subir este resultado</button>
+              <div id="rankStatus" class="hint" style="margin-top:6px; font-weight:900;"></div>
+            </div>
           </div>
         </section>
 
@@ -410,10 +412,5 @@
 
   <!-- JS modular -->
   <script type="module" src="./assets/js/app.js"></script>
-  <script type="module">
-  import { initRanking } from "./assets/js/ranking.js";
-  initRanking();
-</script>
-
 </body>
 </html>

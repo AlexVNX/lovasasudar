@@ -670,4 +670,114 @@ canvas{display:block; width:100%; height:auto;}
 
 .rankStatus{ margin-left:auto; font-weight:900; opacity:.9; }
 .rankDopamine{ margin-top:10px; font-weight:950; opacity:.92; }
+/* ===== Ranking ===== */
+.rankCard{
+  margin-top:16px;
+  padding:16px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(10,14,40,.25);
+  border-radius: 18px;
+}
+.rankHead{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
+.rankTitle{ font-weight:950; font-size:18px; }
+.rankSub{ opacity:.75; font-size:13px; margin-top:4px; }
+.rankFilter{
+  min-width: 190px;
+  padding:10px 12px;
+  border-radius: 14px;
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.25);
+  color: inherit;
+}
+
+.rankList{ display:grid; gap:10px; margin-top:10px; }
+.rankRow{
+  display:grid;
+  grid-template-columns: 42px 1fr auto auto;
+  gap:10px;
+  align-items:center;
+  padding:12px 14px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(10,14,40,.35);
+  border-radius:16px;
+}
+.rankPos{ font-weight:950; opacity:.9; }
+.rankNick{ font-weight:900; }
+.rankMeta{ opacity:.75; font-size:12px; text-transform:lowercase; }
+.rankKcal{ font-weight:950; }
+
+.rankEmpty{
+  opacity:.75;
+  padding:10px 2px;
+}
+
+.rankDivider{
+  height:1px;
+  background: rgba(255,255,255,.10);
+  margin:14px 0;
+}
+
+.rankCountriesTitle{ font-weight:950; margin-bottom:6px; }
+.rankCountries{ display:grid; gap:8px; }
+
+.countryRow{
+  display:grid;
+  grid-template-columns: 1fr 80px 110px;
+  gap:10px;
+  align-items:center;
+  padding:10px 12px;
+  border:1px solid rgba(255,255,255,.08);
+  background: rgba(10,14,40,.25);
+  border-radius:14px;
+}
+.countryName{ font-weight:900; }
+.countryCount, .countryBest{ text-align:right; font-weight:900; }
+
+.rankSubmitRow{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap: wrap;
+}
+.rankNickInput{
+  flex: 1 1 180px;
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.25);
+  color: inherit;
+}
+.rankSubmitBtn{
+  padding:12px 14px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(91,124,250,.18);
+  color: inherit;
+  font-weight: 950;
+  cursor:pointer;
+}
+.rankStatus{
+  margin-left:auto;
+  font-weight:900;
+  opacity:.9;
+}
+.rankDopamine{
+  margin-top:10px;
+  font-weight:950;
+  opacity:.92;
+}
+
+/* Mobile: que no se rompa el layout */
+@media (max-width: 520px){
+  .rankRow{ grid-template-columns: 34px 1fr; }
+  .rankMeta, .rankKcal{ justify-self: end; }
+  .countryRow{ grid-template-columns: 1fr 70px 90px; }
+  .rankFilter{ min-width: 140px; }
+}
 

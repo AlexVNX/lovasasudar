@@ -134,26 +134,19 @@ function applyLanguage(LANG){
   $("hintWeight").textContent = t.hintWeight;
   $("lblGender").textContent = t.lblGender;
   $("hintGender").textContent = t.hintGender;
-  // Traduce opciones del select de género
+// Traduce opciones del select de género (SIN recrear el select)
 const g = $("gender");
-if (g) {
-  const v = g.value || "na";
+if (g && g.options.length >= 3) {
   if (LANG === "en") {
-    g.innerHTML = `
-      <option value="na">Prefer not to say</option>
-      <option value="male">Male</option>
-      <option value="female">Female</option>
-    `;
+    g.options[0].text = "Prefer not to say";
+    g.options[1].text = "Male";
+    g.options[2].text = "Female";
   } else {
-    g.innerHTML = `
-      <option value="na">Prefiero no decirlo</option>
-      <option value="male">Hombre</option>
-      <option value="female">Mujer</option>
-    `;
+    g.options[0].text = "Prefiero no decirlo";
+    g.options[1].text = "Hombre";
+    g.options[2].text = "Mujer";
   }
-  g.value = v;
 }
-
   $("tNormal").textContent = t.modes.normal;
   $("tDrinks").textContent = t.modes.drinks;
   $("tBattle").textContent = t.modes.battle;

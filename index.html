@@ -82,10 +82,13 @@
   <!-- CSS separado (misma estética) -->
   <link rel="stylesheet" href="./assets/css/styles.css" />
 
-  <!-- Parche mínimo (temporal) para CTA sticky + overlay meme.
-       Si prefieres, lo movemos luego a assets/css/styles.css -->
+  <!-- Parche mínimo para CTA sticky + overlay meme (lo movemos luego a styles.css si quieres) -->
   <style>
-    /* Sticky CTA en móvil: visible sin scroll */
+    /* CTA arriba SOLO en móvil (desktop: fuera) */
+    #btnCalcTop { width: 100%; margin-top: 12px; display: none; }
+    @media (max-width: 768px) { #btnCalcTop { display: block; } }
+
+    /* Sticky CTA en móvil */
     #stickyCalcBar {
       position: fixed;
       left: 0;
@@ -98,20 +101,13 @@
       border-top: 1px solid rgba(255,255,255,0.08);
       display: none;
     }
-    #stickyCalcBar .cta {
-      width: 100%;
-      margin: 0;
-    }
+    #stickyCalcBar .cta { width: 100%; margin: 0; }
     @media (max-width: 768px) {
       #stickyCalcBar { display: block; }
-      /* Para que el contenido no quede tapado por la barra */
       body { padding-bottom: 86px; }
     }
 
-    /* CTA arriba: sin inventar clases nuevas, reusamos .cta */
-    #btnCalcTop { width: 100%; margin-top: 12px; }
-
-    /* Overlay meme (dominante) */
+    /* Overlay meme */
     #memeOverlay[hidden] { display: none !important; }
     #memeOverlay {
       position: fixed;
@@ -158,11 +154,7 @@
       border: 1px solid rgba(255,255,255,0.12);
       background: rgba(255,255,255,0.04);
     }
-    #memeOverlay img {
-      display: block;
-      width: 100%;
-      height: auto;
-    }
+    #memeOverlay img { display: block; width: 100%; height: auto; }
     #memeOverlay .actions {
       display: flex;
       flex-wrap: wrap;
@@ -213,9 +205,9 @@
           <label for="food" id="lblFood">Alimento o bebida</label>
           <select id="food" aria-label="Alimento o bebida"></select>
 
-          <!-- CTA arriba (A2): visible sin scroll -->
+          <!-- CTA arriba (solo móvil) -->
           <button class="cta" id="btnCalcTop" type="button" data-calc="1">
-            CALCULAR (SIN SCROLL) 💥
+            CALCULAR 💪
           </button>
 
           <div class="row2">
@@ -409,7 +401,6 @@
         </div>
       </div>
 
-      <!-- CTA original (se mantiene) -->
       <button class="cta" id="btnCalc" type="button" data-calc="1">CALCULAR EJERCICIO NECESARIO 💪</button>
 
       <section class="results" id="results" aria-label="Resultados">
@@ -447,9 +438,13 @@
           <div class="sports" id="inverseList"></div>
         </div>
 
-        <div class="btnRow" aria-label="Acciones meme">
+        <!-- Dejo estos por compatibilidad pero el JS NO los mostrará (evita duplicados) -->
+        <div class="btnRow" aria-label="Acciones meme (top)" style="display:none;">
           <button class="btnLite" id="btnShareTop" type="button" style="display:none;">📲 Compartir MEME</button>
           <a class="btnLite" id="btnDownloadTop" download="lovasasudar-meme.png" href="#" style="display:none;">⬇️ Descargar MEME</a>
+        </div>
+
+        <div class="btnRow" aria-label="Acciones meme">
           <button class="btnLite" id="btnMeme" type="button">📸 Generar MEME</button>
         </div>
 
@@ -457,6 +452,7 @@
           <canvas id="memeCanvas" width="1200" height="630"></canvas>
         </div>
 
+        <!-- SOLO UNA PAREJA DE BOTONES (bottom) -->
         <div class="btnRow" aria-label="Acciones meme (abajo)">
           <button class="btnLite" id="btnShare" type="button" style="display:none;">📲 Compartir</button>
           <a class="btnLite" id="btnDownload" download="lovasasudar-meme.png" href="#" style="display:none;">⬇️ Descargar MEME</a>
@@ -469,23 +465,22 @@
     </main>
   </div>
 
-  <!-- Sticky CTA móvil (A2) -->
+  <!-- Sticky CTA móvil -->
   <div id="stickyCalcBar" aria-label="Acción rápida calcular">
     <button class="cta" id="btnCalcSticky" type="button" data-calc="1">
-      CALCULAR AHORA 💪
+      CALCULAR 💪
     </button>
   </div>
 
-  <!-- Overlay meme dominante (A3) -->
+  <!-- Overlay meme dominante -->
   <div id="memeOverlay" role="dialog" aria-modal="true" aria-label="Meme generado" hidden>
     <div class="panel">
       <div class="topRow">
-        <div class="title">📸 Tu MEME (listo para humillarte con dignidad)</div>
+        <div class="title">📸 Tu MEME</div>
         <button class="closeBtn" id="btnCloseMemeOverlay" type="button" aria-label="Cerrar">✕</button>
       </div>
 
       <div class="imgWrap">
-        <!-- Se rellenará desde JS con el dataURL del canvas -->
         <img id="memeOverlayImg" alt="Meme generado" />
       </div>
 

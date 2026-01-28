@@ -165,11 +165,11 @@
       flex: 1 1 180px;
       text-align: center;
     }
-    /* MODOS: en móvil se ven todos (2x2) sin scroll horizontal */
+    /* MODOS: en móvil, 4 en columna (sin cortes ni scroll lateral) */
 @media (max-width: 768px) {
   .modes{
-    display: grid !important;
-    grid-template-columns: 1fr 1fr !important;
+    display: flex !important;
+    flex-direction: column !important;
     gap: 10px !important;
     overflow: visible !important;
     white-space: normal !important;

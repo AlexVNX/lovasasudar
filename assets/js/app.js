@@ -329,6 +329,9 @@ async function init(){
     setLangInUrl("es");
     applyLanguage(LANG);
     track("lang_change", { lang: "es" });
+    document.dispatchEvent(new CustomEvent("lang_change", {
+  detail: { lang: LANG }
+}));
     applySeoLanding(LANG);
   });
   $("btnEN").addEventListener("click", ()=>{
@@ -338,6 +341,9 @@ async function init(){
     setLangInUrl("en");
     applyLanguage(LANG);
     track("lang_change", { lang: "en" });
+    document.dispatchEvent(new CustomEvent("lang_change", {
+  detail: { lang: LANG }
+}));
     applySeoLanding(LANG);
   });
 

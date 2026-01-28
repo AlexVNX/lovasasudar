@@ -7,7 +7,6 @@ function countryToFlagEmoji(cc){
   const code = cc.toUpperCase();
   if (FLAG_CACHE.has(code)) return FLAG_CACHE.get(code);
 
-  // ISO2 -> Regional Indicator Symbols
   const A = 0x1F1E6;
   const chars = [...code].map(c => A + (c.charCodeAt(0) - 65));
   const emoji = String.fromCodePoint(...chars);
@@ -25,7 +24,6 @@ function escapeHtml(s){
 }
 
 export function buildMemeHash(url){
-  // hash lite del dataURL (dedupe). No cripto, suficiente.
   let h = 2166136261;
   for (let i = 0; i < url.length; i++){
     h ^= url.charCodeAt(i);
@@ -54,7 +52,6 @@ export async function submitEntry({ supaFnUrl, anonKey, payload }){
 }
 
 export async function fetchLeaderboard({ supaUrl, anonKey, weekId, mode, limit = 15 }){
-  // Usamos RLS: solo status=approved es visible
   const params = new URLSearchParams();
   params.set("select", "id,created_at,mode,kcal,item_label,nick,country,score");
   params.set("week_id", `eq.${weekId}`);

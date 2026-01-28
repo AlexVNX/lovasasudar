@@ -17,20 +17,13 @@ import {
 import { generateMeme, pickSportForMeme, shareMeme } from "./meme.js";
 
 // ✅ Ranking
+import { SUPABASE } from "./config.js";
 import {
   buildMemeHash,
   submitEntry,
   fetchLeaderboard,
   renderLeaderboard
 } from "./ranking.js";
-
-// -------------------------
-// Supabase config (PON TUS VALORES)
-// -------------------------
-const SUPABASE_URL = "https://TU-PROYECTO.supabase.co";
-const SUPABASE_ANON_KEY = "TU_ANON_KEY";
-// Edge Functions base URL (Supabase): https://<project-ref>.functions.supabase.co
-const SUPABASE_FUNCTIONS_URL = "https://TU-PROYECTO.functions.supabase.co";
 
 // -------------------------
 // Helpers
@@ -287,7 +280,7 @@ function closeMemeOverlay(){
 }
 
 // -------------------------
-// Ranking state
+// Ranking
 // -------------------------
 let lastRankPayload = null;
 
@@ -295,12 +288,18 @@ async function refreshLeaderboard(){
   const list = $("leaderboardList");
   if (!list) return;
 
+  // si config no está rellena, no petamos UI
+  if (!SUPABASE?.URL || !SUPABASE?.ANON_KEY){
+    list.innerHTML = `<div style="opacity:.75; padding:10px 0;">(Ranking pendiente de configurar Supabase)</div>`;
+    return;
+  }
+
   const weekId = getISOWeekId();
   const mode = $("rankMode") ? $("rankMode").value : "all";
 
   const rows = await fetchLeaderboard({
-    supaUrl: SUPABASE_URL,
-    anonKey: SUPABASE_ANON_KEY,
+    supaUrl: SUPABASE.URL,
+    anonKey: SUPABASE.ANON_KEY,
     weekId,
     mode,
     limit: 15
@@ -312,12 +311,14 @@ async function refreshLeaderboard(){
 // -------------------------
 // Calculate
 // -------------------------
+let LANG = "es";
+
 function calculate({ source = "btn", auto = false } = {}){
   $("battleResultsWrap").style.display = "none";
   $("inverseResultsWrap").style.display = "none";
   $("memeWrap").style.display = "none";
 
-  ["btnDownload","btnShare"].forEach(id=>{
+  ["btnDownload","btnShare","btnDownloadTop","btnShareTop"].forEach(id=>{
     const el = $(id);
     if (el) el.style.display = "none";
   });
@@ -361,7 +362,6 @@ function calculate({ source = "btn", auto = false } = {}){
     summary = T[LANG].summaryInverse(burned);
 
     kcalForMeme = burned;
-
     const sportKey = $("invSport").value;
     const sport = SPORTS.find(s=>s.key===sportKey) || SPORTS[0];
     const hours = Math.max(0, parseFloat($("invHours").value || "0"));
@@ -403,10 +403,10 @@ function calculate({ source = "btn", auto = false } = {}){
     sportPick
   });
 
-  // botones bottom
   const fnShare = ()=>shareMeme(T, LANG, track, url);
   $("btnShare").onclick = fnShare;
 
+  // botones bottom
   const dlBottom = $("btnDownload");
   if (dlBottom){
     dlBottom.href = url;
@@ -419,7 +419,7 @@ function calculate({ source = "btn", auto = false } = {}){
 
   track("meme_generated", { mode, kcal: kcalForMeme, lang: LANG, source: auto ? "auto" : source });
 
-  // ✅ Guardamos payload “subible” SOLO si es acción humana
+  // ✅ Guardar payload “subible” SOLO humano
   if (!auto){
     lastRankPayload = {
       mode,
@@ -431,10 +431,8 @@ function calculate({ source = "btn", auto = false } = {}){
     };
   }
 
-  // Overlay solo humano
   if (!auto) openMemeOverlay(url);
 
-  // refresca leaderboard cuando hay resultados visibles (no cuesta)
   refreshLeaderboard().catch(()=>{});
 }
 
@@ -450,15 +448,13 @@ const autoCalcDebounced = debounce((source)=>{
 // -------------------------
 function init(){
   const qLang = getLangFromUrl();
-  let LANG_LOCAL = "es";
-  if (qLang) LANG_LOCAL = qLang;
+  if (qLang) LANG = qLang;
   else {
     const nav = (navigator.language || "es").toLowerCase();
-    LANG_LOCAL = nav.startsWith("en") ? "en" : "es";
+    LANG = nav.startsWith("en") ? "en" : "es";
   }
-  LANG = LANG_LOCAL;
 
-  // Lang buttons
+  // Buttons language
   $("btnES").addEventListener("click", ()=>{
     LANG = "es";
     $("btnES").classList.add("active");
@@ -470,6 +466,7 @@ function init(){
     autoCalcDebounced("lang_change");
     refreshLeaderboard().catch(()=>{});
   });
+
   $("btnEN").addEventListener("click", ()=>{
     LANG = "en";
     $("btnEN").classList.add("active");
@@ -499,7 +496,7 @@ function init(){
   });
   syncModePills(LANG);
 
-  // CTAs
+  // CTAs calculate
   document.querySelectorAll('[data-calc="1"]').forEach(btn=>{
     btn.addEventListener("click", ()=>{
       calculate({ source: btn.id || "btn", auto: false });
@@ -521,6 +518,7 @@ function init(){
     $("units").value = String(n);
     autoCalcDebounced("units_blur");
   });
+
   $("units").addEventListener("change", ()=>{
     track("input_change", { field:"units", mode:getSelectedMode(), lang: LANG });
     autoCalcDebounced("units_change");
@@ -560,7 +558,7 @@ function init(){
       if (st) st.textContent = "";
 
       if (!lastRankPayload){
-        if (st) st.textContent = (LANG==="es" ? "Primero calcula algo (y que sea bestia)." : "Calculate something first (make it brutal).");
+        if (st) st.textContent = (LANG==="es" ? "Primero calcula algo." : "Calculate something first.");
         return;
       }
 
@@ -568,11 +566,16 @@ function init(){
       const payload = { ...lastRankPayload, nick };
 
       try{
+        if (!SUPABASE?.FUNCTIONS_URL || !SUPABASE?.ANON_KEY){
+          if (st) st.textContent = (LANG==="es" ? "Falta configurar Supabase (config.js)." : "Supabase config missing (config.js).");
+          return;
+        }
+
         if (st) st.textContent = (LANG==="es" ? "Subiendo…" : "Uploading…");
 
         const r = await submitEntry({
-          supaFnUrl: SUPABASE_FUNCTIONS_URL,
-          anonKey: SUPABASE_ANON_KEY,
+          supaFnUrl: SUPABASE.FUNCTIONS_URL,
+          anonKey: SUPABASE.ANON_KEY,
           payload
         });
 
@@ -586,14 +589,13 @@ function init(){
         track("rank_submit_ok", { lang: LANG });
 
         await refreshLeaderboard();
-      }catch(e){
+      }catch(_e){
         if (st) st.textContent = (LANG==="es" ? "Error de red" : "Network error");
         track("rank_submit_fail", { lang: LANG, error: "network" });
       }
     });
   }
 
-  // Cargar leaderboard al inicio (aunque esté oculto hasta results)
   refreshLeaderboard().catch(()=>{});
 
   // Enter = calcular manual
@@ -606,7 +608,7 @@ function init(){
     }
   });
 
-  // Autocalc inicial (sin overlay)
+  // Autocalc inicial
   setTimeout(()=>autoCalcDebounced("auto_initial"), 50);
 }
 

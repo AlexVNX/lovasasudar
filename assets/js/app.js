@@ -18,15 +18,10 @@ import { generateMeme, pickSportForMeme, shareMeme } from "./meme.js";
 
 // ✅ Ranking
 import { SUPABASE } from "./config.js";
-import {
-  buildMemeHash,
-  submitEntry,
-  fetchLeaderboard,
-  renderLeaderboard
-} from "./ranking.js";
+import { buildMemeHash, submitEntry, fetchLeaderboard, renderLeaderboard } from "./ranking.js";
 
 // -------------------------
-// Helpers
+// Helpers ranking
 // -------------------------
 function getISOWeekId(d = new Date()) {
   const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
@@ -38,12 +33,34 @@ function getISOWeekId(d = new Date()) {
   return `${date.getUTCFullYear()}-W${ww}`;
 }
 
-function debounce(fn, ms){
-  let t = null;
-  return (...args)=>{
-    clearTimeout(t);
-    t = setTimeout(()=>fn(...args), ms);
-  };
+let LANG = "es";
+let lastMemeUrl = null;
+
+// payload del último resultado para subir al ranking
+let lastRankPayload = null;
+
+async function refreshLeaderboard(){
+  const list = $("leaderboardList");
+  if (!list) return;
+
+  // Si aún no está configurado
+  if (!SUPABASE?.URL || !SUPABASE?.ANON_KEY){
+    list.innerHTML = `<div style="opacity:.75; padding:10px 0;">(Ranking pendiente de configurar Supabase)</div>`;
+    return;
+  }
+
+  const weekId = getISOWeekId();
+  const mode = $("rankMode") ? $("rankMode").value : "all";
+
+  const rows = await fetchLeaderboard({
+    supaUrl: SUPABASE.URL,
+    anonKey: SUPABASE.ANON_KEY,
+    weekId,
+    mode,
+    limit: 15
+  });
+
+  renderLeaderboard({ el: list, rows, lang: LANG });
 }
 
 // -------------------------
@@ -176,8 +193,12 @@ function applyLanguage(LANG){
   $("modeSub").textContent = t.modeSub;
   $("sportsTitle").textContent = t.sportsTitle;
 
+  $("btnMeme").textContent = t.meme;
+
   $("btnDownload").textContent = t.download;
   $("btnShare").textContent = t.share;
+  $("btnDownloadTop").textContent = t.downloadTop;
+  $("btnShareTop").textContent = t.shareTop;
 
   $("fineprint").textContent = t.fine;
 
@@ -226,94 +247,9 @@ function applyLanguage(LANG){
 }
 
 // -------------------------
-// Meme overlay
+// Main calculate (TU lógica original)
 // -------------------------
-let overlayKeyHandler = null;
-let overlayClickHandler = null;
-
-function openMemeOverlay(url){
-  const overlay = $("memeOverlay");
-  const img = $("memeOverlayImg");
-  if (!overlay || !img) return;
-
-  img.src = url;
-
-  const dl = $("btnDownloadOverlay");
-  if (dl){
-    dl.href = url;
-    dl.style.display = "inline-flex";
-  }
-
-  const sh = $("btnShareOverlay");
-  if (sh){
-    sh.style.display = "inline-flex";
-    sh.onclick = ()=>shareMeme(T, LANG, track, url);
-  }
-
-  overlay.hidden = false;
-
-  overlayClickHandler = (e)=>{
-    if (e.target === overlay) closeMemeOverlay();
-  };
-  overlay.addEventListener("click", overlayClickHandler);
-
-  overlayKeyHandler = (e)=>{
-    if (e.key === "Escape") closeMemeOverlay();
-  };
-  document.addEventListener("keydown", overlayKeyHandler);
-}
-
-function closeMemeOverlay(){
-  const overlay = $("memeOverlay");
-  if (!overlay) return;
-
-  overlay.hidden = true;
-
-  if (overlayClickHandler){
-    overlay.removeEventListener("click", overlayClickHandler);
-    overlayClickHandler = null;
-  }
-  if (overlayKeyHandler){
-    document.removeEventListener("keydown", overlayKeyHandler);
-    overlayKeyHandler = null;
-  }
-}
-
-// -------------------------
-// Ranking
-// -------------------------
-let lastRankPayload = null;
-
-async function refreshLeaderboard(){
-  const list = $("leaderboardList");
-  if (!list) return;
-
-  // si config no está rellena, no petamos UI
-  if (!SUPABASE?.URL || !SUPABASE?.ANON_KEY){
-    list.innerHTML = `<div style="opacity:.75; padding:10px 0;">(Ranking pendiente de configurar Supabase)</div>`;
-    return;
-  }
-
-  const weekId = getISOWeekId();
-  const mode = $("rankMode") ? $("rankMode").value : "all";
-
-  const rows = await fetchLeaderboard({
-    supaUrl: SUPABASE.URL,
-    anonKey: SUPABASE.ANON_KEY,
-    weekId,
-    mode,
-    limit: 15
-  });
-
-  renderLeaderboard({ el: list, rows, lang: LANG });
-}
-
-// -------------------------
-// Calculate
-// -------------------------
-let LANG = "es";
-
-function calculate({ source = "btn", auto = false } = {}){
+function calculate(){
   $("battleResultsWrap").style.display = "none";
   $("inverseResultsWrap").style.display = "none";
   $("memeWrap").style.display = "none";
@@ -376,19 +312,15 @@ function calculate({ source = "btn", auto = false } = {}){
   $("results").style.display = "block";
   $("results").scrollIntoView({ behavior:"smooth", block:"start" });
 
-  const baseTrack = {
+  track("calculate", {
     mode,
     kcal: kcalForMeme,
     weight,
     gender,
     item_id: $("food").value,
     item_label: getSelectedLabel(LANG),
-    lang: LANG,
-    source
-  };
-
-  if (auto) track("auto_calculate", baseTrack);
-  else track("calculate", baseTrack);
+    lang: LANG
+  });
 
   const sportPick = (mode === "inverse")
     ? (LANG==="es" ? "A comer con tranquilidad (moderada)" : "Eat with (moderate) peace")
@@ -403,49 +335,28 @@ function calculate({ source = "btn", auto = false } = {}){
     sportPick
   });
 
+  lastMemeUrl = url;
+
   const fnShare = ()=>shareMeme(T, LANG, track, url);
   $("btnShare").onclick = fnShare;
+  $("btnShareTop").onclick = fnShare;
 
-  // botones bottom
-  const dlBottom = $("btnDownload");
-  if (dlBottom){
-    dlBottom.href = url;
-    dlBottom.style.display = "inline-flex";
-  }
-  const shBottom = $("btnShare");
-  if (shBottom){
-    shBottom.style.display = "inline-flex";
-  }
+  // ✅ payload “subible” para ranking
+  lastRankPayload = {
+    mode,
+    lang: LANG,
+    kcal: kcalForMeme,
+    item_id: $("food").value,
+    item_label: getSelectedLabel(LANG),
+    meme_hash: buildMemeHash(url)
+  };
 
-  track("meme_generated", { mode, kcal: kcalForMeme, lang: LANG, source: auto ? "auto" : source });
+  track("meme_generated", { mode, kcal: kcalForMeme, lang: LANG });
 
-  // ✅ Guardar payload “subible” SOLO humano
-  if (!auto){
-    lastRankPayload = {
-      mode,
-      lang: LANG,
-      kcal: kcalForMeme,
-      item_id: $("food").value,
-      item_label: getSelectedLabel(LANG),
-      meme_hash: buildMemeHash(url)
-    };
-  }
-
-  if (!auto) openMemeOverlay(url);
-
+  // actualiza ranking
   refreshLeaderboard().catch(()=>{});
 }
 
-// -------------------------
-// Autocalc
-// -------------------------
-const autoCalcDebounced = debounce((source)=>{
-  calculate({ source, auto: true });
-}, 250);
-
-// -------------------------
-// Init
-// -------------------------
 function init(){
   const qLang = getLangFromUrl();
   if (qLang) LANG = qLang;
@@ -454,7 +365,7 @@ function init(){
     LANG = nav.startsWith("en") ? "en" : "es";
   }
 
-  // Buttons language
+  // Buttons
   $("btnES").addEventListener("click", ()=>{
     LANG = "es";
     $("btnES").classList.add("active");
@@ -463,7 +374,6 @@ function init(){
     applyLanguage(LANG);
     track("lang_change", { lang: "es" });
     applySeoLanding(LANG);
-    autoCalcDebounced("lang_change");
     refreshLeaderboard().catch(()=>{});
   });
 
@@ -475,7 +385,6 @@ function init(){
     applyLanguage(LANG);
     track("lang_change", { lang: "en" });
     applySeoLanding(LANG);
-    autoCalcDebounced("lang_change");
     refreshLeaderboard().catch(()=>{});
   });
 
@@ -489,73 +398,54 @@ function init(){
   applySeoLanding(LANG);
 
   document.querySelectorAll('input[name="mode"]').forEach(r=>{
-    r.addEventListener("change", ()=>{
-      syncModePills(LANG);
-      autoCalcDebounced("mode_change");
-    });
+    r.addEventListener("change", ()=>syncModePills(LANG));
   });
   syncModePills(LANG);
 
-  // CTAs calculate
-  document.querySelectorAll('[data-calc="1"]').forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      calculate({ source: btn.id || "btn", auto: false });
+  // ✅ TU botón original
+  $("btnCalc").addEventListener("click", calculate);
+
+  // Si mantienes el botón oculto btnMeme, esto no molesta
+  const btnMeme = $("btnMeme");
+  if (btnMeme){
+    btnMeme.addEventListener("click", ()=>{
+      track("meme_click", { lang: LANG });
+      calculate();
     });
-  });
+  }
 
-  // Overlay controls
-  const closeBtn = $("btnCloseMemeOverlay");
-  if (closeBtn) closeBtn.addEventListener("click", closeMemeOverlay);
-
-  const regen = $("btnRegenOverlay");
-  if (regen) regen.addEventListener("click", ()=>{
-    calculate({ source: "overlay_regen", auto: false });
-  });
-
-  // Inputs
   $("units").addEventListener("blur", ()=>{
     const n = Math.max(1, parseInt($("units").value || "1",10));
     $("units").value = String(n);
-    autoCalcDebounced("units_blur");
-  });
-
-  $("units").addEventListener("change", ()=>{
-    track("input_change", { field:"units", mode:getSelectedMode(), lang: LANG });
-    autoCalcDebounced("units_change");
   });
 
   $("food").addEventListener("change", ()=>{
     track("food_change", { item_id: $("food").value, lang: LANG });
     if ($("food").value === "custom") $("extra").focus();
-    autoCalcDebounced("food_change");
   });
 
-  [
-    "weight","gender","extra",
-    "drink1","drink2","drink3","drink1n","drink2n","drink3n",
-    "invSport","invHours",
-    "p1w","p2w","p3w","p4w","p1gender","p2gender","p3gender","p4gender"
-  ].forEach(id=>{
+  ["weight","gender","extra","drink1","drink2","drink3","drink1n","drink2n","drink3n","invSport","invHours"].forEach(id=>{
     const el = $(id);
     if (!el) return;
-    el.addEventListener("change", ()=>{
-      track("input_change", { field:id, mode:getSelectedMode(), lang: LANG });
-      autoCalcDebounced(`change_${id}`);
-    });
+    el.addEventListener("change", ()=>track("input_change", { field:id, mode:getSelectedMode(), lang: LANG }));
   });
 
-  applyLanguage(LANG);
-  track("page_view_custom", { lang: LANG });
-
-  // Ranking UI
-  if ($("rankMode")){
-    $("rankMode").addEventListener("change", ()=>refreshLeaderboard().catch(()=>{}));
+  // Ranking: filtro + submit
+  const rankMode = $("rankMode");
+  if (rankMode){
+    rankMode.addEventListener("change", ()=>refreshLeaderboard().catch(()=>{}));
   }
 
-  if ($("btnSubmitRank")){
-    $("btnSubmitRank").addEventListener("click", async ()=>{
+  const btnSubmitRank = $("btnSubmitRank");
+  if (btnSubmitRank){
+    btnSubmitRank.addEventListener("click", async ()=>{
       const st = $("rankStatus");
       if (st) st.textContent = "";
+
+      if (!SUPABASE?.FUNCTIONS_URL || !SUPABASE?.ANON_KEY){
+        if (st) st.textContent = (LANG==="es" ? "Falta configurar Supabase (config.js)." : "Supabase not configured (config.js).");
+        return;
+      }
 
       if (!lastRankPayload){
         if (st) st.textContent = (LANG==="es" ? "Primero calcula algo." : "Calculate something first.");
@@ -566,11 +456,6 @@ function init(){
       const payload = { ...lastRankPayload, nick };
 
       try{
-        if (!SUPABASE?.FUNCTIONS_URL || !SUPABASE?.ANON_KEY){
-          if (st) st.textContent = (LANG==="es" ? "Falta configurar Supabase (config.js)." : "Supabase config missing (config.js).");
-          return;
-        }
-
         if (st) st.textContent = (LANG==="es" ? "Subiendo…" : "Uploading…");
 
         const r = await submitEntry({
@@ -589,27 +474,28 @@ function init(){
         track("rank_submit_ok", { lang: LANG });
 
         await refreshLeaderboard();
-      }catch(_e){
+      }catch(_){
         if (st) st.textContent = (LANG==="es" ? "Error de red" : "Network error");
         track("rank_submit_fail", { lang: LANG, error: "network" });
       }
     });
   }
 
+  applyLanguage(LANG);
+
+  track("page_view_custom", { lang: LANG });
+
+  // carga ranking aunque esté abajo
   refreshLeaderboard().catch(()=>{});
 
-  // Enter = calcular manual
   document.addEventListener("keydown", (e)=>{
     if (e.key === "Enter"){
       const tag = (e.target && e.target.tagName || "").toLowerCase();
       if (tag === "textarea") return;
       e.preventDefault();
-      calculate({ source: "enter", auto: false });
+      calculate();
     }
   });
-
-  // Autocalc inicial
-  setTimeout(()=>autoCalcDebounced("auto_initial"), 50);
 }
 
 init();

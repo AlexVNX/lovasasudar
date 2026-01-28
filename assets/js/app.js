@@ -106,6 +106,8 @@ function syncModePills(LANG){
   $("panelInverse").style.display = (getSelectedMode()==="inverse") ? "block" : "none";
 
   $("btnCalc").textContent = T[LANG].btnCalc;
+  if ($("btnCalcTop")) $("btnCalcTop").textContent = (LANG==="es" ? "CALCULAR (SIN SCROLL) 💥" : "CALCULATE (NO SCROLL) 💥");
+  if ($("btnCalcSticky")) $("btnCalcSticky").textContent = (LANG==="es" ? "CALCULAR AHORA 💪" : "CALCULATE NOW 💪");
 
   track("mode_change", { mode: getSelectedMode(), lang: LANG });
 }
@@ -140,6 +142,8 @@ function applyLanguage(LANG){
   $("tInverse").textContent = t.modes.inverse;
 
   $("btnCalc").textContent = t.btnCalc;
+  if ($("btnCalcTop")) $("btnCalcTop").textContent = (LANG==="es" ? "CALCULAR (SIN SCROLL) 💥" : "CALCULATE (NO SCROLL) 💥");
+  if ($("btnCalcSticky")) $("btnCalcSticky").textContent = (LANG==="es" ? "CALCULATE NOW 💪" : "CALCULATE NOW 💪");
 
   $("resTitle").textContent = t.results;
   $("kcalSub").textContent = t.kcalSub;
@@ -200,12 +204,65 @@ function applyLanguage(LANG){
 }
 
 // -------------------------
+// Meme overlay (A3)
+// -------------------------
+function openMemeOverlay(url){
+  const overlay = $("memeOverlay");
+  const img = $("memeOverlayImg");
+  if (!overlay || !img) return;
+
+  img.src = url;
+
+  // Download link inside overlay
+  const dl = $("btnDownloadOverlay");
+  if (dl){
+    dl.href = url;
+    dl.style.display = "inline-flex";
+  }
+
+  // Share button inside overlay (solo si el navegador soporta share)
+  const sh = $("btnShareOverlay");
+  if (sh){
+    sh.style.display = "inline-flex";
+    sh.onclick = ()=>shareMeme(T, LANG, track, url);
+  }
+
+  overlay.hidden = false;
+
+  // Cierra con click fuera
+  overlay.addEventListener("click", onOverlayBackdropClick);
+  document.addEventListener("keydown", onOverlayEsc);
+
+  function onOverlayBackdropClick(e){
+    if (e.target === overlay) closeMemeOverlay();
+  }
+  function onOverlayEsc(e){
+    if (e.key === "Escape") closeMemeOverlay();
+  }
+}
+
+function closeMemeOverlay(){
+  const overlay = $("memeOverlay");
+  if (!overlay) return;
+  overlay.hidden = true;
+
+  // Limpieza listeners
+  overlay.replaceWith(overlay.cloneNode(true));
+  // OJO: al clonar, perdemos handlers; los reenganchamos en init()
+}
+
+// -------------------------
 // Main calculate
 // -------------------------
 let LANG = "es";
 let lastMemeUrl = null;
 
-function calculate(){
+/**
+ * calculate({source, auto})
+ * - source: string (btn / auto / enter / meme_btn ...)
+ * - auto: boolean (si viene de autocalc, no contamos como "calculate" en GA)
+ */
+function calculate({ source = "btn", auto = false } = {}){
   $("battleResultsWrap").style.display = "none";
   $("inverseResultsWrap").style.display = "none";
   $("memeWrap").style.display = "none";
@@ -268,15 +325,20 @@ function calculate(){
   $("results").style.display = "block";
   $("results").scrollIntoView({ behavior:"smooth", block:"start" });
 
-  track("calculate", {
+  // Tracking: autocalc separado para no inflar "calculate"
+  const baseTrack = {
     mode,
     kcal: kcalForMeme,
     weight,
     gender,
     item_id: $("food").value,
     item_label: getSelectedLabel(LANG),
-    lang: LANG
-  });
+    lang: LANG,
+    source
+  };
+
+  if (auto) track("auto_calculate", baseTrack);
+  else track("calculate", baseTrack);
 
   const sportPick = (mode === "inverse")
     ? (LANG==="es" ? "A comer con tranquilidad (moderada)" : "Eat with (moderate) peace")
@@ -297,9 +359,46 @@ function calculate(){
   $("btnShare").onclick = fnShare;
   $("btnShareTop").onclick = fnShare;
 
-  track("meme_generated", { mode, kcal: kcalForMeme, lang: LANG });
+  // Deja listos botones download/share top/bottom (mantiene tu lógica actual)
+  const dlBottom = $("btnDownload");
+  const dlTop = $("btnDownloadTop");
+  if (dlBottom){ dlBottom.href = url; dlBottom.style.display = "inline-flex"; }
+  if (dlTop){ dlTop.href = url; dlTop.style.display = "inline-flex"; }
+
+  const shBottom = $("btnShare");
+  const shTop = $("btnShareTop");
+  if (shBottom){ shBottom.style.display = "inline-flex"; }
+  if (shTop){ shTop.style.display = "inline-flex"; }
+
+  // Evento meme (una vez por cálculo)
+  track("meme_generated", { mode, kcal: kcalForMeme, lang: LANG, source: auto ? "auto" : source });
+
+  // Overlay dominante (A3)
+  openMemeOverlay(url);
 }
 
+// -------------------------
+// Autocalc (A1)
+// -------------------------
+function debounce(fn, ms){
+  let t = null;
+  return (...args)=>{
+    clearTimeout(t);
+    t = setTimeout(()=>fn(...args), ms);
+  };
+}
+
+let hasCalculatedOnce = false;
+const autoCalcDebounced = debounce((source)=>{
+  // Evita autocalcular antes de que haya catálogo/idioma listo
+  if (!document.body) return;
+  calculate({ source, auto: true });
+  hasCalculatedOnce = true;
+}, 250);
+
+// -------------------------
+// Init
+// -------------------------
 function init(){
   const qLang = getLangFromUrl();
   if (qLang) LANG = qLang;
@@ -308,7 +407,7 @@ function init(){
     LANG = nav.startsWith("en") ? "en" : "es";
   }
 
-  // Buttons
+  // Buttons lang
   $("btnES").addEventListener("click", ()=>{
     LANG = "es";
     $("btnES").classList.add("active");
@@ -317,6 +416,9 @@ function init(){
     applyLanguage(LANG);
     track("lang_change", { lang: "es" });
     applySeoLanding(LANG);
+
+    // Recalcula en el idioma nuevo (auto, para no inflar)
+    autoCalcDebounced("lang_change");
   });
   $("btnEN").addEventListener("click", ()=>{
     LANG = "en";
@@ -326,6 +428,8 @@ function init(){
     applyLanguage(LANG);
     track("lang_change", { lang: "en" });
     applySeoLanding(LANG);
+
+    autoCalcDebounced("lang_change");
   });
 
   if (LANG==="en"){ $("btnEN").classList.add("active"); $("btnES").classList.remove("active"); }
@@ -338,45 +442,126 @@ function init(){
   applySeoLanding(LANG);
 
   document.querySelectorAll('input[name="mode"]').forEach(r=>{
-    r.addEventListener("change", ()=>syncModePills(LANG));
+    r.addEventListener("change", ()=>{
+      syncModePills(LANG);
+      autoCalcDebounced("mode_change");
+    });
   });
   syncModePills(LANG);
 
-  $("btnCalc").addEventListener("click", calculate);
-
-  $("btnMeme").addEventListener("click", ()=>{
-    track("meme_click", { lang: LANG });
-    calculate(); // tu comportamiento actual: regenerar todo sincronizado
+  // Conecta TODOS los CTAs de cálculo (original + top + sticky)
+  document.querySelectorAll('[data-calc="1"]').forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      calculate({ source: btn.id || "btn", auto: false });
+      hasCalculatedOnce = true;
+    });
   });
 
+  // Meme button: mantiene tu comportamiento (regenerar todo)
+  $("btnMeme").addEventListener("click", ()=>{
+    track("meme_click", { lang: LANG });
+    calculate({ source: "meme_btn", auto: false });
+    hasCalculatedOnce = true;
+  });
+
+  // Overlay buttons
+  const closeBtn = $("btnCloseMemeOverlay");
+  if (closeBtn){
+    closeBtn.addEventListener("click", ()=>{
+      closeMemeOverlay();
+      // Reenganchar handlers perdidos por el clone (ver closeMemeOverlay)
+      // Solución simple: recarga la página de overlay DOM con init handlers mínimos
+      hookOverlayHandlers();
+    });
+  }
+
+  function hookOverlayHandlers(){
+    // Como closeMemeOverlay clona el nodo para limpiar listeners, hay que reenganchar:
+    const closeBtn2 = $("btnCloseMemeOverlay");
+    if (closeBtn2){
+      closeBtn2.addEventListener("click", ()=>{
+        closeMemeOverlay();
+        hookOverlayHandlers();
+      });
+    }
+    const regen = $("btnRegenOverlay");
+    if (regen){
+      regen.addEventListener("click", ()=>{
+        calculate({ source: "overlay_regen", auto: false });
+        hasCalculatedOnce = true;
+      });
+    }
+  }
+  hookOverlayHandlers();
+
+  // Inputs sanitización / tracking + autocalc
   $("units").addEventListener("blur", ()=>{
     const n = Math.max(1, parseInt($("units").value || "1",10));
     $("units").value = String(n);
+    autoCalcDebounced("units_blur");
+  });
+  $("units").addEventListener("change", ()=>{
+    track("input_change", { field:"units", mode:getSelectedMode(), lang: LANG });
+    autoCalcDebounced("units_change");
   });
 
   $("food").addEventListener("change", ()=>{
     track("food_change", { item_id: $("food").value, lang: LANG });
     if ($("food").value === "custom") $("extra").focus();
+    autoCalcDebounced("food_change");
   });
 
-  ["weight","gender","extra","drink1","drink2","drink3","drink1n","drink2n","drink3n","invSport","invHours"].forEach(id=>{
+  // Auto-calc para el resto (con tracking input_change como tenías)
+  [
+    "weight","gender","extra",
+    "drink1","drink2","drink3","drink1n","drink2n","drink3n",
+    "invSport","invHours",
+    "p1w","p2w","p3w","p4w","p1gender","p2gender","p3gender","p4gender"
+  ].forEach(id=>{
     const el = $(id);
     if (!el) return;
-    el.addEventListener("change", ()=>track("input_change", { field:id, mode:getSelectedMode(), lang: LANG }));
+    el.addEventListener("change", ()=>{
+      track("input_change", { field:id, mode:getSelectedMode(), lang: LANG });
+      autoCalcDebounced(`change_${id}`);
+    });
   });
 
   applyLanguage(LANG);
 
   track("page_view_custom", { lang: LANG });
 
+  // Enter = calcular manual (cuenta como calculate)
   document.addEventListener("keydown", (e)=>{
     if (e.key === "Enter"){
       const tag = (e.target && e.target.tagName || "").toLowerCase();
       if (tag === "textarea") return;
       e.preventDefault();
-      calculate();
+      calculate({ source: "enter", auto: false });
+      hasCalculatedOnce = true;
+    }
+    if (e.key === "Escape"){
+      // cerrar overlay si está abierto
+      const overlay = $("memeOverlay");
+      if (overlay && !overlay.hidden){
+        closeMemeOverlay();
+        // reenganchar handlers tras clone
+        // (si esto te parece feo, luego lo refactorizamos sin clone)
+        // aquí lo mínimo: intentar reenganchar
+        const closeBtn3 = $("btnCloseMemeOverlay");
+        if (closeBtn3){
+          closeBtn3.addEventListener("click", ()=>{
+            closeMemeOverlay();
+          });
+        }
+      }
     }
   });
+
+  // Autocalc inicial: “llegas → BOOM”
+  // Lo hacemos tras un tick para que el DOM esté listo.
+  setTimeout(()=>{
+    autoCalcDebounced("auto_initial");
+  }, 50);
 }
 
 init();

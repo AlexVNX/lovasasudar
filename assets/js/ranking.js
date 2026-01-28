@@ -1,16 +1,20 @@
 // assets/js/ranking.js
 // Ranking semanal + Top países + dopamina (ES/EN)
-// Diseñado para NO romper nada: si falta DOM o keys, se desactiva silenciosamente.
+// Ultra-defensivo: si algo falla, NO rompe la app principal
 
 import { $ } from "./helpers.js";
 
+/* =========================
+   Config
+========================= */
 const PROJECT_REF = window.LVAS_SUPABASE_PROJECT_REF || "xjszetgxhrrdqtxgmfvo";
 const FN_SUBMIT = `https://${PROJECT_REF}.functions.supabase.co/submit-entry`;
 const FN_LEADERBOARD = `https://${PROJECT_REF}.functions.supabase.co/get-leaderboard`;
-
-// ANON key (ponla en index.html como window.SUPABASE_ANON_KEY = "..." )
 const ANON = window.SUPABASE_ANON_KEY || "";
 
+/* =========================
+   Idioma
+========================= */
 function getLang() {
   const l = (document.documentElement.lang || "es").toLowerCase();
   return l.startsWith("en") ? "en" : "es";
@@ -65,9 +69,12 @@ const STR = {
   }
 };
 
+/* =========================
+   Utils
+========================= */
 function flagEmoji(code) {
   const c = (code || "XX").toUpperCase();
-  if (c === "XX" || c.length !== 2) return "🌍";
+  if (c.length !== 2) return "🌍";
   const A = 0x1F1E6;
   const a = c.charCodeAt(0) - 65;
   const b = c.charCodeAt(1) - 65;
@@ -80,13 +87,11 @@ function getISOWeekId(d = new Date()) {
   const dayNum = date.getUTCDay() || 7;
   date.setUTCDate(date.getUTCDate() + 4 - dayNum);
   const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
-  const weekNo = Math.ceil((((date.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
-  const ww = String(weekNo).padStart(2, "0");
-  return `${date.getUTCFullYear()}-W${ww}`;
+  const weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+  return `${date.getUTCFullYear()}-W${String(weekNo).padStart(2, "0")}`;
 }
 
 function headers() {
-  // Supabase Edge Functions requieren auth con anon (Bearer + apikey)
   return {
     "Content-Type": "application/json",
     "Authorization": `Bearer ${ANON}`,
@@ -104,177 +109,143 @@ function getSelectedMode() {
   return r ? r.value : "normal";
 }
 
-// FNV-1a hash (simple, rápido)
+/* =========================
+   Meme hash (dedupe)
+========================= */
 function fnv1a(str) {
   let h = 0x811c9dc5;
   for (let i = 0; i < str.length; i++) {
     h ^= str.charCodeAt(i);
-    h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
+    h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
   }
-  return h.toString(16);
+  return (h >>> 0).toString(16);
 }
 
 function getMemeHash() {
-  // usamos href de descarga si existe (dataURL). Si no, hash del canvas.
   const dl = document.getElementById("btnDownload");
-  const url = dl && dl.getAttribute("href");
+  const url = dl?.getAttribute("href");
   if (url && url.startsWith("data:image")) return fnv1a(url.slice(0, 9000));
 
   const canvas = document.getElementById("memeCanvas");
-  if (canvas && canvas.toDataURL) {
+  if (canvas?.toDataURL) {
     try {
-      const d = canvas.toDataURL("image/png").slice(0, 9000);
-      return fnv1a(d);
-    } catch (_) {}
+      return fnv1a(canvas.toDataURL("image/png").slice(0, 9000));
+    } catch {}
   }
   return "no_meme";
 }
 
+/* =========================
+   Local streak (dopamina)
+========================= */
 function streakUpdate() {
-  // streak local: cuenta días consecutivos con submits OK (no es server-side; es dopamina barata)
-  const today = new Date();
-  const yyyy = today.getFullYear();
-  const mm = String(today.getMonth() + 1).padStart(2, "0");
-  const dd = String(today.getDate()).padStart(2, "0");
-  const keyToday = `${yyyy}-${mm}-${dd}`;
+  const today = new Date().toISOString().slice(0, 10);
+  const last = localStorage.getItem("lvas_streak_last");
+  let count = parseInt(localStorage.getItem("lvas_streak_count") || "0", 10);
 
-  const last = localStorage.getItem("lvas_streak_last") || "";
-  let count = parseInt(localStorage.getItem("lvas_streak_count") || "0", 10) || 0;
-
-  if (!last) {
-    count = 1;
-  } else {
-    const lastD = new Date(last + "T00:00:00");
-    const diffDays = Math.round((today - lastD) / 86400000);
-    if (diffDays === 0) {
-      // mismo día: no sube
-    } else if (diffDays === 1) {
-      count += 1;
-    } else {
-      count = 1;
-    }
+  if (!last) count = 1;
+  else {
+    const diff = (new Date(today) - new Date(last)) / 86400000;
+    if (diff === 1) count++;
+    else if (diff > 1) count = 1;
   }
 
-  localStorage.setItem("lvas_streak_last", keyToday);
-  localStorage.setItem("lvas_streak_count", String(count));
+  localStorage.setItem("lvas_streak_last", today);
+  localStorage.setItem("lvas_streak_count", count);
   return count;
 }
 
+/* =========================
+   API calls
+========================= */
 async function callLeaderboard({ week_id, mode, nick }) {
   const res = await fetch(FN_LEADERBOARD, {
     method: "POST",
     headers: headers(),
-    body: JSON.stringify({
-      week_id,
-      mode,
-      limit: 15,
-      nick: nick || ""
-    })
+    body: JSON.stringify({ week_id, mode, limit: 15, nick })
   });
   const data = await res.json().catch(() => null);
-  if (!data || !data.ok) throw new Error(data?.error || "leaderboard_error");
+  if (!data || !data.ok) throw new Error("leaderboard_error");
   return data;
 }
 
 async function callSubmit({ lang, nick }) {
-  const kcal = safeIntFromText(document.getElementById("kcalOut")?.textContent);
-  if (!kcal || kcal <= 0) return { ok: false, error: "need_calc" };
+  const kcal = safeIntFromText($("kcalOut")?.textContent);
+  if (!kcal) return { ok: false, error: "need_calc" };
 
-  const mode = getSelectedMode();
-  const foodSel = document.getElementById("food");
-  const item_id = foodSel ? foodSel.value : "unknown";
-  const item_label = foodSel
-    ? (foodSel.options[foodSel.selectedIndex]?.textContent || "Item").slice(0, 120)
-    : "Item";
-
-  const meme_hash = getMemeHash();
+  const food = $("food");
+  const item_id = food?.value || "unknown";
+  const item_label = food?.options[food.selectedIndex]?.textContent || "Item";
 
   const res = await fetch(FN_SUBMIT, {
     method: "POST",
     headers: headers(),
     body: JSON.stringify({
-      mode,
+      mode: getSelectedMode(),
       lang,
       item_id,
-      item_label,
-      meme_hash,
+      item_label: item_label.slice(0, 120),
+      meme_hash: getMemeHash(),
       kcal,
-      nick: nick || ""
+      nick
     })
   });
 
-  const out = await res.json().catch(() => null);
-  if (!out) return { ok: false, error: "no_response" };
-  return out;
+  return await res.json().catch(() => ({ ok: false }));
 }
 
-function el(id) {
-  return document.getElementById(id);
-}
-
-function renderEntries(listEl, entries) {
-  listEl.innerHTML = "";
-  entries.forEach((e, idx) => {
-    const row = document.createElement("div");
-    row.className = "rankRow";
-    const nick = e.nick || "Anon";
-    const kcal = (e.kcal ?? e.score ?? 0);
-    const cc = (e.country || "XX").toUpperCase();
-    const flag = flagEmoji(cc);
-    const mode = (e.mode || "").toLowerCase();
-
-    row.innerHTML = `
-      <div class="rankPos">${idx + 1}</div>
-      <div class="rankNick">${flag} ${nick}</div>
-      <div class="rankMeta">${mode}</div>
-      <div class="rankKcal">${kcal} kcal</div>
-    `;
-    listEl.appendChild(row);
+/* =========================
+   Render
+========================= */
+function renderEntries(list, entries) {
+  list.innerHTML = "";
+  entries.forEach((e, i) => {
+    list.insertAdjacentHTML("beforeend", `
+      <div class="rankRow">
+        <div class="rankPos">${i + 1}</div>
+        <div class="rankNick">${flagEmoji(e.country)} ${e.nick || "Anon"}</div>
+        <div class="rankMeta">${e.mode}</div>
+        <div class="rankKcal">${e.kcal} kcal</div>
+      </div>
+    `);
   });
 }
 
-function renderCountries(cEl, rows) {
-  cEl.innerHTML = "";
+function renderCountries(box, rows) {
+  box.innerHTML = "";
   rows.forEach(r => {
-    const cc = (r.country || "XX").toUpperCase();
-    const flag = flagEmoji(cc);
-    const row = document.createElement("div");
-    row.className = "countryRow";
-    row.innerHTML = `
-      <div class="countryName">${flag} ${cc}</div>
-      <div class="countryCount">${r.entries}</div>
-      <div class="countryBest">${r.best} kcal</div>
-    `;
-    cEl.appendChild(row);
+    box.insertAdjacentHTML("beforeend", `
+      <div class="countryRow">
+        <div class="countryName">${flagEmoji(r.country)} ${r.country}</div>
+        <div class="countryCount">${r.entries}</div>
+        <div class="countryBest">${r.best} kcal</div>
+      </div>
+    `);
   });
 }
 
-// PUBLIC: init
+/* =========================
+   INIT
+========================= */
 export function initRanking() {
   try {
-    // Si no existe el bloque ranking, salimos sin hacer nada
-    const wrap = el("rankWrap");
+    const wrap = $("rankWrap");
     if (!wrap) return;
 
     const LANG = getLang();
     const s = STR[LANG];
 
-    const title = el("rankTitle");
-    const sub = el("rankSub");
-    const filter = el("rankFilter");
-    const list = el("rankList");
-    const cTitle = el("rankCountriesTitle");
-    const countries = el("rankCountries");
-    const nick = el("rankNick");
-    const submit = el("rankSubmit");
-    const status = el("rankStatus");
-    const dopamine = el("rankDopamine");
+    $("rankTitle").textContent = s.title;
+    $("rankSub").textContent = s.subtitle;
+    $("rankCountriesTitle").textContent = s.topCountries;
 
-    if (!filter || !list || !submit || !nick || !status) return;
-
-    if (title) title.textContent = s.title;
-    if (sub) sub.textContent = s.subtitle;
-    if (cTitle) cTitle.textContent = s.topCountries;
+    const filter = $("rankFilter");
+    const list = $("rankList");
+    const countries = $("rankCountries");
+    const nick = $("rankNick");
+    const submit = $("rankSubmit");
+    const status = $("rankStatus");
+    const dopamine = $("rankDopamine");
 
     filter.innerHTML = `
       <option value="all">${s.filterAll}</option>
@@ -290,78 +261,52 @@ export function initRanking() {
     const week_id = getISOWeekId();
 
     async function refresh() {
-      status.textContent = "";
-      if (dopamine) dopamine.textContent = "";
-
-      if (!ANON) {
-        list.innerHTML = `<div class="rankEmpty">${s.missingKey}</div>`;
-        if (countries) countries.innerHTML = "";
-        return;
-      }
-
       try {
-        const mode = filter.value || "all";
         const data = await callLeaderboard({
           week_id,
-          mode,
+          mode: filter.value,
           nick: nick.value.trim()
         });
 
-        if (!data.entries || data.entries.length === 0) {
-          list.innerHTML = `<div class="rankEmpty">${s.empty}</div>`;
-        } else {
-          renderEntries(list, data.entries);
-        }
+        data.entries?.length
+          ? renderEntries(list, data.entries)
+          : list.innerHTML = `<div class="rankEmpty">${s.empty}</div>`;
 
-        if (countries && data.countries) renderCountries(countries, data.countries);
+        renderCountries(countries, data.countries || []);
 
-        if (dopamine) {
-          if (data.you && data.you.percentile) {
-            dopamine.textContent = s.youTop(data.you.percentile);
-          } else {
-            dopamine.textContent = s.youNo;
-          }
-        }
-      } catch (_e) {
+        dopamine.textContent = data.you?.percentile
+          ? s.youTop(data.you.percentile)
+          : s.youNo;
+      } catch {
         list.innerHTML = `<div class="rankEmpty">${s.netErr}</div>`;
       }
     }
 
-    filter.addEventListener("change", refresh);
+    filter.onchange = refresh;
 
-    submit.addEventListener("click", async () => {
+    submit.onclick = async () => {
       status.textContent = "…";
+      const out = await callSubmit({ lang: LANG, nick: nick.value.trim() });
 
-      if (!ANON) {
-        status.textContent = s.missingKey;
+      if (!out.ok) {
+        status.textContent = out.error === "need_calc" ? s.needCalc : s.netErr;
         return;
       }
 
-      const out = await callSubmit({ lang: LANG, nick: nick.value.trim() })
-        .catch(() => ({ ok: false, error: "network" }));
+      status.textContent = out.deduped ? s.deduped : (out.is_valid === false ? s.rejected : s.ok);
+      dopamine.textContent = (streakUpdate() <= 1) ? s.streak0 : s.streakN(streakUpdate());
+      refresh();
+    };
 
-      if (!out || out.ok !== true) {
-        status.textContent = (out?.error === "need_calc") ? s.needCalc : s.netErr;
-        return;
-      }
-
-      if (out.deduped) status.textContent = s.deduped;
-      else if (out.is_valid === false) status.textContent = s.rejected;
-      else status.textContent = s.ok;
-
-      // streak local
-      if (dopamine) {
-        const n = streakUpdate();
-        dopamine.textContent = (n <= 1) ? s.streak0 : s.streakN(n);
-      }
-
-      // refrescar tabla
-      await refresh();
-    });
-
-    // carga inicial
     refresh();
-  } catch (_e) {
-    // silencio total: ranking nunca debe romper la app
+  } catch {
+    // silencio total: nunca rompe la app
   }
 }
+
+/* =========================
+   RE-INIT on language change
+========================= */
+document.addEventListener("lang_change", () => {
+  initRanking();
+});

@@ -14,7 +14,9 @@ export const SPORTS = [
   { key:"petanque",es:"Petanca",          en:"Bocce / Petanque",    met:3.0 }
 ];
 
-export const GENDER_FACTOR = { na:1.00, male:1.00, female:0.95 };
+// No aplicamos un multiplicador fijo por género: el gasto real depende de
+// variables individuales que esta calculadora recreativa no recoge.
+export const GENDER_FACTOR = { na:1.00, male:1.00, female:1.00 };
 
 export function genderLabel(LANG, g){
   if (LANG==="en"){

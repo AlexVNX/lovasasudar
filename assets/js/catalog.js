@@ -1,77 +1,29 @@
-// =========================
-    // Food + Drink catalog (bilingual)
-    // =========================
+// Catálogo editorial v2. Cada registro conserva trazabilidad y una cifra central
+// para la calculadora. Los rangos se muestran como estimaciones, nunca como datos
+// exactos de una marca.
 export const CATALOG = [
-      // Food
-      { id:"pizza_medium", group:"food", kcal:850,  es:"Pizza mediana", en:"Medium pizza" },
-      { id:"burger",      group:"food", kcal:650,  es:"Hamburguesa", en:"Burger" },
-      { id:"kebab_full",  group:"food", kcal:1050, es:"Kebab completo", en:"Full kebab" },
-      { id:"bravas",      group:"food", kcal:520,  es:"Ración bravas", en:"Patatas bravas (portion)" },
-      { id:"bocata_calam",group:"food", kcal:460,  es:"Bocata calamares", en:"Calamari sandwich" },
-      { id:"happy_meal",  group:"food", kcal:500,  es:"Happy Meal McDonald's", en:"McDonald's Happy Meal" },
-      { id:"big_mac",     group:"food", kcal:550,  es:"Big Mac", en:"Big Mac" },
-      { id:"mc_menu_med", group:"food", kcal:510,  es:"Menú mediano McDonald's", en:"McDonald's medium meal" },
-      { id:"mc_nug_6",    group:"food", kcal:250,  es:"6 Nuggets McDonald's", en:"McDonald's 6 nuggets" },
-      { id:"mc_fries_med",group:"food", kcal:340,  es:"Patatas fritas medianas McDonald's", en:"McDonald's medium fries" },
-      { id:"bk_wedges",   group:"food", kcal:420,  es:"Patatas gajo Burger King", en:"Burger King wedges" },
-      { id:"pizza_slice_cheese", group:"food", kcal:450, es:"Porción pizza queso (1/8 mediana)", en:"Cheese pizza slice (1/8 medium)" },
-      { id:"pizza_slice_pep",    group:"food", kcal:500, es:"Porción pizza pepperoni (1/8 mediana)", en:"Pepperoni pizza slice (1/8 medium)" },
-      { id:"pizza_family_cheese",group:"food", kcal:3600,es:"Pizza familiar queso entera", en:"Family cheese pizza (whole)" },
-      { id:"pizza_family_pep",   group:"food", kcal:4000,es:"Pizza familiar pepperoni entera", en:"Family pepperoni pizza (whole)" },
-      { id:"lasagna",     group:"food", kcal:600,  es:"Lasaña boloñesa", en:"Bolognese lasagna" },
-      { id:"pasta_carbon",group:"food", kcal:700,  es:"Ración pasta carbonara", en:"Carbonara pasta (portion)" },
-
-      { id:"tortilla_pincho",group:"food", kcal:250, es:"Pincho de tortilla", en:"Spanish omelette slice" },
-      { id:"bravas_2",       group:"food", kcal:500, es:"Ración patatas bravas", en:"Patatas bravas (portion)" },
-      { id:"croquetas_3",    group:"food", kcal:350, es:"3 croquetas de jamón", en:"3 ham croquettes" },
-      { id:"bocata_jamon",   group:"food", kcal:450, es:"Bocadillo de jamón serrano", en:"Serrano ham sandwich" },
-      { id:"bocata_calam_2", group:"food", kcal:550, es:"Bocadillo de calamares", en:"Calamari sandwich" },
-
-      { id:"donut",      group:"food", kcal:280, es:"Donut clásico", en:"Classic donut" },
-      { id:"croissant",  group:"food", kcal:220, es:"Croissant de mantequilla", en:"Butter croissant" },
-      { id:"palmera_choc",group:"food",kcal:400, es:"Palmera de chocolate", en:"Chocolate palmier" },
-      { id:"brownie",    group:"food", kcal:450, es:"Brownie de chocolate", en:"Chocolate brownie" },
-      { id:"muffin",     group:"food", kcal:450, es:"Muffin de chocolate", en:"Chocolate muffin" },
-      { id:"cheesecake", group:"food", kcal:550, es:"Tarta de queso porción", en:"Cheesecake slice" },
-      { id:"choc_cake",  group:"food", kcal:500, es:"Tarta de chocolate porción", en:"Chocolate cake slice" },
-
-      { id:"kitkat",     group:"food", kcal:150, es:"Barrita chocolate tipo KitKat", en:"KitKat-style bar" },
-      { id:"snickers",   group:"food", kcal:240, es:"Barrita Snickers", en:"Snickers bar" },
-      { id:"chips_small",group:"food", kcal:250, es:"Bolsa patatas fritas pequeña", en:"Small bag of chips" },
-      { id:"chips_big",  group:"food", kcal:500, es:"Bolsa patatas fritas grande", en:"Large bag of chips" },
-      { id:"kinder_bueno",group:"food",kcal:200, es:"Kinder Bueno (2 barritas)", en:"Kinder Bueno (2 bars)" },
-      { id:"ice_cream_pop",group:"food",kcal:200, es:"Helado de palo cremoso", en:"Creamy ice cream pop" },
-      { id:"magnum",     group:"food", kcal:280, es:"Helado tipo Magnum", en:"Magnum-style ice cream" },
-
-      { id:"homemade_burger", group:"food", kcal:650, es:"Hamburguesa casera completa", en:"Homemade burger (full)" },
-      { id:"sushi_8",         group:"food", kcal:350, es:"Ración de sushi (8 piezas)", en:"Sushi (8 pieces)" },
-      { id:"caesar_salad",    group:"food", kcal:300, es:"Ensalada César completa", en:"Caesar salad (full)" },
-
-      { id:"shawarma_big", group:"food", kcal:950, es:"Shawarma grande extra salsas", en:"Large shawarma (extra sauces)" },
-      { id:"nachos_loaded",group:"food", kcal:700, es:"Nachos con queso y guacamole", en:"Loaded nachos" },
-      { id:"wings_10",     group:"food", kcal:600, es:"10 alitas barbacoa", en:"10 BBQ wings" },
-      { id:"ramen_big",    group:"food", kcal:650, es:"Ramen grande", en:"Large ramen" },
-      { id:"sushi_for_2",  group:"food", kcal:1200,es:"Sushi para 2 (20-24 piezas)", en:"Sushi for 2 (20–24 pieces)" },
-      { id:"double_bacon", group:"food", kcal:900, es:"Hamburguesa doble bacon cheese", en:"Double bacon cheeseburger" },
-
-      // Drinks
-      { id:"beer_330",    group:"drink", kcal:150, es:"Cerveza 330 ml", en:"Beer (330 ml)" },
-      { id:"craft_beer",  group:"drink", kcal:180, es:"Cerveza artesana 330 ml", en:"Craft beer (330 ml)" },
-      { id:"red_wine",    group:"drink", kcal:90,  es:"Copa vino tinto", en:"Glass of red wine" },
-      { id:"white_wine",  group:"drink", kcal:110, es:"Copa vino blanco", en:"Glass of white wine" },
-      { id:"gin_tonic",   group:"drink", kcal:210, es:"Gin-tonic", en:"Gin & tonic" },
-      { id:"rum_cola",    group:"drink", kcal:200, es:"Ron-cola", en:"Rum & cola" },
-      { id:"mojito",      group:"drink", kcal:240, es:"Mojito", en:"Mojito" },
-      { id:"sex_beach",   group:"drink", kcal:230, es:"Sex on the Beach", en:"Sex on the Beach" },
-      { id:"caipirinha",  group:"drink", kcal:250, es:"Caipiriña", en:"Caipirinha" },
-      { id:"pina_colada", group:"drink", kcal:300, es:"Piña colada", en:"Piña colada" },
-      { id:"whisky_cola", group:"drink", kcal:200, es:"Whisky-cola", en:"Whisky & cola" },
-      { id:"aperol",      group:"drink", kcal:200, es:"Aperol Spritz", en:"Aperol Spritz" },
-      { id:"shot_tequila",group:"drink", kcal:65,  es:"Chupito tequila", en:"Tequila shot" },
-      { id:"soda",        group:"drink", kcal:120, es:"Refresco azucarado 330 ml", en:"Sugary soda (330 ml)" },
-      { id:"vermouth",    group:"drink", kcal:100, es:"Vermú", en:"Vermouth" },
-
-      // “graciosas”
-      { id:"sangria_glass", group:"drink", kcal:200, es:"Sangría (vaso)", en:"Sangria (glass)" },
-      { id:"beer_bucket",   group:"drink", kcal:320, es:"Cubo cerveza (vaso)", en:"Beer bucket (per glass)" }
-    ];
+  {id:"pizza_medium",group:"food",category:"pizza",kcal:900,kcalMin:700,kcalMax:1100,es:"Pizza mediana (entera)",en:"Medium pizza (whole)",serving:"1 pizza, 30–33 cm",status:"estimate",source:"Estimación editorial por receta y tamaño",sourceUrl:"/metodologia-fuentes/",market:"España",checked:"2026-08-03"},
+  {id:"pizza_slice_cheese",group:"food",category:"pizza",kcal:250,kcalMin:200,kcalMax:300,es:"Porción de pizza de queso",en:"Cheese pizza slice",serving:"1/8 de pizza mediana",status:"estimate",source:"Estimación editorial por receta y tamaño",sourceUrl:"/metodologia-fuentes/",market:"España",checked:"2026-08-03"},
+  {id:"pizza_slice_pep",group:"food",category:"pizza",kcal:290,kcalMin:230,kcalMax:350,es:"Porción de pizza pepperoni",en:"Pepperoni pizza slice",serving:"1/8 de pizza mediana",status:"estimate",source:"Estimación editorial por receta y tamaño",sourceUrl:"/metodologia-fuentes/",market:"España",checked:"2026-08-03"},
+  {id:"burger",group:"food",category:"fastfood",kcal:600,kcalMin:450,kcalMax:750,es:"Hamburguesa completa",en:"Loaded burger",serving:"1 unidad",status:"estimate",source:"Rango editorial según pan, carne, queso y salsa",sourceUrl:"/metodologia-fuentes/",market:"España",checked:"2026-08-03"},
+  {id:"double_bacon",group:"food",category:"fastfood",kcal:900,kcalMin:750,kcalMax:1050,es:"Hamburguesa doble con bacon y queso",en:"Double bacon cheeseburger",serving:"1 unidad",status:"estimate",source:"Rango editorial según receta y tamaño",sourceUrl:"/metodologia-fuentes/",market:"España",checked:"2026-08-03"},
+  {id:"kebab_full",group:"food",category:"fastfood",kcal:850,kcalMin:650,kcalMax:1050,es:"Kebab completo",en:"Full kebab",serving:"1 unidad",status:"estimate",source:"Rango editorial según carne, salsas y tamaño",sourceUrl:"/metodologia-fuentes/",market:"España",checked:"2026-08-03"},
+  {id:"wings_10",group:"food",category:"fastfood",kcal:700,kcalMin:550,kcalMax:850,es:"10 alitas con salsa",en:"10 sauced wings",serving:"10 unidades",status:"estimate",source:"Rango editorial según fritura y salsa",sourceUrl:"/metodologia-fuentes/",market:"España",checked:"2026-08-03"},
+  {id:"bravas",group:"food",category:"tapas",kcal:500,kcalMin:350,kcalMax:650,es:"Ración de patatas bravas",en:"Patatas bravas",serving:"1 ración para compartir",status:"estimate",source:"Rango editorial según peso, fritura y salsa",sourceUrl:"/metodologia-fuentes/",market:"España",checked:"2026-08-03"},
+  {id:"tortilla_pincho",group:"food",category:"tapas",kcal:260,kcalMin:200,kcalMax:320,es:"Pincho de tortilla",en:"Spanish omelette slice",serving:"1 pincho",status:"estimate",source:"Rango editorial según tamaño y aceite",sourceUrl:"/metodologia-fuentes/",market:"España",checked:"2026-08-03"},
+  {id:"croquetas_3",group:"food",category:"tapas",kcal:270,kcalMin:210,kcalMax:330,es:"3 croquetas de jamón",en:"3 ham croquettes",serving:"3 unidades",status:"estimate",source:"Rango editorial según tamaño y fritura",sourceUrl:"/metodologia-fuentes/",market:"España",checked:"2026-08-03"},
+  {id:"bocata_calam",group:"food",category:"tapas",kcal:600,kcalMin:450,kcalMax:750,es:"Bocadillo de calamares",en:"Calamari sandwich",serving:"1 bocadillo",status:"estimate",source:"Rango editorial según pan, fritura y salsa",sourceUrl:"/metodologia-fuentes/",market:"España",checked:"2026-08-03"},
+  {id:"donut",group:"food",category:"snacks",kcal:280,kcalMin:220,kcalMax:340,es:"Dónut glaseado",en:"Glazed doughnut",serving:"1 unidad",status:"estimate",source:"Rango editorial según tamaño y cobertura",sourceUrl:"/metodologia-fuentes/",market:"España",checked:"2026-08-03"},
+  {id:"croissant",group:"food",category:"snacks",kcal:260,kcalMin:200,kcalMax:320,es:"Cruasán de mantequilla",en:"Butter croissant",serving:"1 unidad",status:"estimate",source:"Rango editorial según peso y receta",sourceUrl:"/metodologia-fuentes/",market:"España",checked:"2026-08-03"},
+  {id:"brownie",group:"food",category:"snacks",kcal:420,kcalMin:320,kcalMax:520,es:"Brownie de chocolate",en:"Chocolate brownie",serving:"1 porción",status:"estimate",source:"Rango editorial según peso y receta",sourceUrl:"/metodologia-fuentes/",market:"España",checked:"2026-08-03"},
+  {id:"kitkat",group:"food",category:"snacks",kcal:213,es:"KITKAT clásico",en:"Classic KITKAT",serving:"1 unidad, 41,5 g",status:"official",source:"Nestlé España, información nutricional de productos",sourceUrl:"https://empresa.nestle.es/sites/g/files/pydnoa431/files/2023-02/72582-nutricional-2023.pdf",market:"España",checked:"2026-08-03"},
+  {id:"chips_small",group:"food",category:"snacks",kcal:260,kcalMin:240,kcalMax:280,es:"Patatas fritas de bolsa",en:"Potato crisps",serving:"1 bolsa, 50 g",status:"estimate",source:"Rango editorial según valores habituales por 100 g",sourceUrl:"/metodologia-fuentes/",market:"España",checked:"2026-08-03"},
+  {id:"beer_330",group:"drink",category:"alcohol",kcal:140,kcalMin:120,kcalMax:160,es:"Cerveza",en:"Beer",serving:"1 lata o tercio, 330 ml",status:"estimate",source:"Rango editorial según graduación y carbohidratos",sourceUrl:"/metodologia-fuentes/",market:"España",checked:"2026-08-03"},
+  {id:"red_wine",group:"drink",category:"alcohol",kcal:100,kcalMin:85,kcalMax:115,es:"Copa de vino tinto",en:"Red wine",serving:"1 copa, 125 ml",status:"estimate",source:"Rango editorial según graduación y azúcares",sourceUrl:"/metodologia-fuentes/",market:"España",checked:"2026-08-03"},
+  {id:"gin_tonic",group:"drink",category:"alcohol",kcal:210,kcalMin:170,kcalMax:250,es:"Gin-tonic",en:"Gin and tonic",serving:"1 copa: 50 ml ginebra + 200 ml tónica",status:"estimate",source:"Rango editorial según medida y mezclador",sourceUrl:"/metodologia-fuentes/",market:"España",checked:"2026-08-03"},
+  {id:"rum_cola",group:"drink",category:"alcohol",kcal:220,kcalMin:180,kcalMax:260,es:"Ron con cola",en:"Rum and cola",serving:"1 copa: 50 ml ron + 200 ml refresco",status:"estimate",source:"Rango editorial según medida y mezclador",sourceUrl:"/metodologia-fuentes/",market:"España",checked:"2026-08-03"},
+  {id:"mojito",group:"drink",category:"alcohol",kcal:230,kcalMin:180,kcalMax:280,es:"Mojito",en:"Mojito",serving:"1 vaso, 250 ml aprox.",status:"estimate",source:"Rango editorial según ron y azúcar",sourceUrl:"/metodologia-fuentes/",market:"España",checked:"2026-08-03"},
+  {id:"sangria_glass",group:"drink",category:"alcohol",kcal:180,kcalMin:140,kcalMax:220,es:"Sangría",en:"Sangria",serving:"1 vaso, 250 ml",status:"estimate",source:"Rango editorial según vino, fruta y azúcar",sourceUrl:"/metodologia-fuentes/",market:"España",checked:"2026-08-03"},
+  {id:"shot_tequila",group:"drink",category:"alcohol",kcal:65,kcalMin:60,kcalMax:70,es:"Chupito de tequila",en:"Tequila shot",serving:"1 chupito, 30 ml",status:"estimate",source:"Rango editorial según graduación",sourceUrl:"/metodologia-fuentes/",market:"España",checked:"2026-08-03"},
+  {id:"soda",group:"drink",category:"softdrink",kcal:140,kcalMin:130,kcalMax:150,es:"Refresco azucarado",en:"Sugary soft drink",serving:"1 lata, 330 ml",status:"estimate",source:"Rango editorial según etiquetados habituales",sourceUrl:"/metodologia-fuentes/",market:"España",checked:"2026-08-03"}
+];

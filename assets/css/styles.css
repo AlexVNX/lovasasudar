@@ -781,3 +781,8 @@ canvas{display:block; width:100%; height:auto;}
   .rankFilter{ min-width: 140px; }
 }
 
+.seoHubs{margin:34px auto 0;padding:28px;border:1px solid rgba(255,255,255,.1);border-radius:24px;background:rgba(8,11,31,.76)}
+.homeNav{display:flex;gap:10px;overflow-x:auto;white-space:nowrap;margin:0 0 16px;padding:10px 2px}.homeNav a{color:#dce1ff;text-decoration:none;border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:7px 11px;font-size:13px;font-weight:800}.homeNav a:hover{border-color:#38e8ff;color:#fff}
+.seoHubs h2{font-size:clamp(24px,5vw,38px);margin:5px 0 20px}.hubEyebrow{color:#38e8ff;font-weight:950;letter-spacing:.12em;font-size:12px}.hubGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.hubGrid a{display:grid;gap:5px;padding:16px;border:1px solid rgba(255,255,255,.1);border-radius:16px;background:rgba(91,124,250,.08);color:#fff;text-decoration:none}.hubGrid a:hover{border-color:#ff4fd8;transform:translateY(-2px)}.hubGrid span,.homeDisclaimer{color:rgba(255,255,255,.7);font-size:14px}.homeFooter{display:flex;flex-wrap:wrap;gap:14px;margin:22px 0;padding:20px 4px;border-top:1px solid rgba(255,255,255,.1)}.homeFooter a{color:#bfc7ff}.homeDisclaimer{margin:20px 0 0}
+@media(max-width:720px){.hubGrid{grid-template-columns:1fr}.seoHubs{padding:20px}}
+

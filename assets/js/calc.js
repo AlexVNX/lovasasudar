@@ -1,5 +1,6 @@
 import { $, clamp, kcalPerMinute, escapeHtml } from "./helpers.js";
 import { CATALOG } from "./catalog.js";
+import { US_CATALOG } from "./catalog-us.js";
 import { SPORTS, GENDER_FACTOR, genderLabel } from "./sports.js";
 
 export function getSelectedMode(){
@@ -117,7 +118,7 @@ export function renderInverse(LANG, T, weight, gender){
   const kpm = kcalPerMinute(sport.met, weight) * factor;
   const burned = Math.max(0, Math.round(kpm * minutes));
 
-  const options = CATALOG
+  const options = (LANG === "en" ? US_CATALOG : CATALOG)
     .filter(x=>x.id!=="custom" && Number.isFinite(x.kcal) && x.kcal > 0)
     .map(x=>({ kcal:x.kcal, label:(LANG==="es"?x.es:x.en) }));
 

@@ -2,6 +2,7 @@ import { track } from "./analytics.js";
 import { $, clamp } from "./helpers.js";
 import { T, getLangFromUrl, setLangInUrl } from "./i18n.js";
 import { CATALOG } from "./catalog.js";
+import { US_CATALOG } from "./catalog-us.js";
 import { SPORTS } from "./sports.js";
 import { applySeoLanding } from "./seo.js";
 
@@ -34,7 +35,7 @@ function buildFoodSelect(LANG, preserveId){
     const og = document.createElement("optgroup");
     og.label = g.label;
 
-    const items = CATALOG.filter(x=>x.group===g.key);
+    const items = (LANG === "en" ? US_CATALOG : CATALOG).filter(x=>x.group===g.key);
     items.forEach(it=>{
       const opt = document.createElement("option");
       opt.value = it.id;
@@ -59,11 +60,12 @@ function buildFoodSelect(LANG, preserveId){
   ogCustom.appendChild(optC);
   sel.appendChild(ogCustom);
 
-  sel.value = prev && [...sel.querySelectorAll("option")].some(o=>o.value===prev) ? prev : "pizza_medium";
+  const fallbackFood = LANG === "en" ? "us_dominos_ultimate_pepperoni" : "pizza_medium";
+  sel.value = prev && [...sel.querySelectorAll("option")].some(o=>o.value===prev) ? prev : fallbackFood;
 }
 
 function fillDrinkSelects(LANG){
-  const opts = CATALOG.filter(x=>x.group==="drink");
+  const opts = (LANG === "en" ? US_CATALOG : CATALOG).filter(x=>x.group==="drink");
   ["drink1","drink2","drink3"].forEach(id=>{
     const sel = $(id);
     const preserve = sel.value;
@@ -77,7 +79,8 @@ function fillDrinkSelects(LANG){
       opt.textContent = `${(LANG==="es"?it.es:it.en)} (~${it.kcal} kcal)`;
       sel.appendChild(opt);
     });
-    sel.value = preserve && [...sel.querySelectorAll("option")].some(o=>o.value===preserve) ? preserve : "beer_330";
+    const fallback = LANG === "en" ? "us_white_claw" : "beer_330";
+    sel.value = preserve && [...sel.querySelectorAll("option")].some(o=>o.value===preserve) ? preserve : fallback;
   });
 }
 
@@ -116,6 +119,49 @@ function setDocumentMeta(LANG){
   document.title = T[LANG].pageTitle;
   const desc = document.querySelector('meta[name="description"]');
   if (desc) desc.setAttribute("content", T[LANG].pageDesc);
+}
+
+function applyHomeChrome(LANG){
+  const english = LANG === "en";
+  const homeNav = document.querySelector(".homeNav");
+  if (homeNav) homeNav.innerHTML = english
+    ? '<a href="/en/alcohol-calories/">Alcohol</a><a href="/en/pizza-calories/">Pizza</a><a href="/en/burgers-fast-food-calories/">Burgers</a><a href="/en/candy-snacks-calories/">Candy</a><a href="/en/bar-food-calories/">Bar food</a><a href="/en/exercise-calorie-equivalents/">Exercise</a><a href="/en/methodology-sources/">Sources</a>'
+    : '<a href="/calorias-alcohol/">Alcohol</a><a href="/calorias-pizzas/">Pizzas</a><a href="/calorias-hamburguesas-comida-rapida/">Hamburguesas</a><a href="/calorias-dulces-snacks/">Dulces</a><a href="/calorias-tapas-comida-espanola/">Tapas</a><a href="/ejercicios-equivalencias/">Ejercicio</a><a href="/metodologia-fuentes/">Fuentes</a>';
+
+  const strip = document.querySelector(".leisureStrip");
+  if (strip) strip.innerHTML = english
+    ? '<strong>ENTERTAINMENT ONLY:</strong> approximate recreational estimates—not medical, nutrition, fitness, eating-disorder or weight-loss advice. Food does not create an exercise debt.'
+    : '<strong>SOLO OCIO Y HUMOR:</strong> estimaciones aproximadas, no consejo médico, nutricional, deportivo ni para perder peso. Comer no crea una deuda de ejercicio.';
+
+  const hubs = document.querySelector(".seoHubs");
+  if (hubs) hubs.innerHTML = english ? `
+    <p class="hubEyebrow">US PRODUCTS · OFFICIAL SOURCES · CLEAR SERVINGS</p>
+    <h2 id="exploraTitle">Choose your next delicious disaster</h2>
+    <div class="hubGrid">
+      <a href="/en/alcohol-calories/"><strong>🍻 Alcohol</strong><span>US beer, hard seltzer, wine and cocktails</span></a>
+      <a href="/en/pizza-calories/"><strong>🍕 Pizza</strong><span>Popular Domino's US slices</span></a>
+      <a href="/en/burgers-fast-food-calories/"><strong>🍔 Burgers</strong><span>Official McDonald's US products</span></a>
+      <a href="/en/candy-snacks-calories/"><strong>🍫 Candy</strong><span>Reese's, Hershey's and KIT KAT</span></a>
+      <a href="/en/bar-food-calories/"><strong>🍗 Bar food</strong><span>Wings, nachos and shareables</span></a>
+      <a href="/en/exercise-calorie-equivalents/"><strong>🏃 Equivalents</strong><span>All 13 activities and the MET formula</span></a>
+    </div>
+    <p class="homeDisclaimer">Approximate entertainment only—not medical, nutrition, fitness or weight-loss advice. <a href="/en/methodology-sources/">Read the methodology and sources</a>.</p>` : `
+    <p class="hubEyebrow">GUÍAS CON FUENTES Y RACIONES CLARAS</p>
+    <h2 id="exploraTitle">Elige tu próximo desastre delicioso</h2>
+    <div class="hubGrid">
+      <a href="/calorias-alcohol/"><strong>🍻 Alcohol</strong><span>Cerveza, vino, copas y cócteles</span></a>
+      <a href="/calorias-pizzas/"><strong>🍕 Pizzas</strong><span>Porción, mediana y rangos</span></a>
+      <a href="/calorias-hamburguesas-comida-rapida/"><strong>🍔 Hamburguesas</strong><span>Fast food sin menús fantasma</span></a>
+      <a href="/calorias-dulces-snacks/"><strong>🍫 Dulces</strong><span>Snacks por unidad real</span></a>
+      <a href="/calorias-tapas-comida-espanola/"><strong>🇪🇸 Tapas</strong><span>Bravas, tortilla y croquetas</span></a>
+      <a href="/ejercicios-equivalencias/"><strong>🏃 Equivalencias</strong><span>La fórmula MET al desnudo</span></a>
+    </div>
+    <p class="homeDisclaimer">Las cifras son aproximadas y recreativas: no son consejo médico ni implican que debas compensar lo que comes. <a href="/metodologia-fuentes/">Consulta metodología y fuentes</a>.</p>`;
+
+  const homeFooter = document.querySelector(".homeFooter");
+  if (homeFooter) homeFooter.innerHTML = english
+    ? '<a href="/?lang=en">Calculator</a><a href="/en/alcohol-calories/">Alcohol</a><a href="/en/pizza-calories/">Pizza</a><a href="/en/burgers-fast-food-calories/">Fast food</a><a href="/en/candy-snacks-calories/">Candy</a><a href="/en/bar-food-calories/">Bar food</a><a href="/en/exercise-calorie-equivalents/">Exercise</a><a href="/en/methodology-sources/">Sources</a>'
+    : '<a href="/">Calculadora</a><a href="/calorias-alcohol/">Alcohol</a><a href="/calorias-pizzas/">Pizzas</a><a href="/calorias-hamburguesas-comida-rapida/">Fast food</a><a href="/calorias-dulces-snacks/">Snacks</a><a href="/calorias-tapas-comida-espanola/">Tapas</a><a href="/ejercicios-equivalencias/">Ejercicio</a><a href="/metodologia-fuentes/">Fuentes</a>';
 }
 
 function applyLanguage(LANG){
@@ -210,6 +256,7 @@ if (g && g.options.length >= 3) {
   fillInverseSports(LANG);
 
   setDocumentMeta(LANG);
+  applyHomeChrome(LANG);
 }
 
 // -------------------------

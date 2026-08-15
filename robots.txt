@@ -1,10 +1,7 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Googlebot-Image
-Allow: /
-
 User-agent: *
 Allow: /
+Disallow: /*?items=
+Disallow: /*?p=
+Disallow: /*&from=challenge
 
 Sitemap: https://lovasasudar.com/sitemap.xml

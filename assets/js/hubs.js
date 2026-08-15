@@ -2,17 +2,61 @@ import { CATALOG } from './catalog.js';
 import { US_CATALOG } from './catalog-us.js';
 import { SPORTS } from './sports.js';
 
-window.dataLayer = window.dataLayer || [];
-window.gtag = window.gtag || function(){ window.dataLayer.push(arguments); };
-if (!document.querySelector('script[data-ga4]')) {
+const CONSENT_KEY = 'lvas_consent';
+
+function readConsent() {
+  try {
+    const value = localStorage.getItem(CONSENT_KEY);
+    return value === 'accept' || value === 'reject' ? value : null;
+  } catch { return null; }
+}
+
+function expireAnalyticsCookies() {
+  const secure = location.protocol === 'https:' ? '; Secure' : '';
+  const domains = new Set(['', location.hostname, 'lovasasudar.com']);
+  for (const cookie of document.cookie.split(';')) {
+    const name = cookie.split('=')[0].trim();
+    if (name !== '_ga' && !name.startsWith('_ga_')) continue;
+    for (const domain of domains) {
+      const domainAttribute = domain ? `; Domain=${domain}` : '';
+      document.cookie = `${name}=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/${domainAttribute}; SameSite=Lax${secure}`;
+    }
+  }
+}
+
+function loadAnalytics() {
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = window.gtag || function(){ window.dataLayer.push(arguments); };
+  window.gtag('consent', 'update', { analytics_storage:'granted' });
+  if (document.querySelector('script[data-ga4]')) return;
   const ga = document.createElement('script');
   ga.async = true;
   ga.dataset.ga4 = 'true';
   ga.src = 'https://www.googletagmanager.com/gtag/js?id=G-RLQ6Y55SNC';
   document.head.append(ga);
   window.gtag('js', new Date());
-  window.gtag('config', 'G-RLQ6Y55SNC', { anonymize_ip:true, allow_ad_personalization_signals:false });
+  window.gtag('config', 'G-RLQ6Y55SNC', { anonymize_ip:true, allow_google_signals:false, allow_ad_personalization_signals:false, page_location:`${location.origin}${location.pathname}` });
 }
+
+function rejectAnalytics() {
+  if (window.gtag) window.gtag('consent', 'update', { analytics_storage:'denied', ad_storage:'denied', ad_user_data:'denied', ad_personalization:'denied' });
+  expireAnalyticsCookies();
+}
+
+function trackHub(name, params) {
+  if (readConsent() !== 'accept' || typeof window.gtag !== 'function') return;
+  window.gtag('event', name, params);
+}
+
+const initialConsent = readConsent();
+if (initialConsent === 'accept') loadAnalytics();
+else if (initialConsent === 'reject') rejectAnalytics();
+
+window.addEventListener('storage', (event) => {
+  if (event.key !== CONSENT_KEY) return;
+  if (event.newValue === 'accept') loadAnalytics();
+  else rejectAnalytics();
+});
 
 const isEnglish = document.documentElement.lang.toLowerCase().startsWith('en');
 const pageCatalog = isEnglish ? US_CATALOG : CATALOG;
@@ -66,8 +110,16 @@ document.querySelectorAll('[data-calc]').forEach(calc => {
     const data = new FormData(calc);
     const item = pageCatalog.find(x => x.id === data.get('food')) || items[0];
     if (!item) return;
-    const units = Math.max(1, Number(data.get('units')) || 1);
-    const weight = Math.min(440, Math.max(isEnglish ? 77 : 35, Number(data.get('weight')) || (isEnglish ? 165 : 75)));
+    const units = Number(data.get('units'));
+    const weight = Number(data.get('weight'));
+    const minWeight = isEnglish ? 77 : 35;
+    const maxWeight = isEnglish ? 440 : 200;
+    if (!Number.isFinite(units) || units < 1 || units > 20 || !Number.isFinite(weight) || weight < minWeight || weight > maxWeight) {
+      calc.querySelector('[data-result]').textContent = isEnglish
+        ? 'Check servings (1-20) and weight (77-440 lb).'
+        : 'Revisa raciones (1-20) y peso (35-200 kg).';
+      return;
+    }
     const weightKg = isEnglish ? weight * 0.45359237 : weight;
     const sport = SPORTS.find(x => x.key === data.get('sport')) || SPORTS[0];
     const kcal = Math.round(item.kcal * units);
@@ -76,7 +128,7 @@ document.querySelectorAll('[data-calc]').forEach(calc => {
     calc.querySelector('[data-result]').textContent = isEnglish
       ? `${kcal} kcal approx.${range} ≈ ${minutes} min of ${sport.en.toLowerCase()} at ${weight} lb.`
       : `${kcal} kcal aprox.${range} ≈ ${minutes} min de ${sport.es.toLowerCase()} para ${weight} kg.`;
-    window.gtag?.('event','hub_calculate',{category,item_id:item.id,kcal,market:isEnglish?'US':'ES'});
+    trackHub('hub_calculate',{category,item_id:item.id,market:isEnglish?'US':'ES',language:isEnglish?'en':'es'});
   });
 });
 

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920" role="img" aria-labelledby="title desc">
+  <title id="title">Plantilla de Stories de LoVasASudar</title>
+  <desc id="desc">Tarjeta vertical oscura con la pregunta cuánto se suda esto, espacio para una equivalencia y llamada a calcular.</desc>
+  <defs>
+    <radialGradient id="bg" cx="14%" cy="5%" r="95%">
+      <stop offset="0" stop-color="#302778"/>
+      <stop offset=".55" stop-color="#10132f"/>
+      <stop offset="1" stop-color="#07081b"/>
+    </radialGradient>
+    <linearGradient id="button" x1="0" x2="1">
+      <stop stop-color="#7157ff"/>
+      <stop offset="1" stop-color="#eb42c8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1080" height="1920" fill="url(#bg)"/>
+  <circle cx="930" cy="300" r="310" fill="#ff4fd8" opacity=".08"/>
+  <circle cx="60" cy="1580" r="340" fill="#3be8ff" opacity=".08"/>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="72" y="145" fill="#3be8ff" font-size="27" font-weight="700" letter-spacing="4">LOVASASUDAR.COM</text>
+    <text x="72" y="330" fill="#ffffff" font-size="88" font-weight="900">¿CUÁNTO SE</text>
+    <text x="72" y="440" fill="#ff4fd8" font-size="102" font-weight="900">SUDA ESTO?</text>
+    <rect x="72" y="555" width="936" height="760" rx="42" fill="#11142f" stroke="#30345f" stroke-width="3"/>
+    <text x="540" y="675" fill="#b7b9d8" font-size="25" font-weight="700" text-anchor="middle" letter-spacing="3">AÑADE AQUÍ EL ANTOJO</text>
+    <text x="540" y="895" fill="#3be8ff" font-size="120" font-weight="900" text-anchor="middle">≈ XX–XX</text>
+    <text x="540" y="975" fill="#ffffff" font-size="42" font-weight="800" text-anchor="middle">MINUTOS DE ACTIVIDAD</text>
+    <text x="540" y="1085" fill="#b7b9d8" font-size="29" text-anchor="middle">Indica ración y actividad</text>
+    <text x="540" y="1135" fill="#b7b9d8" font-size="29" text-anchor="middle">para que la comparación tenga contexto</text>
+    <rect x="160" y="1195" width="760" height="3" fill="#ff4fd8"/>
+    <text x="540" y="1260" fill="#b7b9d8" font-size="24" text-anchor="middle">Estimación recreativa · No es una compensación</text>
+    <text x="72" y="1455" fill="#ffffff" font-size="42" font-weight="800">APROXIMADO · COMPARTIBLE</text>
+    <text x="72" y="1515" fill="#ffffff" font-size="42" font-weight="800">Y SIN SERMONES.</text>
+    <rect x="72" y="1620" width="936" height="112" rx="25" fill="url(#button)"/>
+    <text x="540" y="1692" fill="#ffffff" font-size="34" font-weight="900" text-anchor="middle">CALCÚLALO EN LOVASASUDAR.COM ↗</text>
+    <text x="72" y="1825" fill="#b7b9d8" font-size="24">Consulta la ración, el rango y la metodología en la web</text>
+  </g>
+</svg>

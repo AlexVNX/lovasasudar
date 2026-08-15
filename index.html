@@ -1,441 +1,57 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <!-- =========================
-       SEO + Social + PWA-ish
-  ========================== -->
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#050617" />
-  <meta name="robots" content="index,follow,max-image-preview:large" />
-
-  <title id="metaTitle">LoVasASudar.com · Calculadora de castigo calórico</title>
-  <meta id="metaDesc" name="description" content="Calcula el castigo calórico de tu cena/noche de copas y descubre cuánto ejercicio tendrías que hacer para sudarlo." />
-
-  <!-- Canonical + alternates (misma página con ?lang=) -->
-  <link id="linkCanonical" rel="canonical" href="https://lovasasudar.com/" />
-  <link rel="alternate" hreflang="es-ES" href="https://lovasasudar.com/?lang=es" />
-  <link rel="alternate" hreflang="en-US" href="https://lovasasudar.com/?lang=en" />
-  <link rel="alternate" hreflang="x-default" href="https://lovasasudar.com/" />
-
-  <!-- Open Graph -->
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="LoVasASudar.com" />
-  <meta property="og:title" content="LoVasASudar.com · Calculadora de castigo calórico" />
-  <meta property="og:description" content="Traduce calorías a esfuerzo real: cuánto ejercicio para sudarlo. Y te genera un meme compartible." />
-  <meta property="og:url" content="https://lovasasudar.com/" />
-
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="LoVasASudar.com" />
-  <meta name="twitter:description" content="Calcula el castigo calórico y genera un meme compartible." />
-
-  <!-- Favicon (SVG inline) -->
-  <link rel="icon" type="image/svg+xml"
-        href='data:image/svg+xml;utf8,
-<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="%235b7cfa"/>
-      <stop offset="1" stop-color="%23ff4fd8"/>
-    </linearGradient>
-    <filter id="s" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur stdDeviation="2" result="b"/>
-      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-  </defs>
-  <rect x="6" y="6" width="52" height="52" rx="16" fill="%23050617" stroke="url(%23g)" stroke-width="3"/>
-  <path d="M20 38c0-8 6-14 14-14s14 6 14 14" fill="none" stroke="url(%23g)" stroke-width="5" stroke-linecap="round" filter="url(%23s)"/>
-  <circle cx="24" cy="40" r="3" fill="%2338e8ff"/>
-  <circle cx="40" cy="20" r="3" fill="%23ffb648"/>
-  <text x="32" y="48" text-anchor="middle" font-family="system-ui,Segoe UI,Arial" font-size="12" font-weight="900" fill="%23ffffff">SUDAR</text>
-</svg>' />
-
-  <!-- Structured data -->
-  <script type="application/ld+json">
-  {
-    "@context":"https://schema.org",
-    "@type":"WebApplication",
-    "name":"LoVasASudar.com",
-    "url":"https://lovasasudar.com/",
-    "applicationCategory":"LifestyleApplication",
-    "operatingSystem":"All",
-    "description":"Herramienta de ocio para comparar de forma aproximada energía de alimentos y actividades MET y generar memes; no ofrece consejo médico, nutricional ni deportivo.",
-    "inLanguage":["es-ES","en-US"],
-    "isAccessibleForFree":true
-  }
-  </script>
-
-  <!-- =========================
-       GA4 (gtag)
-  ========================== -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-RLQ6Y55SNC"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-RLQ6Y55SNC', {
-      anonymize_ip: true,
-      allow_ad_personalization_signals: false
-    });
-  </script>
-
-  <!-- ✅ Supabase anon key para ranking/submit (pública por diseño) -->
-  <script>
-    window.SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhqc3pldGd4aHJyZHF0eGdtZnZvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1OTY0MDksImV4cCI6MjA4NTE3MjQwOX0.CTH-0yCG-4g76uRJcbI4wB9MJVDUnap6fl738Kgc-Yw";
-  </script>
-
-  <!-- CSS separado (misma estética) -->
-  <link rel="stylesheet" href="./assets/css/styles.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07081b">
+  <meta name="description" content="Traduce antojos a equivalencias aproximadas de actividad. Sin sermones, con fuentes y listo para compartir.">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <link rel="canonical" href="https://lovasasudar.com/">
+  <link rel="alternate" hreflang="es-ES" href="https://lovasasudar.com/">
+  <link rel="alternate" hreflang="x-default" href="https://lovasasudar.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="LoVasASudar.com">
+  <meta property="og:title" content="¿Cuánto se suda esto? · LoVasASudar.com">
+  <meta property="og:description" content="Aproximado, compartible y sin sermones.">
+  <meta property="og:url" content="https://lovasasudar.com/">
+  <meta property="og:image" content="https://lovasasudar.com/assets/og-default.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://lovasasudar.com/assets/og-default.png">
+  <title>¿Cuánto se suda esto? · LoVasASudar.com</title>
+  <link rel="stylesheet" href="/assets/css/app.css">
+  <link rel="stylesheet" href="/assets/css/basket.css">
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","name":"LoVasASudar.com","url":"https://lovasasudar.com/","inLanguage":"es-ES"},{"@type":"WebApplication","name":"LoVasASudar.com","url":"https://lovasasudar.com/","applicationCategory":"EntertainmentApplication","operatingSystem":"All","isAccessibleForFree":true}]}</script>
+  <script>if(new URLSearchParams(location.search).has('items')||new URLSearchParams(location.search).has('p'))document.querySelector('meta[name="robots"]').content='noindex,follow';</script>
 </head>
-
 <body>
-  <div class="fx" aria-hidden="true"></div>
-
-  <!-- NEÓN IZQUIERDO -->
-  <div class="neon-sign" aria-hidden="true" title="Lo vas a sudar">
-    <div>
-      <div class="neon-text">LO VAS A SUDAR</div>
-      <div class="neon-sub">CALORÍAS</div>
-    </div>
-  </div>
-
-  <!-- NEÓN DERECHO (JAPONÉS) -->
-  <div class="neon-sign-right" aria-hidden="true" title="ハンバーガーと寿司">
-    <div class="jp-text">ハンバーガーと寿司</div>
-  </div>
-
-  <div class="wrap">
-    <header>
-      <div class="brand-pill" id="brand">LoVasASudar.com · Calculadora de castigo calórico</div>
-
-      <div class="langBtns" style="display:flex; gap:10px;">
-        <button id="btnES" type="button" class="active" aria-label="Cambiar a español">ES</button>
-        <button id="btnEN" type="button" aria-label="Switch to English">EN</button>
-      </div>
-    </header>
-
-    <nav class="homeNav" aria-label="Guías de calorías">
-      <a href="/calorias-alcohol/">Alcohol</a><a href="/calorias-pizzas/">Pizzas</a><a href="/calorias-hamburguesas-comida-rapida/">Hamburguesas</a><a href="/calorias-dulces-snacks/">Dulces</a><a href="/calorias-tapas-comida-espanola/">Tapas</a><a href="/ejercicios-equivalencias/">Ejercicio</a><a href="/metodologia-fuentes/">Fuentes</a>
-    </nav>
-
-    <aside class="leisureStrip"><strong>SOLO OCIO Y HUMOR:</strong> estimaciones aproximadas, no consejo médico, nutricional, deportivo ni para perder peso. Comer no crea una deuda de ejercicio.</aside>
-
-    <main class="card">
-      <h1 id="title">LoVasASudar.com</h1>
-      <p class="subtitle" id="subtitle">
-        Mete lo que vas a comer y beber y descubre cuánto ejercicio tendrías que hacer para sudarlo. Perfecta para cenas con amigos y noches de copas.
-      </p>
-
-      <section class="grid" aria-label="Formulario de cálculo">
-        <div class="field">
-          <label for="food" id="lblFood">Alimento o bebida</label>
-          <select id="food" aria-label="Alimento o bebida"></select>
-
-          <div class="row2">
-            <div class="field">
-              <label for="units" id="lblUnits">Nº de unidades</label>
-              <input id="units" type="number" min="1" step="1" value="1" inputmode="numeric" />
-              <div class="hint" id="hintUnits">Ej: 3 cervezas → pon 3 unidades.</div>
-            </div>
-
-            <div class="field">
-              <label for="extra" id="lblExtra">Calorías extra</label>
-              <input id="extra" type="number" min="0" step="10" value="0" inputmode="numeric" />
-              <div class="hint" id="hintExtra">Se suman a lo anterior (comida + copas).</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="weight" id="lblWeight">Peso (kg)</label>
-          <input id="weight" type="number" min="35" max="200" step="1" value="80" inputmode="numeric" />
-          <div class="hint" id="hintWeight">
-            El cálculo se hace por kg de peso (ecuación basada en MET).
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="gender" id="lblGender">Género (opcional)</label>
-          <select id="gender">
-            <option value="na">Prefiero no decirlo</option>
-            <option value="male">Hombre</option>
-            <option value="female">Mujer</option>
-          </select>
-          <div class="hint" id="hintGender">
-            Dato opcional para la batalla; no altera el cálculo MET.
-          </div>
-        </div>
-      </section>
-
-      <!-- MODOS EXCLUYENTES -->
-      <div class="modes" aria-label="Modos">
-        <label class="mode" id="mNormal">
-          <input type="radio" name="mode" value="normal" checked />
-          <span id="tNormal">Modo normal</span>
-        </label>
-
-        <label class="mode" id="mDrinks">
-          <input type="radio" name="mode" value="drinks" />
-          <span id="tDrinks">Modo noche de copas</span>
-        </label>
-
-        <label class="mode" id="mBattle">
-          <input type="radio" name="mode" value="battle" />
-          <span id="tBattle">Batalla de colegas</span>
-        </label>
-
-        <label class="mode" id="mInverse">
-          <input type="radio" name="mode" value="inverse" />
-          <span id="tInverse">Calculadora inversa</span>
-        </label>
-      </div>
-
-      <!-- PANEL: NOCHE DE COPAS -->
-      <div class="panel" id="panelDrinks">
-        <h3 id="drinksTitle">🍻 Añade tus bebidas (se suman al total)</h3>
-
-        <div class="row2">
-          <div class="field">
-            <label for="drink1" id="lblDrink1">Bebida</label>
-            <select id="drink1"></select>
-          </div>
-          <div class="field">
-            <label for="drink1n" id="lblDrink1n">Cantidad</label>
-            <input id="drink1n" type="number" min="0" step="1" value="0" inputmode="numeric" />
-          </div>
-        </div>
-
-        <div class="row2">
-          <div class="field">
-            <label for="drink2" id="lblDrink2">Bebida (opcional)</label>
-            <select id="drink2"></select>
-          </div>
-          <div class="field">
-            <label for="drink2n" id="lblDrink2n">Cantidad</label>
-            <input id="drink2n" type="number" min="0" step="1" value="0" inputmode="numeric" />
-          </div>
-        </div>
-
-        <div class="row2">
-          <div class="field">
-            <label for="drink3" id="lblDrink3">Bebida (opcional)</label>
-            <select id="drink3"></select>
-          </div>
-          <div class="field">
-            <label for="drink3n" id="lblDrink3n">Cantidad</label>
-            <input id="drink3n" type="number" min="0" step="1" value="0" inputmode="numeric" />
-          </div>
-        </div>
-
-        <div class="hint" id="drinksHint">
-          Tip: si mezclas “cubo cerveza” + “gin-tonic”, el universo no juzga… pero las matemáticas sí.
-        </div>
-      </div>
-
-      <!-- PANEL: BATALLA -->
-      <div class="panel" id="panelBattle">
-        <h3 id="battleTitle">⚔️ Batalla de colegas (tú + 3)</h3>
-        <div class="friends">
-          <div class="friendCard">
-            <h4 id="youTitle">Tú</h4>
-            <div class="friendRow">
-              <input id="p1name" type="text" placeholder="Nombre (opcional)" />
-              <select id="p1gender">
-                <option value="na">Prefiero no decirlo</option>
-                <option value="male">Hombre</option>
-                <option value="female">Mujer</option>
-              </select>
-            </div>
-            <div style="margin-top:10px;">
-              <input id="p1w" type="number" min="35" max="200" step="1" value="80" inputmode="numeric" />
-              <div class="hint" id="battleHint1">Peso (kg)</div>
-            </div>
-          </div>
-
-          <div class="friendCard">
-            <h4 id="f1Title">Colega 1</h4>
-            <div class="friendRow">
-              <input id="p2name" type="text" placeholder="Nombre" />
-              <select id="p2gender">
-                <option value="na">Prefiero no decirlo</option>
-                <option value="male">Hombre</option>
-                <option value="female">Mujer</option>
-              </select>
-            </div>
-            <div style="margin-top:10px;">
-              <input id="p2w" type="number" min="35" max="200" step="1" value="75" inputmode="numeric" />
-              <div class="hint" id="f1Hint">Peso (kg)</div>
-            </div>
-          </div>
-
-          <div class="friendCard">
-            <h4 id="f2Title">Colega 2</h4>
-            <div class="friendRow">
-              <input id="p3name" type="text" placeholder="Nombre" />
-              <select id="p3gender">
-                <option value="na">Prefiero no decirlo</option>
-                <option value="male">Hombre</option>
-                <option value="female">Mujer</option>
-              </select>
-            </div>
-            <div style="margin-top:10px;">
-              <input id="p3w" type="number" min="35" max="200" step="1" value="68" inputmode="numeric" />
-              <div class="hint" id="f2Hint">Peso (kg)</div>
-            </div>
-          </div>
-
-          <div class="friendCard">
-            <h4 id="f3Title">Colega 3</h4>
-            <div class="friendRow">
-              <input id="p4name" type="text" placeholder="Nombre" />
-              <select id="p4gender">
-                <option value="na">Prefiero no decirlo</option>
-                <option value="male">Hombre</option>
-                <option value="female">Mujer</option>
-              </select>
-            </div>
-            <div style="margin-top:10px;">
-              <input id="p4w" type="number" min="35" max="200" step="1" value="90" inputmode="numeric" />
-              <div class="hint" id="f3Hint">Peso (kg)</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="hint" id="battleHint2" style="margin-top:10px;">
-          Aquí no gana el más fuerte. Gana el que tiene menos calorías… o más dignidad.
-        </div>
-      </div>
-
-      <!-- PANEL: INVERSA -->
-      <div class="panel" id="panelInverse">
-        <h3 id="inverseTitle">🔁 Calculadora inversa</h3>
-        <div class="row2">
-          <div class="field">
-            <label for="invSport" id="lblInvSport">Deporte</label>
-            <select id="invSport"></select>
-          </div>
-          <div class="field">
-            <label for="invHours" id="lblInvHours">Duración (horas)</label>
-            <input id="invHours" type="number" min="0" step="0.25" value="1" inputmode="decimal" />
-            <div class="hint" id="invHint">Ej: 1.5 = 1 hora y 30 min</div>
-          </div>
-        </div>
-      </div>
-
-      <button class="cta" id="btnCalc" type="button">CALCULAR EJERCICIO NECESARIO 💪</button>
-
-      <section class="results" id="results" aria-label="Resultados">
-        <h2 id="resTitle">🎯 Resultados</h2>
-
-        <div class="kpi" id="kpiBlock">
-          <div class="box">
-            <p class="big" id="kcalOut">0 kcal</p>
-            <p class="small" id="kcalSub">Calorías totales estimadas</p>
-          </div>
-          <div class="box">
-            <p class="big" id="modeOut">Normal</p>
-            <p class="small" id="modeSub">Modo activo</p>
-          </div>
-          <div class="box">
-            <p class="big" id="mainOut">—</p>
-            <p class="small" id="mainSub">Resumen</p>
-          </div>
-        </div>
-
-        <div class="divider"></div>
-
-        <div id="sportsTitle" style="font-weight:950; margin-bottom:8px;">⏱️ Tiempo para quemarlo (aprox.)</div>
-        <div class="sports" id="sportsList"></div>
-
-        <div id="battleResultsWrap" style="display:none;">
-          <div class="divider"></div>
-          <div style="font-weight:950; margin-bottom:8px;" id="battleResultsTitle">⚔️ Resultado por persona</div>
-          <div class="sports" id="battleList"></div>
-        </div>
-
-        <div id="inverseResultsWrap" style="display:none;">
-          <div class="divider"></div>
-          <div style="font-weight:950; margin-bottom:8px;" id="inverseResultsTitle">🔁 Has “ganado” esto</div>
-          <div class="sports" id="inverseList"></div>
-        </div>
-
-        <div class="btnRow" aria-label="Acciones meme">
-          <button class="btnLite" id="btnShareTop" type="button" style="display:none;">📲 Compartir MEME</button>
-          <a class="btnLite" id="btnDownloadTop" download="lovasasudar-meme.png" href="#" style="display:none;">⬇️ Descargar MEME</a>
-          <button class="btnLite" id="btnMeme" type="button">📸 Generar MEME</button>
-        </div>
-        
-        <div class="memeWrap" id="memeWrap">
-          <canvas id="memeCanvas" width="1200" height="630"></canvas>
-        </div>
-
-        <div class="btnRow" aria-label="Acciones meme (abajo)">
-          <button class="btnLite" id="btnShare" type="button" style="display:none;">📲 Compartir</button>
-          <a class="btnLite" id="btnDownload" download="lovasasudar-meme.png" href="#" style="display:none;">⬇️ Descargar</a>
-        </div>
-
-        <!-- ✅ RANKING (IDs estables) -->
-        <div class="divider"></div>
-        <section id="rankWrap" class="panel" style="display:block;">
-          <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
-            <div>
-              <h3 id="rankTitle" style="margin:0;">🏆 Ranking semanal (lo más bestia)</h3>
-              <div id="rankSub" class="hint" style="margin-top:6px;">Bandera = país estimado (best-effort). Sin datos personales.</div>
-            </div>
-
-            <select id="rankFilter" class="btnLite" style="min-width:220px;"></select>
-          </div>
-
-          <div id="rankDopamine" style="margin-top:10px; font-weight:950;"></div>
-
-          <div id="rankList" class="rankList" style="margin-top:10px;"></div>
-
-          <div class="divider"></div>
-
-          <div style="font-weight:950; margin-bottom:8px;" id="rankCountriesTitle">🌍 Top países (semana)</div>
-          <div id="rankCountries"></div>
-
-          <div class="divider"></div>
-
-          <div class="row2" style="align-items:center;">
-            <div class="field" style="margin:0;">
-              <input id="rankNick" type="text" placeholder="Tu nick (opcional)" />
-              <div class="hint" style="margin-top:6px;" id="rankHintNick">Sin email, sin login, sin drama.</div>
-            </div>
-            <div class="field" style="margin:0;">
-              <button id="rankSubmit" class="cta" type="button">🚀 Subir este resultado</button>
-              <div id="rankStatus" class="hint" style="margin-top:6px; font-weight:900;"></div>
-            </div>
-          </div>
-        </section>
-
-        <div class="fineprint" id="fineprint">
-          Cálculos y equivalencias aproximados y recreativos. No constituyen consejo médico, nutricional ni deportivo.
-        </div>
-      </section>
-    </main>
-
-    <section class="seoHubs" aria-labelledby="exploraTitle">
-      <p class="hubEyebrow">GUÍAS CON FUENTES Y RACIONES CLARAS</p>
-      <h2 id="exploraTitle">Elige tu próximo desastre delicioso</h2>
-      <div class="hubGrid">
-        <a href="/calorias-alcohol/"><strong>🍻 Alcohol</strong><span>Cerveza, vino, copas y cócteles</span></a>
-        <a href="/calorias-pizzas/"><strong>🍕 Pizzas</strong><span>Porción, mediana y rangos</span></a>
-        <a href="/calorias-hamburguesas-comida-rapida/"><strong>🍔 Hamburguesas</strong><span>Fast food sin menús fantasma</span></a>
-        <a href="/calorias-dulces-snacks/"><strong>🍫 Dulces</strong><span>Snacks por unidad real</span></a>
-        <a href="/calorias-tapas-comida-espanola/"><strong>🇪🇸 Tapas</strong><span>Bravas, tortilla y croquetas</span></a>
-        <a href="/ejercicios-equivalencias/"><strong>🏃 Equivalencias</strong><span>La fórmula MET al desnudo</span></a>
-      </div>
-      <p class="homeDisclaimer">Las cifras son aproximadas y recreativas: no son consejo médico ni implican que debas compensar lo que comes. <a href="/metodologia-fuentes/">Consulta metodología y fuentes</a>.</p>
+  <a class="skip" href="#main">Saltar a la calculadora</a>
+  <header><a class="brand" href="/">LO VAS A <b>SUDAR</b></a><nav aria-label="Principal"><a href="#duelo">Duelo</a><a href="/equivalencias/">Guías</a><a href="/metodologia-fuentes/">Fuentes</a></nav></header>
+  <main id="main">
+    <section class="hero"><small>EL DATO QUE NADIE PIDIÓ</small><h1>¿Cuánto se suda esto?</h1><p>Elige uno o varios antojos y los traducimos a minutos de actividad. <b>Aproximado, compartible y sin sermones.</b></p></section>
+    <section class="card" aria-labelledby="calc-title">
+      <small>01 · ELIGE</small><h2 id="calc-title">Tu caos gastronómico</h2>
+      <div class="filters"><label for="search">Buscar<input id="search" type="search" autocomplete="off" placeholder="Pizza, bravas, cerveza…"></label><label for="category">Categoría<select id="category"><option value="">Todas</option></select></label></div>
+      <div id="products" class="products" role="listbox" aria-label="Productos disponibles"></div>
+      <p id="empty" hidden>No encontramos ese producto. <a href="/contacto/?motivo=producto">Pídelo sin dejar datos innecesarios</a>.</p>
+      <div class="choice"><div><span id="badge" class="badge">Estimación</span><h3 id="name">Selecciona un producto</h3><p id="serving">La ración aparecerá aquí.</p></div><label for="quantity">Cantidad<input id="quantity" type="number" min=".25" max="20" step=".25" value="1" inputmode="decimal"></label></div>
+      <div class="add-row"><button id="add-cart" type="button">AÑADIR A LA CESTA</button></div>
+      <section id="cart" class="cart" hidden aria-labelledby="cart-title"><header><h3 id="cart-title">Tu cesta</h3><span id="cart-count"></span></header><ol id="cart-items"></ol></section>
+      <details><summary>Ajustar peso (opcional y privado)</summary><label for="weight">Peso en kg<input id="weight" type="number" min="35" max="200" value="75" inputmode="numeric"></label><p>Solo se procesa en tu navegador; no se guarda, no se comparte y no se envía a analítica.</p></details>
+      <button id="calculate" class="primary" type="button">TRADUCIR A SUDOR ↗</button><p id="error" role="alert"></p>
     </section>
-
-    <footer class="homeFooter">
-      <a href="/">Calculadora</a><a href="/calorias-alcohol/">Alcohol</a><a href="/calorias-pizzas/">Pizzas</a><a href="/calorias-hamburguesas-comida-rapida/">Fast food</a><a href="/calorias-dulces-snacks/">Snacks</a><a href="/calorias-tapas-comida-espanola/">Tapas</a><a href="/ejercicios-equivalencias/">Ejercicio</a><a href="/metodologia-fuentes/">Fuentes</a>
-    </footer>
-  </div>
-
-  <!-- JS modular -->
-  <script type="module" src="./assets/js/app.js"></script>
+    <section id="result" class="card result" hidden tabindex="-1" aria-live="polite">
+      <small>02 · LAS MATEMÁTICAS HAN HABLADO</small>
+      <div class="result-grid"><div><span id="result-badge" class="badge"></span><h2 id="result-title"></h2><p id="meta"></p><p id="kcal"></p></div><div class="big"><span id="minutes"></span><b>Caminando rápido</b><small>equivalencia aproximada</small></div></div>
+      <div id="secondary" class="secondary"></div>
+      <div class="source"><p id="source"></p><a id="source-link" target="_blank" rel="noopener noreferrer">Ver fuente</a><a id="correction-link" href="/contacto/?motivo=correccion">Corregir un dato</a></div>
+      <p class="fine">Comparación recreativa basada en valores MET. No existe una equivalencia exacta ni necesitas compensar lo que comes. En alcohol, hacer ejercicio no elimina sus efectos: si bebes, no conduzcas.</p>
+      <div class="actions"><button id="share" class="primary" type="button">RETAR A UN AMIGO</button><button id="copy" type="button">COPIAR ENLACE</button><button id="again" type="button">COMPARAR OTRO</button></div>
+      <div class="format-actions" aria-label="Descargar formatos sociales"><button id="download-feed" type="button">DESCARGAR FEED 4:5</button><button id="download-story" type="button">DESCARGAR STORY 9:16</button></div><p id="status" role="status"></p>
+    </section>
+    <section id="duelo" class="card"><small>03 · DUELO SIN GANADOR MORAL</small><h2>Producto A <em>VS</em> Producto B</h2><div class="filters"><label for="duel-a">Producto A<select id="duel-a"></select></label><label for="duel-b">Producto B<select id="duel-b"></select></label></div><button id="run-duel" type="button">COMPARAR RACIONES</button><p id="duel-result" aria-live="polite"></p></section>
+  </main>
+  <footer><b>LoVasASudar.com</b><nav aria-label="Legal y recursos"><a href="/equivalencias/">Guías</a><a href="/metodologia-fuentes/">Metodología</a><a href="/privacidad/">Privacidad</a><a href="/cookies/">Cookies</a><a href="/aviso-legal/">Aviso legal</a><a href="/contacto/">Contacto</a><button id="cookie-settings" class="link" type="button">Preferencias de cookies</button></nav><p>Las marcas se citan solo para identificar productos. No existe afiliación o respaldo salvo indicación expresa.</p></footer>
+  <dialog id="consent"><form method="dialog"><h2>Tu visita, tus reglas</h2><p>La calculadora funciona sin analítica. Solo activamos medición agregada si aceptas; nunca enviamos peso, texto libre ni resultados individuales.</p><div class="consent-actions"><button value="reject">RECHAZAR</button><button value="accept">ACEPTAR</button></div><p><a href="/cookies/">Política de cookies</a></p></form></dialog>
+  <script type="module" src="/assets/js/product-app.js"></script>
 </body>
 </html>
